@@ -1,0 +1,106 @@
+<link rel="stylesheet" href="/css/user/compiler.css">
+<div class="full-width container">
+    <div class="compiler__container full-width row gap-64">
+        <div class="side__container hide-on-4 col gap-16"> 
+            <div class="compiler-logo center">
+                <img src="/images/logo-light.png" alt="Wise Owl Logo">
+            </div>
+            <div class="compiler-title">
+                <h1>Compiler</h1>
+                <p class="compiler-slogan">Unleash Your Code's Wisdom</p>
+            </div>
+            <div class="compiler-description">
+                <p>Wise Owl Compiler là nền tảng mạnh mẽ cho việc biên dịch và chạy mã trực tuyến, hỗ trợ nhiều ngôn ngữ lập trình để bạn có thể học, thực hành và phát triển.</p>
+            </div>
+            <div class="compiler-features">
+                <h2>Tính Năng:</h2>
+                <ul>
+                    <li><strong>Hỗ trợ đa ngôn ngữ:</strong> Từ C/C++ đến Python</li>
+                    <li><strong>Biên dịch nhanh chóng:</strong> Hiệu suất đáng tin cậy</li>
+                    <li><strong>Giao diện thân thiện:</strong> Dễ dàng thao tác</li>
+                </ul>
+            </div>
+        </div>
+        <div class="editor__container col">
+            <div class="editor__header row">
+                <div class="notch full-height"></div>
+                <div class="editor__header-main">
+                    <div class="row gap-12 center full-height">
+                        <div class="wo-input relative file_name">
+                            <input type="text" class="full-width full-height" id="file_name" placeholder="Tên file" value="NewFile">
+                            <span class="absolute full-height center">.cpp</span>
+                        </div>
+                        <div class="wo-select language__select relative" data-val="Cpp">
+                            <div class="wo-select_body full-width row item-center flex-box">
+                                <span class="selected-text">C/C++</span>
+                                <ion-icon name="caret-down-outline"></ion-icon>
+                            </div>
+                            <div class="option__list col absolute full-width">
+                                <ul class="full-height col full-width">
+                                    <li class="option__item selected" data-option-val="Cpp"><span>C/C++</span></li>
+                                    <li class="option__item" data-option-val="Java"><span>Java</span></li>
+                                    <li class="option__item" data-option-val="Pascal"><span>Pascal</span></li>
+                                    <li class="option__item" data-option-val="Python"><span>Python</span></li>                                
+                                </ul>
+                            </div>
+                        </div>
+                        <button class="new-file-btn center editor__left-action" title="Tạo file mới"><ion-icon name="document"></ion-icon></button>
+                        <button class="upload-file-btn center editor__left-action" title="Upload file"><ion-icon name="cloud-upload"></ion-icon></button>
+                        <button class="download-file-btn center editor__left-action" title="Download file"><ion-icon name="cloud-download"></ion-icon></button>
+                    </div>
+                </div>
+                <div class="notch full-height"></div>
+            </div>
+            <div class="editor__body full-height scale-up-ver-top" style="--scale: 0.6;">
+                <textarea name="" id="editor"></textarea>
+            </div>
+        </div>
+        <div class="side__container right col gap-16">            
+            <div class="row flex-box item-center">
+                <div class="slide-left" style="--slide-distance: 40px; --delay: 0.1s"><small>Nhập input nếu có</small></div>
+                <div class="row gap-12">
+                    <button class="run-code-btn center editor__right-action" title="Run"><ion-icon name="play"></ion-icon></button>
+                    <button class="stop-code-btn center editor__right-action" title="Stop"><ion-icon name="stop"></ion-icon></button>
+                    <!-- <label>
+                        <input type="checkbox" id="auto-indent" checked> Tự động căn lề
+                    </label>
+                    <label>
+                        <input type="checkbox" id="auto-close" checked> Tự động đóng ngoặc
+                    </label> -->
+                </div>
+            </div>
+            <div class="input__container full-width side-box col slide-left" style="--slide-distance: 40px; --delay: 0.2s">
+                <div class="side-box__header row">
+                    <div class="title center">
+                        <span>Input</span>
+                    </div>
+                    <div class="action flex-1">
+                        <div class="full-width full-height row gap-12">
+                            <button class="upload-input-btn center editor__left-action" title="Upload file (.txt)"><ion-icon name="cloud-upload"></ion-icon></button>
+                            <button class="clear-btn center editor__left-action" title="Xóa"><ion-icon name="backspace"></ion-icon></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-box__body flex-1">
+                    <textarea name="" id="input"></textarea>
+                </div>
+            </div>
+            <div class="output__container full-width side-box col slide-left" style="--slide-distance: 40px; --delay: 0.4s">
+                <div class="side-box__header row">
+                    <div class="title center">
+                        <span>Output</span>
+                    </div>
+                    <div class="action flex-1">
+                        <div class="full-width full-height row gap-12">
+                            <button class="clear-btn center editor__left-action" title="Xóa"><ion-icon name="backspace"></ion-icon></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="side-box__body flex-1">
+                    <textarea name="" id="output"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/user/compiler.js"></script>

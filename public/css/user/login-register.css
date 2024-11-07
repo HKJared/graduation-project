@@ -1,0 +1,453 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@300;400;500;600;700&display=swap');
+
+:root{
+    --nc-primary : var(--color-black-100);
+    --borderColor: #d6d6d6;
+    --headerWeb: #ccc;
+    --extraText: #8d8d8d;
+    --bg: var(--color-black-60);
+    --Text1: #333;
+    --Text2: #666;
+    --Text3: #999;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    background: linear-gradient(to right, #e2e2e2, var(--bg));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container {
+    background-color: var(--color-black-100);
+    border-radius: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+}
+
+.container p {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.3px;
+    margin: 20px 0;
+}
+
+.container span {
+    font-size: 12px;
+}
+
+.container a {
+    color: var(--Text3);
+    font-size: 13px;
+    text-decoration: none;
+    margin: 15px 0 10px;
+}
+
+.container button {
+    background-color: var(--nc-primary);
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 18px;
+}
+
+.container button.hidden {
+    background-color: transparent;
+    border-color: #fff;
+}
+
+.container form {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 36px 32px;
+    height: 100%;
+}
+
+.container form span {
+    color: var(--Text3);
+}
+
+.container form h1 {
+    color: var(--nc-primary);
+}
+
+.container input, .account-input-container input {
+    background-color: #eee;
+    border: 0;
+    margin: 8px 0;
+    padding: 10px 40px 10px 16px;
+    font-size: 13px;
+    width: 100%;
+    outline: none;
+    border-radius: 19px;
+}
+
+.container input::placeholder, .account-input-container input::placeholder {
+    color: var(--color-white-60);
+}
+
+.form-container {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 0 64px 96px 0;
+    top: 0;
+    height: 100%;
+    transition:  all 0.6s ease-in-out;
+}
+
+.active .form-container {
+    border-radius: 64px 0 0 96px;
+}
+
+.form-container .toggle-button {
+    padding: 16px 0;
+}
+
+.form-container .toggle-button span {
+    font-size: 0.875rem;
+    white-space: pre;
+}
+
+.toggle-span {
+    color: var(--nc-primary) !important;
+    cursor: pointer;
+}
+
+.sign-up {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+.container.active .sign-up {
+    transform: translateX(100%);
+}
+
+.sign-in {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.container.active .sign-in {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: move 0.6s;
+}
+
+@keyframes move {
+    0%,
+    49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 
+    100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+.social-icons {
+    margin: 20px 0;
+}
+
+.social-icons a {
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    margin: 0 3px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+}
+
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    z-index: 1000;
+}
+
+.container.active .toggle-container {
+    transform: translateX(-100%);
+    border-radius: 0 150px 100px 0;
+}
+
+.toggle {
+    height: 100%;
+    color: #fff;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+.toggle-panel {
+    background-color: var(--nc-primary);
+    display: flex;
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 96px 32px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-panel .logo {
+    height: 64px;
+    width: 64px;
+    margin-bottom: 24px;
+}
+
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left {
+    transform: translateX(0);
+}
+
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.container.container.active .toggle-right {
+    transform: translateX(200%);
+}
+
+/* otp verivication */
+.verification-container {
+    display: none;
+    width: 500px;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+}
+
+.verification-container .span-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+}
+
+.verification-container form {
+    gap: 16px;
+}
+
+.verification-container span {
+    color: var(--Text1);
+}
+
+.verification-container .header {
+    margin: 1.5rem 0;
+    align-items: center;
+    padding-right: 80px;
+    font-size: 1.25rem;
+}
+
+.verification-container .header .back-container {
+    width: 80px;
+}
+
+.verification-container .back-container button {
+    color: var(--color-primary);
+    font-size: 1.5rem;
+}
+
+.verification-container .body {
+    padding: 0 80px 60px;
+    gap: 1.5rem;
+}
+
+.otp-input-container {
+    gap: 10px;
+    justify-content: center;
+}
+
+.otp-input {
+    font-size: 1.5rem;
+    width: 36px;
+    height: 45px;
+    border: 1px solid rgba(0, 0, 0, 0.42);
+    border-radius: .25rem;
+    color: rgba(0, 0, 0, 0.42);
+    text-align: center;
+}
+
+.action-btn button {
+    background-color: var(--color-primary);
+    height: 2.5rem;
+    color: #fff;
+    border-radius: .125rem;
+    text-transform: uppercase;
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+.account-input-container {
+    gap: 8px;
+}
+
+.input-container span {
+    font-size: 12px;
+}
+
+.condition-container span {
+    font-size: 14px;
+    color: #999;
+}
+
+.condition-container span.valid {
+    color: #66cc00;
+}
+
+.complete-icon-container {
+    padding: 2rem 0;
+}
+
+.complete-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+    border: 1px solid #66cc00;
+    color: #66cc00;
+    font-size: 2rem;
+}
+
+.submit-step3-btn {
+    opacity: 1 !important;
+    cursor: pointer !important;
+}
+
+.resend-btn {
+    color: var(--color-primary);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .sign-in {
+        left: 0;
+        width: 100%;
+        opacity: 1;
+        z-index: 1;
+    }
+
+    .sign-up {
+        left: 0;
+        width: 100%;
+        opacity: 1;
+        z-index: 2;
+    }
+
+    /* otp verivication */
+    .verification-container, .container {
+        width: calc(100vw - 24px);
+        margin: 12px;
+    }
+
+    .verification-container .body {
+        padding: 0 12px 40px;
+        gap: 1.5rem;
+    }
+
+    .otp-input-container {
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .otp-input {
+        font-size: 1.5rem;
+        width: 36px;
+        height: 45px;
+        border: 1px solid rgba(0, 0, 0, 0.42);
+        border-radius: .25rem;
+        color: rgba(0, 0, 0, 0.42);
+        text-align: center;
+    }
+
+    .action-btn button {
+        background-color: var(--color-primary);
+        height: 2.5rem;
+        color: #fff;
+        border-radius: .125rem;
+        text-transform: uppercase;
+        opacity: .7;
+        cursor: not-allowed;
+    }
+
+    .account-input-container {
+        gap: 8px;
+    }
+
+    .input-container span {
+        font-size: 12px;
+    }
+
+    .condition-container span {
+        font-size: 14px;
+        color: #999;
+    }
+
+    .condition-container span.valid {
+        color: #66cc00;
+    }
+
+    .complete-icon-container {
+        padding: 2rem 0;
+    }
+
+    .complete-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        border: 1px solid #66cc00;
+        color: #66cc00;
+        font-size: 2rem;
+    }
+}

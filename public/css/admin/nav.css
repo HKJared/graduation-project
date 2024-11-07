@@ -1,0 +1,67 @@
+nav {
+    width: 260px;
+    background-color: var(--color-black-100);
+    color: #fff;
+    transition: width 0.3s ease;
+    
+}
+
+nav.hidden {
+    width: 0; /* Khi nav bị ẩn */
+    overflow: hidden;
+}
+
+nav .nav__header {
+    padding: 24px 24px 6px;
+    font-size: .75rem;
+    min-width: 260px;
+}
+
+nav .logo__container {
+    height: 56px;
+    min-width: 260px;
+    padding: 14px;
+}
+
+nav .menu {
+    overflow-y: auto;
+    flex-grow: 1;
+    min-width: 260px;
+    padding-bottom: 24px;
+}
+
+nav .menu::-webkit-scrollbar-track {
+    background: var(--color-black-100);
+}
+
+nav .menu > li {
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+}
+
+nav .menu .main {
+    background: #222e3c;
+    border-left: 3px solid transparent;
+    color: rgba(233, 236, 239, .5);
+    cursor: pointer;
+    font-size: .875rem;
+    font-weight: 400;
+    padding: .625rem 1.625rem;
+    transition: background .3s ease-in-out;
+    line-height: 1.5;
+}
+
+nav .menu .main .title__icon {
+    width: 20px;
+}
+
+nav .menu .main:hover {
+    color: rgba(233, 236, 239, .8);
+}
+
+nav .menu .main.active {
+    background: linear-gradient(90deg, rgba(59, 125, 221, .1), rgba(59, 125, 221, .088) 50%, transparent);
+    border-left-color: var(--color-primary);
+    color: var(--color-white-90);
+}

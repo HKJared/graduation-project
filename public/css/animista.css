@@ -1,0 +1,100 @@
+.slide-right {
+    -webkit-animation: slide-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: slide-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation-delay: var(--delay, 0s); /* Độ trễ mặc định */
+}
+
+@-webkit-keyframes slide-right {
+    0% {
+        -webkit-transform: translateX(calc(-1 * var(--slide-distance, 30px)));
+                transform: translateX(calc(-1 * var(--slide-distance, 30px)));
+        opacity: 0; /* Bắt đầu với độ mờ */
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+                transform: translateX(0px);
+        opacity: 1; /* Kết thúc với độ rõ ràng */
+    }
+}
+
+@keyframes slide-right {
+    0% {
+        -webkit-transform: translateX(calc(-1 * var(--slide-distance, 30px)));
+                transform: translateX(calc(-1 * var(--slide-distance, 30px)));
+        opacity: 0; /* Bắt đầu với độ mờ */
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+                transform: translateX(0px);
+        opacity: 1; /* Kết thúc với độ rõ ràng */
+    }
+}
+
+
+.slide-left {
+    -webkit-animation: slide-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: slide-left 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation-delay: var(--delay, 0s); /* Độ trễ mặc định */
+}
+
+@-webkit-keyframes slide-left {
+    0% {
+        -webkit-transform: translateX(var(--slide-distance, 30px)); /* Di chuyển từ phải sang trái */
+                transform: translateX(var(--slide-distance, 30px));
+        opacity: 0; /* Bắt đầu với độ mờ */
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+                transform: translateX(0px);
+        opacity: 1; /* Kết thúc với độ rõ ràng */
+    }
+}
+
+@keyframes slide-left {
+    0% {
+        -webkit-transform: translateX(var(--slide-distance, 30px)); /* Di chuyển từ phải sang trái */
+                transform: translateX(var(--slide-distance, 30px));
+        opacity: 0; /* Bắt đầu với độ mờ */
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+                transform: translateX(0px);
+        opacity: 1; /* Kết thúc với độ rõ ràng */
+    }
+}
+
+
+.scale-up-ver-top {
+	-webkit-animation: scale-up-ver-top 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: scale-up-ver-top 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+            animation-delay: var(--delay, 0s);
+}
+
+@-webkit-keyframes scale-up-ver-top {
+    0% {
+        -webkit-transform: scaleY(var(--scale, 0.4));
+                transform: scaleY(var(--scale, 0.4));
+        -webkit-transform-origin: 100% 0%;
+                transform-origin: 100% 0%;
+    }
+    100% {
+      -webkit-transform: scaleY(1);
+              transform: scaleY(1);
+      -webkit-transform-origin: 100% 0%;
+              transform-origin: 100% 0%;
+    }
+  }
+@keyframes scale-up-ver-top {
+    0% {
+        -webkit-transform: scaleY(var(--scale, 0.4));
+                transform: scaleY(var(--scale, 0.4));
+        -webkit-transform-origin: 100% 0%;
+                transform-origin: 100% 0%;
+    }
+    100% {
+        -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+        -webkit-transform-origin: 100% 0%;
+                transform-origin: 100% 0%;
+    }
+}

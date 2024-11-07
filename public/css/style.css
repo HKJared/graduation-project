@@ -1,0 +1,400 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    background: var(--color-bg);
+    font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
+}
+
+.hide-on-mobile {
+    display: flex;
+}
+
+.show-on-mobile {
+    display: none !important;
+}
+
+::-webkit-scrollbar {
+    width: 6px; /* Độ rộng thanh cuộn dọc */
+    height: 6px; /* Độ cao thanh cuộn ngang */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #a3a3a3; /* Màu của phần thanh cuộn */
+    border-radius: 3px; /* Bo góc cho phần thanh cuộn */
+}
+
+/* Phần nền của thanh cuộn */
+::-webkit-scrollbar-track {
+    background: #fff; /* Màu nền của thanh cuộn */
+    border-radius: 3px; /* Bo góc cho phần nền thanh cuộn */
+}
+
+.blur {
+    filter: blur(5px);
+    pointer-events: none;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.wrap {
+    flex-wrap: wrap;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+}
+
+.full-height {
+    display: flex;
+    height: 100%;
+}
+
+.flex-1 {
+    flex-grow: 1;
+}
+
+.flex-box {
+    display: flex;
+    justify-content: space-between;
+}
+
+.item-center {
+    align-items: center;
+}
+
+.container {
+    padding-left: 1rem;
+    padding-right: 1rem;    
+}
+
+.section {
+    padding-top: 3.75rem;
+    padding-bottom: 3.75rem;
+}
+
+.limit-view {
+    width: 1200px !important;
+    max-width: 1200px !important;
+}
+
+.hr {
+    border-left: 1px solid #b7b7b7;
+}
+
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+}
+
+.sticky-bot {
+    position: sticky;
+    bottom: 0;
+}
+
+.gap-1 {
+    gap: 1px;
+}
+
+.gap-2 {
+    gap: 2px;
+}
+
+.gap-4 {
+    gap: 4px;
+}
+
+.gap-8 {
+    gap: 8px;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.gap-12 {
+    gap: 12px;
+}
+
+.gap-16 {
+    gap: 16px;
+}
+
+.gap-24 {
+    gap: 24px;
+}
+
+.gap-48 {
+    gap: 48px;
+}
+
+.gap-64 {
+    gap: 64px;
+}
+
+.eye-icon {
+    right: 10px; /* Khoảng cách từ bên phải */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px; /* Kích thước icon */
+    color: #333; /* Màu icon */
+}
+
+a, button, select {
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--color-primary-white);
+}
+
+img, video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+button {
+    border: 0;
+    opacity: .8;
+    background-color: transparent;
+    transition: opacity 0.3s ease;
+}
+
+input {
+    color: var(--color-text-primary);
+    border: 0;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+input:focus {
+    outline: none;
+    border: 0;
+}
+
+button.not-allowed {
+    cursor: not-allowed;
+}
+
+button:hover:not(.not-allowed) {
+    opacity: 1;
+}
+
+button.button-outline {
+    border: 1px solid var(--color-border);
+}
+
+ul, li {
+    margin: 0; /* Xóa khoảng cách ngoài (margin) của ul */
+    padding: 0; /* Xóa khoảng cách bên trong (padding) của ul */
+    list-style-type: none; /* Loại bỏ dấu chấm đầu dòng của danh sách */
+}
+
+.notification {
+    top: 125px;
+    right: -350px;
+    width: 300px;
+    background-color: var(--color-black-100);
+    color: #fff;
+    padding: 10px;
+    border-radius: 12px 0 0 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    transition: right 0.5s ease; 
+    z-index: 99999;
+}
+
+.right-slide {
+    right: 0px; 
+}
+
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column-reverse; /* Xếp từ dưới lên */
+    gap: 12px; /* Khoảng cách giữa các thông báo */
+    z-index: 99999; /* Đảm bảo thông báo luôn nằm trên các phần tử khác */
+}
+
+.notification-item {
+    background-color: var(--color-white-100);
+    color: var(--color-text-primary);
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    right: -300px; /* Bắt đầu từ ngoài màn hình */
+    opacity: 1; /* Bắt đầu với độ mờ đầy đủ */
+    transition: right 0.5s ease, opacity 0.5s ease; /* Hiệu ứng trượt vào và giảm độ mờ */
+    word-wrap: break-word; /* Đảm bảo từ dài được bẻ dòng */
+    overflow-wrap: break-word; /* Đảm bảo nội dung dài không tràn ra ngoài */
+    white-space: normal; /* Cho phép xuống dòng */
+}
+
+/* Hiệu ứng trượt vào */
+.notification-item.right-slide {
+    right: 0; /* Trượt vào màn hình */
+}
+
+/* Hiệu ứng co lại */
+@keyframes zoomScale {
+    0% { transform: scale(1); }
+    25% { transform: scale(0.96); }
+    50% { transform: scale(1); }
+    75% { transform: scale(0.96); }
+    100% { transform: scale(1); }
+}
+
+.notification-item.zoom-scale {
+    animation: zoomScale 0.5s ease;
+}
+
+
+.close-btn {
+    top: 4px;
+    right: 4px;
+    background-color: transparent;
+    border: 0;
+    color: var(--color-black-100);
+    background-color: var(--color-neutral-90);
+    font-size: 14px;
+    cursor: pointer;
+    opacity: .9;
+    padding: 2px;
+    border-radius: 50%;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.blur__container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 90000;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+.confirm {
+    padding: 2rem;
+    border-radius: 1.875rem;
+    width: 23.75rem;
+    color: var(--color-black-70);
+    background-color: #fff;
+    animation: zoomOut 0.5s forwards;
+}
+
+@keyframes zoomOut {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.confirm-content span {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    color: var(--color-text-primary);
+}
+
+.confirm-action {
+    justify-content: center;
+    margin-top: 1.875rem;
+}
+
+.confirm-action button {
+    background-color: var(--color-neutral-90);
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    height: 30px;
+    width: calc(50% - 12px);
+    padding-top: 1px;
+    border-radius: 15px;
+}
+
+.confirm-action .confirm-btn {
+    color: #fff;
+    background-color: var(--color-black-100);
+}
+
+.danger-border {
+    border: 0.5px solid var(--color-danger) !important;
+}
+
+ion-icon {
+    pointer-events: none;
+}
+
+/* Ẩn phần tử 1 trên màn hình nhỏ hơn 768px (điện thoại di động và máy tính bảng nhỏ) */
+@media only screen and (max-width: 768px) {
+    .hide-on-1 {
+        display: none;
+    }
+}
+
+/* Ẩn phần tử 2 trên màn hình từ 768px đến 992px (máy tính bảng lớn) */
+@media only screen and (max-width: 992px) {
+    .hide-on-2 {
+        display: none;
+    }
+}
+
+/* Ẩn phần tử 3 trên màn hình từ 992px đến 1200px (laptop nhỏ và máy tính để bàn tiêu chuẩn) */
+@media only screen and (max-width: 1200px) {
+    .hide-on-3 {
+        display: none;
+    }
+}
+
+/* Ẩn phần tử 4 trên màn hình lớn hơn 1200px (máy tính để bàn lớn) */
+@media only screen and (max-width: 1540px) {
+    .hide-on-4 {
+        display: none;
+    }
+}

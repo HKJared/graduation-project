@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiseOwl || <%= is_login ? 'Đăng nhập' : 'Đăng ký' %></title>
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-light-16x16.png" media="(prefers-color-scheme: light)">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-dark-16x16.png" media="(prefers-color-scheme: dark)">
+
+    <!-- Thư viện cho ionicons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/css/ionicons.min.css">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+    <link rel="stylesheet" href="/libraries/fontawesome-free-6.6.0-web/css/all.min.css"/>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/user/login-register.css">
+    <script src="/libraries/jQuery/jquery-3.7.1.min.js"></script>
+    <script src="/js/utils.js"></script>
+</head>
+<body>
+    <div class="container hide-on-mobile <%= is_login ? 'active' : '' %>" id="container">
+        <div class="form-container sign-up">
+            <form action="" id="inputPhoneNumberForm">
+                <h1>Đăng kí</h1>
+                <div class="social-icons row gap-4">
+                    <a href="/auth/login?redirect_uri=/&provider=google" class="icon center"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon center"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="/auth/login?redirect_uri=/&provider=github" class="icon center"><i class="fa-brands fa-github"></i></a>
+                </div>
+                <span style="margin: 0 0 16px 0;">Hoặc đăng kí bằng số điện thoại</span>
+                <input type="text" id="phone_number_signin" placeholder="Số điện thoại của bạn">
+                <button class="submit-btn" type="submit">Tiếp theo</button>
+                <div class="row toggle-button">
+                    <span>Nếu bạn đã có tài khoản, </span>
+                    <span class="toggle-span" id="login">Đăng nhập</span>
+                </div>
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form action="" id="loginForm">
+                <h1>Đăng nhập</h1>
+                <div class="social-icons row gap-4">
+                    <a href="/auth/login?redirect_uri=/&provider=google" class="icon center"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon center"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="/auth/login?redirect_uri=/&provider=github" class="icon center"><i class="fa-brands fa-github"></i></a>
+                </div>
+                <span style="margin: 0 0 16px 0;">Hoặc sử dụng tài khoản</span>
+                <input type="text" id="username_login" placeholder="Tên tài khoản/Số điện thoại">
+                <div class="input-container relative full-width">
+                    <input type="password" id="password_login" placeholder="Mật khẩu">
+                    <span class="eye-icon absolute" id="togglePasswordLogin"><i class="fa fa-eye-slash"></i></span>
+                </div>
+                <a href="#">Quên mật khẩu ?</a>
+                <button class="submit-btn" type="submit">Đăng nhập</button>
+                <div class="row toggle-button">
+                    <span>Nếu bạn chưa có tài khoản, </span>
+                    <span class="toggle-span" id="register">Đăng ký</span>
+                </div>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <div class="logo">
+                        <img src="/images/logo-oval.png" alt="">
+                    </div>
+                    <h1>Chào mừng bạn trở lại!</h1>
+                    <p>Đăng nhập để sử dụng các dịch vụ của chúng tôi</p>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <div class="logo">
+                        <img src="/images/logo-oval.png" alt="">
+                    </div>
+                    <h1>Xin chào, bạn mới!</h1>
+                    <p>Đăng kí tài khoản với thông tin cá nhân của bạn để sử dụng các dịch vụ của chúng tôi</p>
+                </div>
+            </div>
+        </div>
+    </div>   
+    <div class="container show-on-mobile">
+        <div class="form-container sign-in">
+            <form action="" id="loginForm">
+                <h1>Đăng nhập</h1>
+                <div class="social-icons row gap-4">
+                    <a href="/auth/login?redirect_uri=/&provider=google" class="icon center"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon center"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="/auth/login?redirect_uri=/&provider=github" class="icon center"><i class="fa-brands fa-github"></i></a>
+                </div>
+                <span style="margin: 0 0 16px 0;">Hoặc sử dụng tài khoản</span>
+                <input type="text" id="username_login" placeholder="Tên tài khoản/Số điện thoại">
+                <div class="input-container relative full-width">
+                    <input type="password" id="password_login" placeholder="Mật khẩu">
+                    <span class="eye-icon absolute" id="togglePasswordLogin"><i class="fa fa-eye-slash"></i></span>
+                </div>
+                <a href="#">Quên mật khẩu ?</a>
+                <button class="submit-btn" type="submit">Đăng nhập</button>
+                <div class="row toggle-button">
+                    <span>Nếu bạn chưa có tài khoản, </span>
+                    <span class="toggle-span" id="register">Đăng ký</span>
+                </div>
+            </form>
+        </div>
+        <div class="form-container sign-up">
+            <form action="" id="inputPhoneNumberForm">
+                <h1>Đăng kí</h1>
+                <div class="social-icons row gap-4">
+                    <a href="/auth/login?redirect_uri=/&provider=google" class="icon center"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon center"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="/auth/login?redirect_uri=/&provider=github" class="icon center"><i class="fa-brands fa-github"></i></a>
+                </div>
+                <span style="margin: 0 0 16px 0;">Hoặc đăng kí bằng số điện thoại</span>
+                <input type="text" id="phone_number_signin" placeholder="Số điện thoại của bạn">
+                <button class="submit-btn" type="submit">Tiếp theo</button>
+                <div class="row toggle-button">
+                    <span>Nếu bạn đã có tài khoản, </span>
+                    <span class="toggle-span" id="login">Đăng nhập</span>
+                </div>
+            </form>
+        </div>
+    </div>   
+</body>
+<script src="/js/user/login-register.js"></script>
+</html>

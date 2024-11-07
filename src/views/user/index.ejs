@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise Owl | Website dạy và học lập trình</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-light-16x16.png" media="(prefers-color-scheme: light)">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-dark-16x16.png" media="(prefers-color-scheme: dark)">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/user/index.css">
+</head>
+<body class="col">
+    <script src="/js/user/variables.js"></script>
+    <div class="full-screen fixed col">
+        <div class="top__full-screen full-screen-partial relative flex-1 center">
+            <div class="logo">
+                <img src="/images/logo-light.png" alt="">
+            </div>
+        </div>
+        <div class="bot__full-screen full-screen-partial relative flex-1 center">
+            <div class="process-bar">
+                <div class="process-bar__fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tải các thư viện trước khi xóa lớp phủ -->
+    <!-- Thư viện cho ionicons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ionicons@5.5.2/dist/css/ionicons.min.css">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+    <!-- Thêm CSS cho CodeMirror -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+
+    <!-- Thêm các addon cần thiết -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/scroll/scrollbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.css">
+
+    <!-- Thêm JS cho CodeMirror và các addon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/indent.js"></script>
+
+    <!-- Các mode cần thiết cho danh sách option -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script> <!-- Cho C/C++ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script> <!-- Cho Python -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script> <!-- Cho Java -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/pascal/pascal.min.js"></script> <!-- Cho Pascal -->
+
+    <!-- Thư viện của project -->
+    <script src="/libraries/jQuery/jquery-3.7.1.min.js"></script>
+    <script src="/js/utils.js"></script>
+
+
+    <!-- Thư viện cho animation -->
+    <link rel="stylesheet" href="/css/animista.css"/>
+
+
+    <%- include('partials/header') %>
+    <main class="main-body full-width col item-center">
+        <div class="waiting__container full-width center" style="height: 700px;">
+            <div class="waiting-wrapper">
+                <div class="waiting set_1"></div>
+                <div class="waiting set_2"></div>
+                <div class="waiting set_3"></div>
+                <div class="waiting set_4"></div>
+                <div class="waiting set_5"></div>
+            </div>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+<script src="/js/user/index.js"></script>
+</html>

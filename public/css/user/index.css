@@ -1,0 +1,108 @@
+:root {
+    --color-black-100:#0A0E14;
+    --color-black-90: #21252F;
+    --color-black-80: #353C4B;
+    --color-black-70: #4B5365;
+    --color-black-60: #616C7F;
+
+    --color-white-100:#FFFFFF;
+    --color-white-90: #E7E8EB;
+    --color-white-80: #D7DCE2;
+    --color-white-70: #CACED8;
+    --color-white-60: #B8BFCC;
+
+    --color-primary: #1967D2;
+
+    /* data theme light = default */
+    --color-bg: var(--color-white-90);
+    --color-text-primary: var(--color-black-100);
+    --color-text-secondary: var(--color-black-80);
+    --color-border: var(--color-white-70);
+    --color-button-bg: var(--color-white-90);
+    --color-button-text: var(--color-black-60);
+    --color-success: #00AF9B;
+    --color-warning: #FFB800;
+    --color-danger: #FF2D55;
+
+    /* guideline */
+    --color-neutral-100:#FFFFFF;
+    --color-neutral-90: #E7E8EB;
+    --color-neutral-80: #D7DCE2;
+    --color-neutral-70: #CACED8;
+    --color-neutral-60: #B8BFCC;
+
+    /* logo */
+    --logo: url('/images/logo-light.png');
+    --underline-bg: url('/images/underline-bg-light.png');
+
+    /* shadow */
+    --shadow: 0 2px 8px rgba(0, 0, 0, .12);
+}
+
+[data-theme="dark"]  {
+    /* color */
+    --color-bg: var(--color-black-90);
+    --color-text-primary: var(--color-white-100);
+    --color-text-secondary: var(--color-white-80);
+    --color-border: var(--color-black-70);
+    --color-button-bg: var(--color-black-90);
+    --color-button-text: var(--color-white-60);
+    --color-success: #00B8A3;
+    --color-warning: #FFC01E;
+    --color-danger: #FF375F;
+
+    /* guideline */
+    --color-neutral-100:#0A0E14;
+    --color-neutral-90: #21252F;
+    --color-neutral-80: #353C4B;
+    --color-neutral-70: #4B5365;
+    --color-neutral-60: #616C7F;
+
+    /* logo */
+    --logo: url('/images/logo-dark.png');
+    --underline-bg: url('/images/underline-bg-dark.png');
+
+    /* shadow */
+    --shadow: 0 2px 8px rgba(255, 255, 255, .12);
+}
+
+.full-screen {
+    width: 100vw;
+    height: 100vh;
+    z-index: 999999;
+    top: 0;
+    left: 0;
+    background-color: transparent
+}
+
+.full-screen .full-screen-partial {
+    background-color: var(--color-neutral-100);
+}
+
+.full-screen .top__full-screen {
+    padding-top: 100px;
+    transition: transform 1s ease-in-out;
+}
+
+.full-screen .bot__full-screen {
+    transition: transform 1s ease-in-out;
+}
+
+.full-screen .process-bar {
+    width: 70%;
+    height: 24px;
+    background-color: var(--color-neutral-80);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.full-screen .process-bar__fill {
+    height: 100%;
+    width: 0;
+    background-color: var(--color-black-100);
+    transition: width 2s ease; /* Thanh process chạy trong 3s */
+}
+
+.main-body {
+    min-height: calc(100vh - 50px);
+}

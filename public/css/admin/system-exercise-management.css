@@ -1,0 +1,169 @@
+/* ? Giao diện biểu đồ */ 
+.system-exercise-management__container {
+    padding: 24px;
+    height: max-content;
+}
+
+.system-exercise-management__container .panel {
+    background-color: var(--color-white-100);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+}
+
+.system-exercise-management__container .panel__header {
+    padding: 16px;
+    font-size: 1.125rem;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--color-primary);
+    border-bottom: 0.8px solid #e5e5e5;
+}
+
+.system-exercise-management__container .panel__body {
+    padding: 24px;
+}
+
+.system-exercise-management__container .panel__footer {
+    padding: 16px;
+    border-top: 0.8px solid #e5e5e5;
+    font-size: .875rem;
+    color: var(--color-black-90);
+}
+
+/* Biểu đồ về số lượng chủ đề */
+.main-view__chart {
+    width: calc(100% - 384px);
+}
+
+.main-view__chart .image_icon {
+    height: 76px;
+    width: 76px;
+    border-radius: 4px;
+    background-color: var(--color-white-80);
+    color: var(--color-black-100);
+    font-size: 34px;
+}
+
+.main-view__chart .statistics {
+    font-size: 1.5rem;
+    color: var(--color-success);
+    font-weight: 500;
+}
+
+/* Biểu đồ về số lượng bài tập */
+.side__chart {
+    width: 360px;
+}
+
+/* ? Giao diện danh sách chủ đề */
+.system-exercise-management__container .level_topic_list {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(266px, 1fr));
+}
+
+/* ? Giao diện thêm chủ đề mới */
+.add-topic__container {
+    padding: 16px 24px;
+    background-color: var(--color-white-100);
+    box-shadow: var(--shadow);
+    right: -100%;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    transition: right 0.5s ease-in-out;
+    z-index: 9;
+}
+
+.add-topic__container.show {
+    right: 0;
+}
+
+.add-topic__container .title h2, .add-topic__container .title .hide-btn {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 10px 0;
+    transition: scale 0.3 ease-in-out;
+}
+
+.add-topic__container .title .hide-btn {
+    font-size: 2rem;
+}
+
+.add-topic__container .title .hide-btn:hover {
+    scale: 1.02;
+}
+
+.add-topic__container .body label {
+    font-weight: 600;
+    font-size: .875rem;
+    color: var(--color-black-100);
+    padding: 6px 0;
+}
+
+.add-topic__container .body p {
+    font-size: .6875rem;
+    color: var(--color-black-90);
+    font-style: italic;
+    margin: 2px 0;
+}
+
+.add-topic__container .main__form {
+    width: 524px;
+}
+
+.add-topic__container .main__form .edit-row > *, .add-topic__container .required_conditions > * {
+    flex-grow: 1;
+    flex: 1 1 50%;
+}
+
+.add-topic__container .sub-label {
+    font-size: .875rem;
+    color: var(--color-black-80);
+    padding-left: 6px;
+}
+
+.add-topic__container .required_conditions input {
+    padding: 0 2px;
+    text-align: center;
+}
+
+.add-topic__container .side__form {
+    height: fit-content;
+}
+
+.add-topic__container .side__form .topic-item {
+    width: 266px !important;
+    min-height: 100px;
+    height: 100px !important;
+}
+
+.add-topic__container .change-image__action label, .add-topic__container .change-document__action label {
+    padding: 8px 12px;
+    font-size: .75rem;
+    font-weight: 400;
+    border: 0.8px dashed var(--color-primary);
+    color: var(--color-primary);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-topic__container .add-topic__box > .action {
+    padding: 64px 0 24px;
+}
+
+.add-topic__container .add-topic__box > .action button {
+    padding: 8px 64px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.add-topic__container .add-topic__box > .action .cancel-btn {
+    background-color: var(--color-warning);
+    color: var(--color-white-100);
+}
+
+.add-topic__container .add-topic__box > .action .submit-btn {
+    background-color: var(--color-success);
+    color: var(--color-white-100);
+}

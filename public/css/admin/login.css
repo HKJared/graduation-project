@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@300;400;500;600;700&display=swap');
+
+:root{
+    --nc-primary : #5790E0;
+    --borderColor: #d6d6d6;
+    --headerWeb: #ccc;
+    --extraText: #8d8d8d;
+    --bg: #2A323C;
+    --Text1: #333;
+    --Text2: #666;
+    --Text3: #999;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    min-height: 450px;
+    min-width: 450px;
+}
+
+.login__container {
+    padding: 106px 32px 46px;
+    background-color: #323C48;
+    border-radius: .5rem;
+    position: relative;
+    width: 450px;
+}
+
+.icon-header {
+    position: absolute;
+    height: 106px;
+    width: 106px;
+    border-radius: 53px;
+    top: -53px;
+    left: 172px;
+    overflow: hidden;
+}
+
+.icon-header img {
+    transform: scale(1.1) translateY(-5px);
+}
+
+.input-box {
+    height: 40px;
+    background-color: #3B4654;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.icon-input {
+    height: 28px;
+    width: 40px;
+    color: #fff;
+    border-right: 1px solid rgba(255, 255, 255, .12);
+    font-size: 1rem;
+}
+
+.input-box input {
+    width: calc(100% - 40px);
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    padding: 0 12px;
+}
+
+
+.input-box input:focus {
+    outline: none;
+    border: 0;
+}
+
+#login_form button {
+    height: 40px;
+    border-radius: 4px;
+    background-color: var(--color-primary);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+#login_form button:hover {
+    opacity: 1;
+}

@@ -1,0 +1,105 @@
+:root {
+    --color-black-100: #222E3C;
+    --color-black-90: #2E3A4A;
+    --color-black-80: #3C495A;
+    --color-black-70: #4A5769;
+    --color-black-60: #586577;
+
+    --color-white-100: #FFFFFF; /* Giữ nguyên */
+    --color-white-90: #f5f7fb;  /* Mới thêm màu nhạt */
+    --color-white-80: #D7DCE2; 
+    --color-white-70: #CACED8;
+    --color-white-60: #B8BFCC;
+
+    --color-primary: #1967D2;
+
+    /* data theme light = default */
+    --color-bg: var(--color-white-90);
+    --color-text-primary: var(--color-black-100);
+    --color-text-secondary: var(--color-black-80);
+    --color-border: var(--color-white-70);
+    --color-button-bg: var(--color-white-90);
+    --color-button-text: var(--color-black-60);
+    --color-success: #00AF9B;
+    --color-warning: #FFB800;
+    --color-danger: #FF2D55;
+
+    /* Các màu trung lập */
+    --color-neutral-100: #FFFFFF;
+    --color-neutral-90: #f5f7fb; /* Sử dụng lại màu mới */
+    --color-neutral-80: #D7DCE2;
+    --color-neutral-70: #CACED8;
+    --color-neutral-60: #B8BFCC;
+
+    /* shadow */
+    --shadow: 0 2px 8px rgba(0, 0, 0, .12);
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--color-bg);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+main {
+    flex-grow: 1; /* Chiếm phần còn lại của chiều rộng */
+    transition: margin-left 0.3s ease; /* Hiệu ứng khi nav ẩn đi */
+    z-index: 9;
+    background-color: var(--color-bg);
+}
+
+main.shifted {
+    margin-left: 0; /* Không có khoảng cách khi nav bị ẩn */
+}
+
+main .main-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: var(--color-bg);
+}
+
+.item-box {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.item-box__form {
+    background-color: var(--color-neutral-100);
+    box-shadow: var(--shadow);
+    border-radius: 6px;
+    position: sticky;
+    top: 0px;
+    z-index: 9;
+    position: relative; /* Để đảm bảo underline nằm đúng vị trí */
+    overflow: hidden;
+}
+
+.item-box__form .nav-item, .item-box__form .nav-hash-item {
+    padding: 0 1rem;
+    font-size: .875rem;
+    height: 56px;
+}
+
+.item-box__form .underline {
+    content: '';
+    height: 3px;
+    width: 0;
+    background-color: var(--color-primary);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.item-box__form .nav-item.active, .item-box__form .nav-item:hover {
+    color: var(--color-primary);
+}
+
+.item-box__form .nav-item.active {
+    font-weight: 600;
+}
