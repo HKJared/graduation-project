@@ -28,7 +28,8 @@ class TopicModel {
                 t.*,
                 u_created.username AS created_by_username,
                 u_updated.username AS updated_by_username,
-                (SELECT GROUP_CONCAT(condition_topic_id) FROM topic_unlock_conditions WHERE topic_id = t.id) AS unlock_conditions
+                (SELECT GROUP_CONCAT(condition_topic_id) FROM topic_unlock_conditions WHERE topic_id = t.id) AS unlock_conditions,
+                (SELECT COUNT(*) FROM exercises e WHERE e.topic_id = t.id) AS total_exercises
             FROM
                 system_exercise_topics t
             LEFT JOIN
@@ -38,19 +39,19 @@ class TopicModel {
             ORDER BY
                 t.level
         `;
-
+    
         try {
             const [rows] = await pool.execute(queryString);
             // Chuyển đổi unlock_conditions thành mảng cho mỗi topic
             return rows.map(row => {
                 row.unlock_conditions = row.unlock_conditions ? row.unlock_conditions.split(',').map(Number) : [];
                 return row;
-            }); // Trả về danh sách topic
+            });
         } catch (error) {
             console.error('Error executing getTopics() query:', error);
             throw error;
         }
-    }
+    }    
 
     // Lấy danh sách topic đã khóa chỉnh sửa
     static async getNonEditableTopics() {
@@ -88,12 +89,16 @@ class TopicModel {
                 t.*,
                 u_created.username AS created_by_username,
                 u_updated.username AS updated_by_username,
-                (SELECT GROUP_CONCAT(condition_topic_id) FROM topic_unlock_conditions WHERE topic_id = t.id) AS unlock_conditions
+                (SELECT GROUP_CONCAT(condition_topic_id) FROM topic_unlock_conditions WHERE topic_id = t.id) AS unlock_conditions,
+                (SELECT COUNT(*) FROM exercises e WHERE e.topic_id = t.id) AS total_exercises
             FROM
                 system_exercise_topics t
-            LEFT JOIN users u_created ON t.created_by = u_created.id
-            LEFT JOIN users u_updated ON t.updated_by = u_updated.id
-            WHERE t.id = ?
+            LEFT JOIN
+                users u_created ON t.created_by = u_created.id
+            LEFT JOIN
+                users u_updated ON t.updated_by = u_updated.id
+            WHERE
+                t.id = ?
         `;
 
         try {
@@ -117,7 +122,7 @@ class TopicModel {
 
         // Tạo chuỗi truy vấn SQL
         const queryString = `
-            UPDATE topics
+            UPDATE system_exercise_topics
             SET ${keys.map(key => `${key} = ?`).join(', ')}
             WHERE id = ?
         `;
@@ -135,7 +140,7 @@ class TopicModel {
     // Xóa một topic
     static async deleteTopic(topicId) {
         const queryString = `
-            DELETE FROM topics
+            DELETE FROM system_exercise_topics
             WHERE id = ?
         `;
 
@@ -152,7 +157,7 @@ class TopicModel {
     static async searchTopics(keyword, page = 1, topicsPerPage = 10) {
         const offset = (page - 1) * topicsPerPage;
         const queryString = `
-            SELECT * FROM topics
+            SELECT * FROM system_exercise_topics
             WHERE
                 (LOWER(title) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?))
                 AND is_editable = 0
@@ -200,6 +205,49 @@ class TopicModel {
             return result.affectedRows > 0; // Trả về true nếu có bản ghi nào bị xóa
         } catch (error) {
             console.error('Error executing deleteTopicCondition() query:', error);
+            throw error;
+        }
+    }
+
+    // Lấy thông tin chủ đề được hoàn thành bởi người dùng
+    static async getUserCompletedTopics() {
+        const queryString = `
+            SELECT
+                ct.*,
+                u.username,
+                t.name as topic_name
+            FROM
+                user_completed_topics ct
+            JOIN
+                users u ON ct.user_id = u.id
+            JOIN
+                system_exercise_topics t ON ct.topic_id = t.id
+            ORDER BY
+                ct.completed_at
+        `;
+    
+        try {
+            const [rows] = await pool.execute(queryString);
+            // Chuyển đổi unlock_conditions thành mảng cho mỗi topic
+            return rows
+        } catch (error) {
+            console.error('Error executing getTopics() query:', error);
+            throw error;
+        }
+    }
+
+    // Xóa thông tin bài làm của người dùng
+    static async deleteCompletedTopicById(topicId) {
+        const queryString = `
+            DELETE FROM user_completed_topics
+            WHERE topic_id = ?
+        `;
+
+        try {
+            const [result] = await pool.execute(queryString, [topicId]);
+            return result.affectedRows > 0; // Trả về true nếu có bản ghi nào bị xóa
+        } catch (error) {
+            console.error('Error executing deleteCompletedTopicById() query:', error);
             throw error;
         }
     }

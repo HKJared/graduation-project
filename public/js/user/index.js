@@ -87,7 +87,7 @@ function setUserInfo(user) {
     $('.avatar__container').empty().append(`
         <a href="/user/profile" class="full-height full-width center spa-action">            
             <img src="${ user.avatar_url }" alt="" srcset="${ user.avatar_url }, ${ user.avatar_url }" 
-                 onerror="this.onerror=null; this.src='/images/logo-oval.png';">
+                 onerror="this.onerror=null; this.src='${ user.avatar_url }';">
         </a>
     `);
 

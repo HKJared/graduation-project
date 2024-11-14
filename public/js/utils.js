@@ -174,16 +174,56 @@ function showConfirm(message, confirmBtnText, callback) {
     });
 }
 
-function addProgressBar(percentage) {
-    const progressBarHTML = `
-        <div id="progress-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 4px; background-color: #f3f3f3; z-index: 99999;">
-            <div id="progress-bar" style="width: 0; height: 100%; background-color: var(--color-primary); transition: width 0.5s ease;"></div>
+function showConfirmWithNotice(message, confirmBtnText, notice, callback) {
+    if ($('.confirm-container').length > 0) {
+        return; // Nếu có, thoát hàm và không tạo thêm hộp thoại
+    }
+
+    let confirmContainerHTML = `
+    <div class="confirm-container blur__container center">
+        <div class="confirm">
+            <div class="confirm-body col">
+                <div class="confirm-content col gap-4">
+                    <span>${message}</span>
+                </div>
+                <div class="notice-content">
+                    <p>${ notice }</p>
+                </div>
+                <div class="confirm-action row gap-24">
+                    <button class="cancel-btn center">Hủy bỏ</button>
+                    <button class="confirm-btn center">${confirmBtnText}</button>
+                </div>
+            </div>
         </div>
+    </div>
     `;
 
+    $('body').append(confirmContainerHTML);
+
+    $('.confirm-container').css('display', 'flex');
+
+    $('.confirm-btn').off('click').on('click', function() {
+        $('.confirm-container').remove();
+        if (callback) callback(true); // Người dùng nhấp vào Confirm
+    });
+
+    $('.cancel-btn').off('click').on('click', function() {
+        $('.confirm-container').remove();
+        if (callback) callback(false); // Người dùng nhấp vào Cancel
+    });
+}
+
+function addProgressBar(percentage = 30) {
+    if (!$('#progress-container').length) {
+        const progressBarHTML = `
+            <div id="progress-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 3.5px; background-color: #f5f5f5; z-index: 99999;">
+                <div id="progress-bar" style="width: 0; height: 100%; background-color: var(--color-primary); transition: width 0.5s ease;"></div>
+            </div>
+        `;
+        $('body').append(progressBarHTML); 
+    } 
+
     $('#progress-bar').css('width', percentage + '%');
-    
-    $('body').append(progressBarHTML); 
 }
 
 function removeProgressBar() {
@@ -213,6 +253,28 @@ function hideFullScreen() {
     }, 2000);
 }
 
+function countUp(element, start, end, duration) {
+    var startTime = null;
+    var range = end - start;
+    var stepTime = 10; // Thời gian mỗi bước (ms)
+    var increment = range / (duration / stepTime); // Bước gia tăng mỗi lần
+
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = timestamp - startTime;
+        var currentValue = start + increment * (progress / duration);
+        
+        if (progress < duration) {
+            $(element).text(Math.round(currentValue)); // Cập nhật giá trị vào phần tử
+            requestAnimationFrame(animate); // Gọi lại hàm animate cho đến khi đạt đích
+        } else {
+            $(element).text(end); // Đảm bảo kết thúc tại giá trị cuối cùng
+        }
+    }
+    
+    requestAnimationFrame(animate); // Bắt đầu animation
+}
+
 // Hàm tạo mảng các tháng gần nhất
 function getLastSixMonths() {
     const months = [];
@@ -229,6 +291,7 @@ function getLastSixMonths() {
 }
 
 async function upload(formData) {
+    addProgressBar(20);
     try {
         const response = await fetch('/api/upload', {
             method: 'POST',

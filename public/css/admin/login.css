@@ -9,6 +9,30 @@
     --Text1: #333;
     --Text2: #666;
     --Text3: #999;
+    
+    --color-black-100: #222E3C;
+    --color-black-90: #2E3A4A;
+    --color-black-80: #3C495A;
+    --color-black-70: #4A5769;
+    --color-black-60: #586577;
+
+    --color-white-100: #FFFFFF; /* Giữ nguyên */
+    --color-white-90: #f5f7fb;  /* Mới thêm màu nhạt */
+    --color-white-80: #D7DCE2; 
+    --color-white-70: #CACED8;
+    --color-white-60: #B8BFCC;
+
+    --color-primary: #1967D2;
+
+    /* Các màu trung lập */
+    --color-neutral-100: #FFFFFF;
+    --color-neutral-90: #f5f7fb; /* Sử dụng lại màu mới */
+    --color-neutral-80: #D7DCE2;
+    --color-neutral-70: #CACED8;
+    --color-neutral-60: #B8BFCC;
+
+    /* shadow */
+    --shadow: 0 2px 8px rgba(0, 0, 0, .12);
 }
 
 * {

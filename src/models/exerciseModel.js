@@ -21,6 +21,27 @@ class ExerciseModel {
         }
     }
 
+    // Lấy danh sách bài tập
+    static async getExercises() {
+        const queryString = `
+            SELECT
+                e.*, 
+                t.is_editable
+            FROM
+                exercises e
+            JOIN
+                system_exercise_topics t ON e.topic_id = t.id
+        `;
+
+        try {
+            const [rows] = await pool.execute(queryString);
+            return rows; // Trả về danh sách bài tập
+        } catch (error) {
+            console.error('Error executing getExercisesByTopic() query:', error);
+            throw error;
+        }
+    }
+
     // Lấy danh sách bài tập theo topic
     static async getExercisesByTopic(topic_id) {
         const queryString = `
@@ -161,6 +182,60 @@ class ExerciseModel {
             return result.insertId; // Trả về ID của bài tập code vừa được tạo
         } catch (error) {
             console.error('Error executing createCodeExercise() query:', error);
+            throw error;
+        }
+    }
+
+    // Lấy thông tin luyện tập của người dùng
+    static async getUserExerciseResultsByStarted(started_at = null) {
+        // Câu truy vấn cơ bản
+        let queryString = `
+            SELECT
+                er.*, 
+                e.topic_id,
+                e.level as exercise_level,
+                u.username,
+                u.last_activity as user_last_activity
+            FROM
+                user_exercise_results er
+            JOIN
+                exercises e ON er.exercise_id = e.id
+            JOIN
+                users u ON er.user_id = u.id
+        `;
+        
+        // Nếu có giá trị started_at, thêm điều kiện vào câu truy vấn
+        if (started_at) {
+            queryString += ` WHERE er.started_at = ?`;  // Điều kiện so sánh với started_at
+        }
+    
+        try {
+            const [rows] = await pool.execute(queryString, started_at ? [started_at] : []);
+            return rows; // Trả về danh sách bài tập
+        } catch (error) {
+            console.error('Error executing getUserExerciseResultsByStarted() query:', error);
+            throw error;
+        }
+    }
+
+    // Xóa thông tin bài làm của người dùng theo topic
+    static async deleteExerciseResultsByTopicId(topicId) {
+        const queryString = `
+            DELETE
+                er
+            FROM
+                user_exercise_results er
+            JOIN
+                exercises e ON er.exercise_id = e.id
+            WHERE
+                e.topic_id = ?
+        `;
+
+        try {
+            const [result] = await pool.execute(queryString, [topicId]);
+            return result.affectedRows > 0; // Trả về true nếu có bản ghi nào bị xóa
+        } catch (error) {
+            console.error('Error executing deleteExerciseResultsByTopicId() query:', error);
             throw error;
         }
     }

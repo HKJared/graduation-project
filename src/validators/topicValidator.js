@@ -30,59 +30,55 @@ function isValidUnlockConditionType(conditionType) {
 
 // Kiểm tra level có phải là số nguyên lớn hơn hoặc bằng 1
 function isValidLevel(level) {
-    return Number.isInteger(level) && level >= 1;
+    return level >= 1;
 }
 
 // Kiểm tra min_required_exercises có phải là số nguyên lớn hơn hoặc bằng 1
 function isValidMinRequiredExercises(minRequiredExercises) {
-    return Number.isInteger(minRequiredExercises) && minRequiredExercises >= 1;
+    return minRequiredExercises >= 1;
 }
 
 // Kiểm tra min_required_score có phải là số nguyên không âm
 function isValidMinRequiredScore(minRequiredScore) {
-    return Number.isInteger(minRequiredScore) && minRequiredScore >= 0;
+    return minRequiredScore >= 0;
 }
 
 // Kiểm tra bonus_points có phải là số nguyên không âm
 function isValidBonusPoints(bonusPoints) {
-    const parsedPoints = parseInt(bonusPoints, 10);
-    return Number.isInteger(parsedPoints) && parsedPoints >= 0;
+    return bonusPoints >= 0;
 }
 
 // Hàm validate toàn bộ topic
 function validateTopic(topic) {
-    const errors = [];
+    const errors = '';
 
     if (!isValidName(topic.name)) {
-        errors.push('Tên không hợp lệ. Phải là một chuỗi không rỗng và tối đa 255 ký tự.');
-    }
-    if (!isValidUrl(topic.image_url)) {
-        errors.push('URL của ảnh không hợp lệ.');
+        errors += 'Tên không hợp lệ. Phải là một chuỗi không rỗng và tối đa 255 ký tự. ';
     }
     if (!isValidDescription(topic.description)) {
-        errors.push('Mô tả không hợp lệ. Độ dài tối đa là 1000 ký tự.');
+        errors += 'Mô tả không hợp lệ. Độ dài tối đa là 1000 ký tự. ';
     }
     if (!isValidProgrammingLanguage(topic.programming_language)) {
-        errors.push('Ngôn ngữ lập trình không hợp lệ. Các giá trị cho phép là Cpp, Java, Pascal, Python, Multi.');
+        errors += 'Ngôn ngữ lập trình không hợp lệ. Các giá trị cho phép là Cpp, Java, Pascal, Python, Multi. ';
     }
     if (!isValidUnlockConditionType(topic.unlock_condition_type)) {
-        errors.push('Loại điều kiện mở khóa không hợp lệ. Các giá trị cho phép là all, any, single.');
+        errors += 'Loại điều kiện mở khóa không hợp lệ. Các giá trị cho phép là all, any, single. ';
     }
     if (!isValidLevel(topic.level)) {
-        errors.push('Cấp độ không hợp lệ. Phải là số nguyên lớn hơn hoặc bằng 1.');
+        errors += 'Cấp độ không hợp lệ. Phải là số nguyên lớn hơn hoặc bằng 1.';
     }
     if (!isValidMinRequiredExercises(topic.min_required_exercises)) {
-        errors.push('Số bài tập yêu cầu tối thiểu không hợp lệ. Phải là số nguyên lớn hơn hoặc bằng 1.');
+        errors += 'Số bài tập yêu cầu tối thiểu không hợp lệ. Phải là số nguyên lớn hơn hoặc bằng 1. ';
     }
     if (!isValidMinRequiredScore(topic.min_required_score)) {
-        errors.push('Điểm yêu cầu tối thiểu không hợp lệ. Phải là số nguyên không âm.');
+        errors += 'Điểm yêu cầu tối thiểu không hợp lệ. Phải là số nguyên không âm.';
     }
     if (!isValidBonusPoints(topic.bonus_points)) {
-        errors.push('Điểm thưởng không hợp lệ. Phải là số nguyên không âm.');
+        errors += 'Điểm thưởng không hợp lệ. Phải là số nguyên không âm.';
     }
 
     return {
-        isValid: errors.length === 0,
+        isValid: errors == '',
         errors
     };
 }

@@ -1,6 +1,6 @@
 $(document).ready(async function() {
     if (!permissions.length) {
-        const response = await getPermissions();
+        const response = await apiWithAccessToken('role-permissions', 'GET');
         if (response && response.permissions) {
             permissions = response.permissions;
             
@@ -49,34 +49,4 @@ function displayNavByPermissions(permissions) {
             `);
         }
     });
-}
-
-// Hàm gọi API
-async function getPermissions() {
-    const token = localStorage.getItem('wiseowlAdminAccessToken');
-    renderLoading();
-    
-    try {
-        const response = await fetch(`/api/admin/role-permissions`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                "authentication": token
-            }
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            showNotification(result.message);
-            throw new Error('Network response was not ok');
-        }
-
-        return result; 
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return [];
-    } finally {
-        removeLoading();
-    }
 }

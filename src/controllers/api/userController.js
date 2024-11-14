@@ -225,10 +225,10 @@ class UserController {
                 return res.status(400).json({ message: "Tài khoản không tồn tại." });
             }
 
-            const log_id = await LogModel.createLog('Đăng nhập', user.user_id);
+            const log_id = await LogModel.createLog('Đăng nhập', user.id);
             const password = hashPassword(account.password);
 
-            const old_password = await UserModel.getOldPassword(password, user.user_id);
+            const old_password = await UserModel.getOldPassword(password, user.id);
 
             if (old_password) {
                 await LogModel.updateDetailLog(`Đăng nhập với mật khẩu cũ.`, log_id);
@@ -240,12 +240,12 @@ class UserController {
                 return res.status(400).json({ message: "Mật khẩu không chính xác." })
             }
 
-            const access_token = await JWTService.generateToken(user.user_id);
-            const refresh_token = await JWTService.generateRefreshToken(user.user_id);
+            const access_token = await JWTService.generateToken(user.id);
+            const refresh_token = await JWTService.generateRefreshToken(user.id);
 
             const now = new Date();
             const vietnamTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-            const is_login = await UserModel.updateUser({user_id: user.user_id, refresh_token: refresh_token, last_activity: vietnamTime.toISOString() });
+            const is_login = await UserModel.updateUser({id: user.id, last_activity: vietnamTime.toISOString() });
 
             if (!is_login) {
                 await LogModel.updateDetailLog(`Đăng nhập không thành công.`, log_id);

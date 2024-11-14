@@ -1,5 +1,8 @@
 var intervalId = null;
 $(document).ready(async function() {
+    if (!localStorage.getItem('wiseowlAdminRefreshToken')) {
+        window.location.href = '/admin/login'
+    }
     refreshToken();
 
     setInterval(function() {
@@ -8,7 +11,7 @@ $(document).ready(async function() {
 
 
     if (admin_info != {}) {
-        const response = await getAdminInfo();
+        const response = await apiWithAccessToken('info', 'GET');
         if (response.admin) {
             admin_info = response.admin;
             $(document).trigger('AdminUpdated', [admin_info]);
@@ -229,7 +232,13 @@ function refreshToken() {
     .then(response => {
         return response.json().then(result => {
             if (!response.ok) {
+                localStorage.removeItem('wiseowlAdminAccessToken');
+                localStorage.removeItem('wiseowlAdminRefreshToken');
                 showNotification('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
+
+                setTimeout(function() {
+                    window.location.href = '/admin/login'
+                }, 2000);
                 throw new Error('Network response was not ok');
             }
             return result;
@@ -244,20 +253,35 @@ function refreshToken() {
     });
 }
 
-async function getAdminInfo() {
+async function apiWithAccessToken(url, method, body) {
     const token = localStorage.getItem('wiseowlAdminAccessToken');
     if (!token) {
         return null
     }
 
-    try {
-        const response = await fetch(`/api/admin/info`, {
-            method: 'GET',
+    let configuration;
+    if (method == 'GET') {
+        configuration = {
+            method: method,
             headers: {
                 "Content-Type": "application/json",
                 "authentication": token
             }
-        });
+        }
+    } else {
+        configuration = {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "authentication": token
+            },
+            body: JSON.stringify(body)
+        }
+    }
+
+    addProgressBar(40);
+    try {
+        const response = await fetch('/api/admin/' + url, configuration);
 
         const result = await response.json();
 
@@ -269,6 +293,8 @@ async function getAdminInfo() {
         return result; 
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        return [];
+        return null;
+    } finally {
+        removeProgressBar();
     }
 }

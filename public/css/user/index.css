@@ -13,17 +13,6 @@
 
     --color-primary: #1967D2;
 
-    /* data theme light = default */
-    --color-bg: var(--color-white-90);
-    --color-text-primary: var(--color-black-100);
-    --color-text-secondary: var(--color-black-80);
-    --color-border: var(--color-white-70);
-    --color-button-bg: var(--color-white-90);
-    --color-button-text: var(--color-black-60);
-    --color-success: #00AF9B;
-    --color-warning: #FFB800;
-    --color-danger: #FF2D55;
-
     /* guideline */
     --color-neutral-100:#FFFFFF;
     --color-neutral-90: #E7E8EB;

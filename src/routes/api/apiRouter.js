@@ -26,7 +26,7 @@ apiRouter.post('/upload', uploadFiles);
 apiRouter.post("/compile", (req, res) => {
     try {
         const { code, input, lang } = req.body;
-
+        
         // Kiểm tra xem mã nguồn và ngôn ngữ có tồn tại không
         if (!code || !lang) {
             console.log("Thiếu mã nguồn hoặc ngôn ngữ");

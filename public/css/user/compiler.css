@@ -40,7 +40,6 @@
     width: 124px;
     height: 30px;
     border-radius: 14px;
-    border: 1px solid var(--color-black-60);
     color: var(--color-black-80);
 }
 
@@ -50,6 +49,7 @@
 
 .compiler__container .file_name input {
     padding: 0 38px 0 8px;
+    border-radius: 14px;
 }
 
 .compiler__container .file_name span {
@@ -71,7 +71,7 @@
     background-color: var(--color-neutral-100);
     color: var(--color-text-primary);
     opacity: 1;
-    border: 1px solid var(--color-black-80);
+    border: 0.8px solid var(--color-white-60);
     color: var(--color-black-60);
 }
 

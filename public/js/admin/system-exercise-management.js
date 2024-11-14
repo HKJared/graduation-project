@@ -5,9 +5,14 @@ $(document).ready(async function() {
     
     activateMenuWhenReady('#system-exercise-management');
 
+    const response = await apiWithAccessToken('topic-statistics', 'GET');
+    if (response && response.statistics) {
+        displayChart(response.statistics);
+    }
+
     if (!topics.length) {
-        const response = await getTopics();
-        if (response && response.topics) { console.log(response.topics)
+        const response = await apiWithAccessToken('topics', 'GET')
+        if (response && response.topics) {
             topics = response.topics;
             // Phát ra sự kiện tùy chỉnh 'topicsUpdated' sau khi topics đã được cập nhật
             $(document).trigger('topicsUpdated', [topics]);
@@ -15,9 +20,6 @@ $(document).ready(async function() {
     }
             
     showTopics(topics);
-
-
-    displayChart();
 });
 
 // xử lí sự kiện
@@ -46,12 +48,12 @@ $(document).ready(function() {
 
     $(document).on('input.wiseowlEvent', '#name', function () {
         const topicName = $(this).val();
-        $('.topic-item .name span').text(topicName);
+        $('.topic-item.preview .name span').text(topicName);
     });
 
     $(document).on('input.wiseowlEvent', '#description', function () {
         const topicDescription = $(this).val();
-        $('.topic-item .description span').text(topicDescription);
+        $('.topic-item.preview .description span').text(topicDescription);
     });
 
     $(document).on('change.wiseowlEvent', '#document_url', function() {
@@ -88,7 +90,7 @@ $(document).ready(function() {
             
             reader.onload = function(e) {
                 // Thay thế URL của background-image trong .topic-item
-                $('.topic-item').css('background-image', `linear-gradient(
+                $('.topic-item.preview').css('background-image', `linear-gradient(
                                                                 to bottom, 
                                                                 rgba(0, 0, 0, 0.024) 0%, 
                                                                 rgba(0, 0, 0, 0.174) 57%
@@ -111,50 +113,60 @@ $(document).ready(function() {
         }, 1000);
     });
 
-    $(document).on('click.wiseowlEvent', '.add-topic__container .submit-btn', async function(event) {
+    $(document).on('click.wiseowlEvent', '.add-topic__container .submit-btn', function(event) {
         event.stopPropagation();
 
         if (!checkTopicInfo()) {
             return
         }
 
-        showConfirm('Xác nhận thêm chủ đề mới.', 'Xác nhận', async function(result) {
+        showConfirm('Xác nhận thêm chủ đề mới.', 'Xác nhận', function(result) {
             if (result) {
-                const newTopic = getTopicInfo();
+                createTopic();
+            }
+        });
+    });
 
-                const formData = createFormData();
+    // ? Bộ sự kiện thao tác với chủ đề
+    $(document).on('click.wiseowlEvent', '.topic-item .delete-topic-btn', function(event) {
+        event.stopPropagation();
 
-                const responseUrl = await upload(formData);
+        const topic_id = $(this).attr('data-topic-id');
 
-                if (!responseUrl) {
-                    return
-                }
+        showConfirm('Xác nhận xóa chủ đề.', 'Xác nhận', function(result) {
+            if (result) {
+                deleteTopic(topic_id)
+            }
+        });
+    });
 
-                newTopic.image_url = responseUrl.image_url || null;
-                newTopic.document_url = responseUrl.document_url;
+    $(document).on('click.wiseowlEvent', '.topic-item .lock-topic-btn', function(event) {
+        event.stopPropagation();
 
-                const response = await createTopic(newTopic);
+        const topic_id = $(this).attr('data-topic-id');
 
-                if (!response) {
-                    return
-                }
+        showConfirmWithNotice('Xác nhận khóa chỉnh sửa chủ đề.', 'Xác nhận', 'Khóa chỉnh sửa đồng nghĩa với việc chủ đề này sẽ được hiển thị ở phía người dùng', function(result) {
+            if (result) {
+                lockTopic(topic_id)
+            }
+        });
+    });
 
-                showNotification(response.message);
+    $(document).on('click.wiseowlEvent', '.topic-item .unlock-topic-btn', function(event) {
+        event.stopPropagation();
 
-                const $addTopicContainer = $('.add-topic__container');
+        const topic_id = $(this).attr('data-topic-id');
 
-                $addTopicContainer.removeClass('show');
-
-                setTimeout(function() {    
-                    $addTopicContainer.find('.add-topic__box').remove();
-                }, 1000);
+        showConfirmWithNotice('Xác nhận  mở khóa chỉnh sửa chủ đề.', 'Xác nhận', 'Mở khóa chỉnh sửa đồng nghĩa với việc chủ đề này sẽ không còn hiển thị ở phía người dùng và dữ liệu bài làm của người dùng sẽ được xóa toàn bộ.', function(result) {
+            if (result) {
+                unlockTopic(topic_id)
             }
         });
     });
 });
 
 // TODO: Tạo biểu đồ 
-function displayChart() {
+function displayChart(statistics) {
     // * Biểu đồ thống kê số lượng chủ đề
     // Lấy phần tử canvas bằng jQuery
     const topic_ctx = $('#total_topics')[0].getContext('2d');
@@ -162,16 +174,16 @@ function displayChart() {
     new Chart(topic_ctx, {
         type: 'bar',
         data: {
-            labels: ['C/C++', 'Java', 'Pascal', 'Python', 'Multi'],
+            labels: statistics.total_topics.map(item => item.lang),
             datasets: [
                 {
                 label: 'Chủ đề đã hoàn thiện',
-                data: [12, 19, 3, 5, 2, 3],
+                data: statistics.total_topics.map(item => item.nonEditable),
                 borderWidth: 1
             },
             {
                 label: 'Chủ đề đang chỉnh sửa',
-                data: [2, 1, 1, 3, 2, 2],
+                data: statistics.total_topics.map(item => item.editable),
                 borderWidth: 1
             }
         ]
@@ -201,28 +213,34 @@ function displayChart() {
             labels: months,
             datasets: [{
                 label: 'Chủ đề được truy cập',
-                data: [65, 59, 80, 81, 56, 55, 40],
+                data: statistics.topicAccessCountsByMonthData,
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                tension: 0.4
             },
             {
                 label: 'Chủ đề đã hoàn thiện',
-                data: [15, 53, 10, 2, 16, 25, 10],
+                data: statistics.topicCompletionCountsByMonthData,
                 fill: false,
                 borderColor: 'rgb(0, 2, 92)',
-                tension: 0.1
+                tension: 0.4
             }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0  // Đảm bảo trục Y không có giá trị âm
+                }
+            }
         }
     });
 
     // * Biểu đồ thống kê số lượng bài tập
     // Dữ liệu cho từng mức độ bài tập
-    const exerciseData = {
-        easy: [30, 20],    // Dữ liệu cho bài tập Dễ [code, trắc nghiệm]
-        medium: [40, 15],  // Dữ liệu cho bài tập Trung Bình [code, trắc nghiệm]
-        hard: [25, 10]     // Dữ liệu cho bài tập Khó [code, trắc nghiệm]
-    };
+    const exerciseData = statistics.total_exercises.reduce((acc, item) => {
+        acc[item.level] = [item.code, item.multiple_choice];
+        return acc;
+    }, {});
 
     const total_exercises_ctx = $('#total_exercises')[0].getContext('2d');
 
@@ -254,6 +272,22 @@ function displayChart() {
         // Cập nhật biểu đồ
         exerciseChart.update();
     });
+
+    // Dữ liệu các phần tử và giá trị cần đếm
+    const elementsData = [
+        { elementId: '#activeUserCount', value: statistics.activeUserCount },
+        { elementId: '#averageExerciseSubmissions', value: statistics.averageExerciseSubmissions },
+        { elementId: '#totalExerciseResults', value: statistics.totalExerciseResults },
+        { elementId: '#totalTopicAccess', value: statistics.totalTopicAccess },
+        { elementId: '#totalTopicCompleted', value: statistics.totalTopicCompleted },
+        { elementId: '#totalUserAccess', value: statistics.totalUserAccess },
+    ];
+
+    // Lặp qua các phần tử và tạo CountUp cho từng phần tử
+    $.each(elementsData, function(index, data) {
+        const $element = $(data.elementId);  // Sử dụng jQuery để chọn phần tử
+        countUp($element[0], 0, data.value, 1000);  // 1s để đếm từ 0 đến data.value
+    });
 }
 
 // TODO: Tạo nội dung mới cho form thêm chủ đề
@@ -266,9 +300,25 @@ function createAddTopicBox($addTopicContainer) {
         { value: 'Python', text: 'Python', is_selected: 0 }
     ];
 
-    const level_options = [
-        { value: '1', text: 'Cấp độ 1', is_selected: 1 },
-    ];
+    function createLevelOptions(topics) {
+        // Tìm level cao nhất trong topics
+        let maxLevel = topics.length ? Math.max(...topics.map(topic => topic.level)) : 0;
+
+        // Tạo level options từ 1 đến maxLevel + 1
+        const level_options = [];
+    
+        for (let level = 1; level <= maxLevel + 1; level++) {
+            level_options.push({
+                value: level.toString(),
+                text: `Cấp độ ${level}`,
+                is_selected: level === 1 ? 1 : 0  // Chọn Cấp độ 1 mặc định
+            });
+        }
+    
+        return level_options;
+    }
+
+    const level_options = createLevelOptions(topics);
 
     const unlock_condition_type_options = [
         { value: 'none', text: 'Không yêu cầu', is_selected: 1 },
@@ -380,7 +430,7 @@ function createAddTopicBox($addTopicContainer) {
                 </div>
                 <div class="side__form">
                     <div class="sticky-top col gap-16">
-                        <div class="topic-item" style="background-image: linear-gradient(
+                        <div class="topic-item preview" style="background-image: linear-gradient(
                                                                                             to bottom, 
                                                                                             rgba(0, 0, 0, 0.024) 0%, 
                                                                                             rgba(0, 0, 0, 0.174) 57%
@@ -412,11 +462,138 @@ function createAddTopicBox($addTopicContainer) {
 
 // TODO: Hiển thị danh sách chủ đề
 function showTopics(topics) {
-
+    $('.topic_list__container .panel__body').append(createListTopicComponent(topics))
 }
 
+// TODO: Tạo chủ đề mới
+async function createTopic() {
+    const newTopic = getTopicInfo();
+
+    const formData = createFormData();
+
+    const responseUrl = await upload(formData);
+
+    if (!responseUrl) {
+        return
+    }
+
+    newTopic.image_url = responseUrl.image_url || null;
+    newTopic.document_url = responseUrl.document_url;
+
+    const response = await apiWithAccessToken('topic', 'POST', { new_topic: newTopic });
+
+    if (!response) {
+        return
+    }
+
+    showNotification(response.message);
+    showTopic(response.topic)
+
+    const $addTopicContainer = $('.add-topic__container');
+
+    $addTopicContainer.removeClass('show');
+
+    setTimeout(function() {    
+        $addTopicContainer.find('.add-topic__box').remove();
+    }, 1000);
+}
+
+// TODO: Hiển thị chủ đề mới
 function showTopic(topic) {
+    const levelId = `#level_${topic.level}`;
     
+    // Kiểm tra xem cấp độ đã tồn tại chưa, nếu chưa thì tạo mới
+    let levelContainer = $(levelId);
+    if (levelContainer.length === 0) {
+        levelContainer = $(`
+            <div class="level_container col gap-16" id="level_${topic.level}">
+                <div class="level_title">Cấp độ ${topic.level}</div>
+                <div class="level_topic_list">
+                </div>
+            </div>
+        `);
+        
+        // Thêm cấp độ vào cuối danh sách
+        $('.topic-list').append(levelContainer);
+    }
+
+    // Thêm topicItem vào level_topic_list
+    levelContainer.find('.level_topic_list').append(createTopicComponent(topic));
+}
+
+// TODO: Khóa chỉnh sửa chủ đề
+async function lockTopic(topic_id) {
+    const response = await apiWithAccessToken('lock-topic', 'PUT', { topic_id: topic_id });
+
+    if (!response) {
+        return;
+    }
+
+    showNotification(response.message);
+
+    const topicIndex = topics.findIndex(topic => topic.id == topic_id);
+
+    if (topicIndex !== -1) {
+        // Cập nhật is_editable của chủ đề
+        topics[topicIndex].is_editable = 0;
+    }
+
+    $(`#topic_${ topic_id }`).addClass('non-editable');
+    $lockBtn = $(`#topic_${ topic_id } .lock-topic-btn`);
+    $lockBtn.after(`<button class="unlock-topic-btn center" data-topic-id="${ topic_id }"  title="Mở khóa chỉnh sửa"><ion-icon name="lock-open-outline"></ion-icon></button>`);
+    $lockBtn.remove();
+}
+
+// TODO: Mở khóa chỉnh sửa chủ đề
+async function unlockTopic(topic_id) {
+    const response = await apiWithAccessToken('unlock-topic', 'PUT', { topic_id: topic_id });
+
+    if (!response) {
+        return;
+    }
+
+    showNotification(response.message);
+
+    const topicIndex = topics.findIndex(topic => topic.id == topic_id);
+
+    if (topicIndex !== -1) {
+        // Cập nhật is_editable của chủ đề
+        topics[topicIndex].is_editable = 1;
+    }
+
+    $(`#topic_${ topic_id }`).removeClass('non-editable');
+    $unlockBtn = $(`#topic_${ topic_id } .unlock-topic-btn`);
+    $unlockBtn.after(`<button class="lock-topic-btn center" data-topic-id="${ topic_id }"  title="Khóa chỉnh sửa"><ion-icon name="lock-closed-outline"></ion-icon></button>`);
+    $unlockBtn.remove();
+}
+
+// TODO: Xóa chủ đề
+async function deleteTopic(topic_id) {
+    const response = await apiWithAccessToken('topic', 'DELETE', { topic_id: topic_id });
+
+    if (!response) {
+        return;
+    }
+
+    // Xóa chủ đề khỏi mảng topics
+    topics = topics.filter(topic => topic.id != topic_id);
+
+    // Tìm phần tử chủ đề trong DOM
+    const $topicElement = $(`#topic_${ topic_id }`);
+    const $levelContainer = $topicElement.closest('.level_container');
+
+    // Sử dụng slideUp để ẩn phần tử chủ đề
+    $topicElement.slideUp(300, function() {
+        // Sau khi hiệu ứng slideUp hoàn thành, xóa phần tử khỏi DOM
+        $topicElement.remove();
+
+        // Kiểm tra xem trong levelContainer có còn .topic-item nào không, nếu không thì xóa đi
+        if ($levelContainer.find('.topic-item').length === 0) {
+            $levelContainer.slideUp(300, function() {
+                $levelContainer.remove(); // Xóa levelContainer nếu không còn topic-item nào
+            });
+        }
+    });
 }
 
 // TODO: Kiểm tra tính hợp lệ của chủ đề mới
@@ -446,7 +623,7 @@ function checkTopicInfo() {
     return true
 }
 
-// TODO: Lấy ảnh để upload
+// TODO: Lấy tài liệu và ảnh (nếu có) để upload
 function createFormData() {
     let formData = new FormData();
 
@@ -467,6 +644,7 @@ function getTopicInfo() {
         name: $('#name').val(),
         image_url: null,
         description: $('#description').val() || null,
+        document_url: null,
         programming_language: $('#programming_language').attr('data-val'),
         level: parseInt($('#level').attr('data-val'), 10),
         unlock_condition_type: $('#unlock_condition_type').attr('data-val'),
@@ -476,71 +654,15 @@ function getTopicInfo() {
     };
 }
 
-// TODO: Thêm chủ đề mới vào mảng chủ đề, cập nhật giao diện
+// TODO: Thêm chủ đề mới vào mảng chủ đề
 function addTopicToArr(topic) {
-
-}
-
-
-// hàm gọi API
-async function getTopics() {
-    const token = localStorage.getItem('wiseowlAdminAccessToken');
-    if (!token) {
-        return null
-    }
-
-    try {
-        const response = await fetch(`/api/admin/topics`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                "authentication": token
-            }
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            showNotification(result.message);
-            throw new Error('Network response was not ok');
-        }
-        
-        return result; 
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return [];
-    }
-}
-
-async function createTopic(topic, topic_unlock_conditions) {
-    const token = localStorage.getItem('wiseowlAdminAccessToken');
-    if (!token) {
-        return null
-    }
-
-    try {
-        const response = await fetch(`/api/admin/topic`, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "authentication": token
-            },
-            body: JSON.stringify({
-                new_topic: topic,
-                topic_unlock_conditions: topic_unlock_conditions
-            })
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            showNotification(result.message);
-            throw new Error('Network response was not ok');
-        }
-        
-        return result; 
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        return [];
+    // Tìm vị trí chèn vào mảng topics sao cho mảng vẫn được sắp xếp theo topic.level
+    const index = topics.findIndex(t => t.level > topic.level);
+    
+    // Nếu tìm được vị trí, chèn vào đó. Nếu không tìm thấy (chèn cuối cùng), thêm vào cuối mảng.
+    if (index === -1) {
+        topics.push(topic); // Chèn vào cuối mảng nếu không tìm thấy vị trí thích hợp.
+    } else {
+        topics.splice(index, 0, topic); // Chèn vào vị trí index
     }
 }

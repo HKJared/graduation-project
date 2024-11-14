@@ -9,6 +9,61 @@
     --Text1: #333;
     --Text2: #666;
     --Text3: #999;
+
+    --color-black-100:#0A0E14;
+    --color-black-90: #21252F;
+    --color-black-80: #353C4B;
+    --color-black-70: #4B5365;
+    --color-black-60: #616C7F;
+
+    --color-white-100:#FFFFFF;
+    --color-white-90: #E7E8EB;
+    --color-white-80: #D7DCE2;
+    --color-white-70: #CACED8;
+    --color-white-60: #B8BFCC;
+
+    --color-primary: #1967D2;
+
+    /* guideline */
+    --color-neutral-100:#FFFFFF;
+    --color-neutral-90: #E7E8EB;
+    --color-neutral-80: #D7DCE2;
+    --color-neutral-70: #CACED8;
+    --color-neutral-60: #B8BFCC;
+
+    /* logo */
+    --logo: url('/images/logo-light.png');
+    --underline-bg: url('/images/underline-bg-light.png');
+
+    /* shadow */
+    --shadow: 0 2px 8px rgba(0, 0, 0, .12);
+}
+
+[data-theme="dark"]  {
+    /* color */
+    --color-bg: var(--color-black-90);
+    --color-text-primary: var(--color-white-100);
+    --color-text-secondary: var(--color-white-80);
+    --color-border: var(--color-black-70);
+    --color-button-bg: var(--color-black-90);
+    --color-button-text: var(--color-white-60);
+    --color-success: #00B8A3;
+    --color-warning: #FFC01E;
+    --color-danger: #FF375F;
+
+    /* guideline */
+    --color-neutral-100:#0A0E14;
+    --color-neutral-90: #21252F;
+    --color-neutral-80: #353C4B;
+    --color-neutral-70: #4B5365;
+    --color-neutral-60: #616C7F;
+
+    /* logo */
+    --logo: url('/images/logo-dark.png');
+    --underline-bg: url('/images/underline-bg-dark.png');
+
+    /* shadow */
+    --shadow: 0 2px 8px rgba(255, 255, 255, .12);
 }
 
 * {

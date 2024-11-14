@@ -34,7 +34,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-  }));
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -43,7 +43,10 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
+app.use(cors({
+    origin: true, // Cho phép tất cả các nguồn gốc
+    credentials: true // Cho phép gửi cookie qua CORS
+}));
 
 app.use('/auth/', authRouter)
 

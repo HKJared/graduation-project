@@ -1,10 +1,16 @@
 <link rel="stylesheet" href="/css/admin/system-exercise-management.css">
 <div class="add-topic__container fixed col gap-24">
 </div>
-<div class="system-exercise-management__container col gap-24 full-width">
+<div class="admin__container col gap-24 full-width">
+    <div aria-label="breadcrumb">
+        <ul class="breadcrumb row">
+            <li class="breadcrumb-item"><a href="/admin" class="spa-action">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Quản Lý Bài Tập Hệ Thống</li>
+        </ul>
+    </div>
     <div class="system-exercise-management__chart row gap-24">
         <div class="main-view__chart col gap-24">
-            <div class="total_topics__container panel full-width col">
+            <div class="total_topics__container panel full-width col slide-right" style="--slide-distance: 40px;">
                 <div class="panel__header">
                     <span>Số Lượng Chủ Đề</span>
                 </div>
@@ -12,7 +18,7 @@
                     <canvas id="total_topics" height="200" width="500"></canvas>
                 </div>
             </div>
-            <div class="user_progress__container panel full-width col">
+            <div class="user_progress__container panel full-width col slide-right" style="--slide-distance: 40px; --delay: 0.2s">
                 <div class="panel__header">
                     <span>Tiến Độ Của Người Dùng</span>
                 </div>
@@ -21,153 +27,61 @@
                 </div>
             </div>
             <div class="row gap-24">
-                <div class="panel col flex-1">
-                    <div class="panel__body row gap-16 item-center">
-                        <div class="image_icon center"><ion-icon name="people-outline"></ion-icon></div>
-                        <div class="user_statistics col gap-8">
-                            <span class="statistics">42</span>
-                            <span>Người dùng tham gia</span>
-                        </div>
-                    </div>
-                    <div class="panel__footer">
-                        <span>75 người đang hoạt động</span>
-                    </div>
-                </div>
-                <div class="panel col flex-1">
+                <div class="panel col flex-1 slide-top" style="--slide-distance: 40px; --delay: 0.2s">
                     <div class="panel__body row gap-16 item-center">
                         <div class="image_icon center"><ion-icon name="cellular-outline"></ion-icon></div>
                         <div class="user_statistics col gap-8">
-                            <span class="statistics">142</span>
-                            <span>Chủ đề được truy cập</span>
+                            <span class="statistics" id="totalTopicAccess">0</span>
+                            <span>Lượt truy cập chủ đề</span>
                         </div>
                     </div>
-                    <div class="panel__footer">
-                        <span>97 chủ đề đã được hoàn thành</span>
+                    <div class="panel__footer row gap-4">
+                        <span id="totalTopicCompleted">0</span>
+                        <span>lượt hoàn thành chủ đề</span>
+                    </div>
+                </div>
+                <div class="panel col flex-1 slide-top" style="--slide-distance: 40px; --delay: 0.4s">
+                    <div class="panel__body row gap-16 item-center">
+                        <div class="image_icon center"><ion-icon name="people-outline"></ion-icon></div>
+                        <div class="user_statistics col gap-8">
+                            <span class="statistics" id="totalUserAccess">0</span>
+                            <span>Người dùng tham gia</span>
+                        </div>
+                    </div>
+                    <div class="panel__footer row gap-4">
+                        <span id="activeUserCount">0</span>
+                        <span>người đang hoạt động</span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="side__chart col gap-24">
-            <div class="total_exercises__container panel full-width col">
+            <div class="total_exercises__container panel full-width col slide-left" style="--slide-distance: 40px; --delay: 0.4s">
                 <div class="panel__header">
                     <span>Số Lượng Bài Tập</span>
                 </div>
-                <div class="panel__body center col">
-                    <div class="panel__nav row">
-                        <button data-difficulty="easy">Dễ</button>
-                        <button data-difficulty="medium">Trung Bình</button>
-                        <button data-difficulty="hard">Khó</button>
+                <div class="panel__body center col gap-16">
+                    <div class="panel__nav row full-width">
+                        <button class="easy" data-difficulty="easy">Dễ</button>
+                        <button class="medium" data-difficulty="medium">Trung Bình</button>
+                        <button class="hard" data-difficulty="hard">Khó</button>
                     </div>
                     <canvas id="total_exercises" height="200" width="500"></canvas>
                 </div>
                 <div class="panel__footer col gap-8">
-                    <span>Số lượng bài tập được truy cập: <strong>154</strong></span>
-                    <span>Số lần nộp bài trung bình: <strong>3</strong></span>
+                    <span>Số lượng bài tập được truy cập: <strong id="totalExerciseResults">0</strong></span>
+                    <span>Số lần nộp bài trung bình: <strong id="averageExerciseSubmissions">0</strong></span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="topic_list full-width col panel">
+    <div class="topic_list__container full-width col panel">
         <div class="panel__header row flex-box">
             <span>Danh sách chủ đề</span>
             <button class="add-topic-btn row item-center"><ion-icon name="add-outline"></ion-icon> Thêm chủ đề</button>
         </div>
         <div class="panel__body">
-            <div class="level_container col gap-16" id="level_1">
-                <div class="level_title">Cấp độ 1</div>
-                <div class="level_topic_list">
-                    <div class="topic-item" style="background-image: linear-gradient(
-                                                                                        to bottom, 
-                                                                                        rgba(0, 0, 0, 0.024) 0%, 
-                                                                                        rgba(0, 0, 0, 0.174) 57%
-                                                                                    ), url('/images/image.png');">
-                        <div class="name">
-                            <span></span>
-                        </div>
-                        <div class="description">
-                            <span></span>
-                        </div>
-                        <div class="action">
-                            <button>Bắt đầu</button>
-                        </div>
-                    </div>
-                    <div class="topic-item" style="background-image: linear-gradient(
-                                                                                        to bottom, 
-                                                                                        rgba(0, 0, 0, 0.024) 0%, 
-                                                                                        rgba(0, 0, 0, 0.174) 57%
-                                                                                    ), url('/images/image.png');">
-                        <div class="name">
-                            <span></span>
-                        </div>
-                        <div class="description">
-                            <span></span>
-                        </div>
-                        <div class="action">
-                            <button>Bắt đầu</button>
-                        </div>
-                    </div>
-                    <div class="topic-item" style="background-image: linear-gradient(
-                                                                                        to bottom, 
-                                                                                        rgba(0, 0, 0, 0.024) 0%, 
-                                                                                        rgba(0, 0, 0, 0.174) 57%
-                                                                                    ), url('/images/image.png');">
-                        <div class="name">
-                            <span></span>
-                        </div>
-                        <div class="description">
-                            <span></span>
-                        </div>
-                        <div class="action">
-                            <button>Bắt đầu</button>
-                        </div>
-                    </div>
-                    <div class="topic-item" style="background-image: linear-gradient(
-                                                                                        to bottom, 
-                                                                                        rgba(0, 0, 0, 0.024) 0%, 
-                                                                                        rgba(0, 0, 0, 0.174) 57%
-                                                                                    ), url('/images/image.png');">
-                        <div class="name">
-                            <span></span>
-                        </div>
-                        <div class="description">
-                            <span></span>
-                        </div>
-                        <div class="action">
-                            <button>Bắt đầu</button>
-                        </div>
-                    </div>
-                    <div class="topic-item" style="background-image: linear-gradient(
-                                                                                        to bottom, 
-                                                                                        rgba(0, 0, 0, 0.024) 0%, 
-                                                                                        rgba(0, 0, 0, 0.174) 57%
-                                                                                    ), url('/images/image.png');">
-                        <div class="name">
-                            <span></span>
-                        </div>
-                        <div class="description">
-                            <span></span>
-                        </div>
-                        <div class="action">
-                            <button>Bắt đầu</button>
-                        </div>
-                    </div>
-                    <div class="topic-item" style="background-image: linear-gradient(
-                                                                                        to bottom, 
-                                                                                        rgba(0, 0, 0, 0.024) 0%, 
-                                                                                        rgba(0, 0, 0, 0.174) 57%
-                                                                                    ), url('/images/image.png');">
-                        <div class="name">
-                            <span></span>
-                        </div>
-                        <div class="description">
-                            <span></span>
-                        </div>
-                        <div class="action">
-                            <button>Bắt đầu</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 </div>

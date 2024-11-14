@@ -13,17 +13,6 @@
 
     --color-primary: #1967D2;
 
-    /* data theme light = default */
-    --color-bg: var(--color-white-90);
-    --color-text-primary: var(--color-black-100);
-    --color-text-secondary: var(--color-black-80);
-    --color-border: var(--color-white-70);
-    --color-button-bg: var(--color-white-90);
-    --color-button-text: var(--color-black-60);
-    --color-success: #00AF9B;
-    --color-warning: #FFB800;
-    --color-danger: #FF2D55;
-
     /* Các màu trung lập */
     --color-neutral-100: #FFFFFF;
     --color-neutral-90: #f5f7fb; /* Sử dụng lại màu mới */
@@ -102,4 +91,68 @@ main .main-body {
 
 .item-box__form .nav-item.active {
     font-weight: 600;
+}
+
+.confirm {
+    border-radius: 6px;
+}
+
+/* admin container */
+.admin__container {
+    padding: 24px;
+    height: max-content;
+}
+
+.panel {
+    background-color: var(--color-white-100);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+}
+
+.panel__header {
+    padding: 16px;
+    font-size: 1.125rem;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--color-primary);
+    border-bottom: 0.8px solid #e5e5e5;
+}
+
+.panel__body {
+    padding: 24px;
+}
+
+.panel__footer {
+    padding: 16px;
+    border-top: 0.8px solid #e5e5e5;
+    font-size: .875rem;
+    color: var(--color-black-90);
+}
+
+/* Styles the list */
+ul.breadcrumb {
+    list-style: none;
+}
+
+ul.breadcrumb li {
+    display: inline;
+    font-size: 1rempx;
+    color: var(--color-black-60);
+}
+
+ul.breadcrumb li+li:before {
+    padding: 8px;
+    color: var(--color-black-60);
+    content: "/\00a0";
+}
+
+ul.breadcrumb li a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a.view-document {
+    font-size: .875rem;
+    color: var(--color-primary);
+    margin-top: 12px;
 }

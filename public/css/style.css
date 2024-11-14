@@ -1,3 +1,16 @@
+:root {
+    /* data theme light = default */
+    --color-bg: var(--color-white-90);
+    --color-text-primary: var(--color-black-100);
+    --color-text-secondary: var(--color-black-80);
+    --color-border: var(--color-white-70);
+    --color-button-bg: var(--color-white-90);
+    --color-button-text: var(--color-black-60);
+    --color-success: #00AF9B;
+    --color-warning: #FFB800;
+    --color-danger: #FF2D55;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -172,6 +185,19 @@ body {
     color: #333; /* Màu icon */
 }
 
+/* Độ khó */
+.easy, .success {
+    color: var(--color-success) !important;
+}
+
+.medium, .warning {
+    color: var(--color-warning) !important;
+}
+
+.hard, .danger {
+    color: var(--color-danger) !important;
+}
+
 a, button, select {
     cursor: pointer;
     text-decoration: none;
@@ -342,14 +368,21 @@ ul, li {
     color: var(--color-text-primary);
 }
 
+.notice-content p {
+    margin-top: 30px;
+    margin-bottom: -10px;
+    font-size: .875rem;
+    font-weight: 300;
+}
+
 .confirm-action {
     justify-content: center;
     margin-top: 1.875rem;
 }
 
 .confirm-action button {
-    background-color: var(--color-neutral-90);
-    color: #666;
+    background-color: var(--color-neutral-80);
+    color: #555;
     font-size: 1rem;
     line-height: 1.5rem;
     height: 30px;
@@ -366,6 +399,53 @@ ul, li {
 .danger-border {
     border: 0.5px solid var(--color-danger) !important;
 }
+
+
+/* alert in screen */
+.alert-not-found, .alert-success {
+    margin-top: 48px;
+}
+
+.alert-not-found  .main-icon, .alert-success .main-icon {
+    font-size: 6rem;
+    color: var(--color-neutral-70);
+}
+
+.alert-not-found  .alert-icon, .alert-success .alert-icon {
+    font-size: 2rem;
+    top: 12px;
+    right: 32px;
+    color: var(--color-danger);
+}
+
+.alert-not-found span, .alert-success span {
+    font-size: 1.25rem;
+    color: var(--color-neutral-60);
+    font-weight: 700;
+}
+
+.alert-success .alert-icon, .alert-success span {
+    color: var(--color-success);
+}
+
+.alert-success .action a {
+    font-size: .875rem;
+    padding: 6px 16px;
+    border-radius: 4px;
+    margin-top: 12px;
+    box-shadow: var(--shadow);
+}
+
+.alert-success .action a.sub-btn {
+    background-color: var(--color-neutral-80);
+    color: var(--color-black-80);
+}
+
+.alert-success .action a.main-btn {
+    background-color: var(--color-success);
+    color: var(--color-white-100);
+}
+
 
 ion-icon {
     pointer-events: none;

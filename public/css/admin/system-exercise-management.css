@@ -1,35 +1,4 @@
 /* ? Giao diện biểu đồ */ 
-.system-exercise-management__container {
-    padding: 24px;
-    height: max-content;
-}
-
-.system-exercise-management__container .panel {
-    background-color: var(--color-white-100);
-    border-radius: 6px;
-    box-shadow: var(--shadow);
-}
-
-.system-exercise-management__container .panel__header {
-    padding: 16px;
-    font-size: 1.125rem;
-    line-height: 1;
-    font-weight: 600;
-    color: var(--color-primary);
-    border-bottom: 0.8px solid #e5e5e5;
-}
-
-.system-exercise-management__container .panel__body {
-    padding: 24px;
-}
-
-.system-exercise-management__container .panel__footer {
-    padding: 16px;
-    border-top: 0.8px solid #e5e5e5;
-    font-size: .875rem;
-    color: var(--color-black-90);
-}
-
 /* Biểu đồ về số lượng chủ đề */
 .main-view__chart {
     width: calc(100% - 384px);
@@ -55,11 +24,30 @@
     width: 360px;
 }
 
+.side__chart .total_exercises__container  .panel__nav button {
+    padding: 4px 12px;
+    font-size: .875rem;
+    font-weight: 600;
+}
+
 /* ? Giao diện danh sách chủ đề */
-.system-exercise-management__container .level_topic_list {
+.level_topic_list {
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(auto-fill, minmax(266px, 1fr));
+}
+
+.level_topic_list .action button, .level_topic_list .action a {
+    opacity: .9;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.level_topic_list .action button:hover, .level_topic_list .action a:hover {
+    opacity: 1;
+}
+
+.topic-item.non-editable .edit-topic-btn  {
+    display: none;
 }
 
 /* ? Giao diện thêm chủ đề mới */

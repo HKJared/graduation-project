@@ -1,0 +1,94 @@
+/* ? Giao diện thêm chủ đề mới */
+.edit-topic__container {
+    padding: 16px 24px;
+}
+
+.edit-topic__container .title h2, .edit-topic__container .title .hide-btn {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: 10px 0;
+    transition: scale 0.3 ease-in-out;
+}
+
+.edit-topic__container .title .hide-btn {
+    font-size: 2rem;
+}
+
+.edit-topic__container .title .hide-btn:hover {
+    scale: 1.02;
+}
+
+.edit-topic__container .body label {
+    font-weight: 600;
+    font-size: .875rem;
+    color: var(--color-black-100);
+    padding: 6px 0;
+}
+
+.edit-topic__container .body p {
+    font-size: .6875rem;
+    color: var(--color-black-90);
+    font-style: italic;
+    margin: 2px 0;
+}
+
+.edit-topic__container .main__form {
+    width: 524px;
+}
+
+.edit-topic__container .main__form .edit-row > *, .edit-topic__container .required_conditions > * {
+    flex-grow: 1;
+    flex: 1 1 50%;
+}
+
+.edit-topic__container .sub-label {
+    font-size: .875rem;
+    color: var(--color-black-80);
+    padding-left: 6px;
+}
+
+.edit-topic__container .required_conditions input {
+    padding: 0 2px;
+    text-align: center;
+}
+
+.edit-topic__container .side__form {
+    height: fit-content;
+}
+
+.edit-topic__container .side__form .topic-item {
+    width: 266px !important;
+    min-height: 100px;
+    height: 100px !important;
+}
+
+.edit-topic__container .change-image__action label, .edit-topic__container .change-document__action label {
+    padding: 8px 12px;
+    font-size: .75rem;
+    font-weight: 400;
+    border: 0.8px dashed var(--color-primary);
+    color: var(--color-primary);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-topic__container .edit-topic__box > .action {
+    padding: 64px 0 24px;
+}
+
+.edit-topic__container .edit-topic__box > .action button {
+    padding: 8px 64px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.edit-topic__container .edit-topic__box > .action .cancel-btn {
+    background-color: var(--color-warning);
+    color: var(--color-white-100);
+}
+
+.edit-topic__container .edit-topic__box > .action .submit-btn {
+    background-color: var(--color-success);
+    color: var(--color-white-100);
+}

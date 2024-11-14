@@ -81,7 +81,6 @@ const compileCode = (lang, code, input, callback) => {
         }
 
         const handleCallback = (data) => {
-            console.log(data)
             if (isCallbackCalled) return;
 
             isCallbackCalled = true;
