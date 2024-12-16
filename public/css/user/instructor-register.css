@@ -1,0 +1,150 @@
+.main .nav, .main #lecturer_info, .main #lecturer_iden, .main .submit-container {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 24px 24px 36px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, .12);
+    font-size: .875rem;
+    color: var(--color-text-primary);
+}
+
+.main .nav {
+    position: sticky;
+    top: 60px;
+    padding: 8px 24px;
+    font-size: 1rem;
+    z-index: 99;
+}
+
+.main h2 {
+    font-weight: 600;
+}
+
+.main label {
+    display: flex;
+    align-items: center;
+}
+
+.teaching_certificate-btn {
+    height: 2rem;
+    width: 120px;
+    border-radius: 4px;
+    border: 1px solid #b7b7b7;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.teaching_certificate-btn:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.main label span {
+    color: var(--color-danger);
+}
+
+.main .row-info > label {
+    justify-content: flex-end;
+    height: 2rem;
+    width: 360px;
+}
+
+.main .wo-input {
+    width: 572px;
+    padding: 0;
+    align-items: center;
+    position: relative;
+}
+
+.main .char-count {
+    display: flex;
+    color: #999;
+    position: absolute;
+    height: 100%;
+    top: 0;
+    right: 2px;
+    align-items: center;
+}
+
+.main input[type="text"], .main select, .main .input-box {
+    height: 2rem;
+}
+
+.main select {
+    width: 180px;
+    border: 1px solid #e5e5e5;
+    padding: 0 .25rem;
+}
+
+.main input[type="text"] {
+    width: 100%;
+    padding: 0 48px 0 12px;
+}
+
+.main input[type="text"]:focus {
+    outline: none;
+}
+
+.main input::placeholder {
+    color: #999;
+}
+
+.main input[type="file"] {
+    display: none;
+}
+
+.main .upload-btn {
+    cursor: pointer;
+    height: 96px;
+    width: 153px;
+    border-radius: .5rem;
+    border: 1px dashed #d8d8d8;
+    color: #d8d8d8;
+    font-size: 1.5rem;
+}
+
+.main .upload-btn:hover {
+    border: 1px dashed var(--color-primary);
+    color: var(--color-primary);
+}
+
+.preview-image {
+    display: none;
+    height: 96px;
+    width: 153px;
+    border-radius: .5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .12);
+}
+
+.remove-img {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 24px;
+    width: 24px;
+    border-radius: 2px;
+    background-color: #e5e5e5;
+    color: #333;
+}
+
+.submit-container {
+    padding: 8px;
+}
+
+.submit-container button {
+    padding: 8px 24px;
+    border-radius: 4px;
+}
+
+.submit-container .cancel-btn {
+    border: 1px solid #e5e5e5;
+}
+
+.submit-container .submit-btn {
+    background-color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    color: #fff;
+    opacity: 0.7;
+    cursor: not-allowed;
+}

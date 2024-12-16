@@ -22,31 +22,39 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).any();
 
-// Hàm xóa tệp từ Cloudinary
-async function deleteFileFromCloudinary(fileUrl) {
-    if (!fileUrl) {
-        return;
-    }
-
-    try {        
-        // Tách `public_id` và bỏ qua phần `/v{timestamp}/` nếu có
+// Tách public_id chính xác từ URL
+const extractPublicId = (fileUrl) => {
+    try {
         const parts = fileUrl.split('/upload/');
         if (parts.length < 2) {
             throw new Error('Invalid Cloudinary URL format');
         }
-
-        // Bỏ phần `v{timestamp}/` nếu có
-        const publicIdWithTimestamp = parts[1];
-        const public_id = publicIdWithTimestamp.replace(/v\d+\/(.+?)\.[^.]+$/, '$1');
         
-        // Xóa tệp khỏi Cloudinary
+        // Lấy phần sau "upload/" và trước đuôi file
+        const pathWithTimestamp = parts[1];
+        const publicIdWithExtension = pathWithTimestamp.split('/').slice(1).join('/').split('.')[0];
+        
+        // Decode URL để xử lý các ký tự mã hóa (%20 -> khoảng trắng)
+        const public_id = decodeURIComponent(publicIdWithExtension);
+        return public_id;
+    } catch (error) {
+        console.error('Error extracting public_id:', error);
+        throw error;
+    }
+};
+
+// Hàm xóa tệp từ Cloudinary
+async function deleteFileFromCloudinary(fileUrl) {
+    try {
+        const public_id = extractPublicId(fileUrl);
+        console.log(`Extracted public_id: ${public_id}`);
+        
         const result = await cloudinary.uploader.destroy(public_id);
-        // console.log(public_id, result)
         if (result.result === 'ok') {
             console.log(`File with public_id ${public_id} has been deleted successfully.`);
             return { success: true, message: 'File deleted successfully.' };
         } else {
-            throw new Error('Failed to delete file from Cloudinary.');
+            throw new Error(`Failed to delete file from Cloudinary. Result: ${result.result}`);
         }
     } catch (error) {
         console.error('Error deleting file from Cloudinary:', error);

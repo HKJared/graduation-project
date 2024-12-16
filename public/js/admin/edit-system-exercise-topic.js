@@ -1,3 +1,4 @@
+// set view
 $(document).ready(async function() {
     $('.menu .main').removeClass('active');
     $('#system-exercise-management').addClass('active');
@@ -19,7 +20,7 @@ $(document).ready(async function() {
     const urlParams = new URLSearchParams(new URL(url).search);
     const topicId = urlParams.get('id');
 
-    const response = await apiWithAccessToken(`/topic?id=${ topicId }`);
+    const response = await apiWithAccessToken(`/topic?id=${ topicId }&data_to_edit=1`);
 
     if (response && response.topic) {
         showTopic(response.topic)
@@ -98,7 +99,8 @@ $(document).ready(function() {
 
         showConfirm('Xác nhận bỏ những thông tin đã thay đổi.', 'Xác nhận', function(result) {
             if (result) {
-                updateViewBasedOnPath('/admin/system-exercise-management');
+                // updateViewBasedOnPath('/admin/system-exercise-management');
+                history.back();
             }
         })
     });

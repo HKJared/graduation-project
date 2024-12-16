@@ -16,6 +16,25 @@
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.1/dist/tippy.css">
     <script src="https://unpkg.com/tippy.js@6.3.1/dist/tippy.umd.min.js"></script>
 
+    <!-- Thêm CSS cho CodeMirror -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+
+    <!-- Thêm các addon cần thiết -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/scroll/scrollbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.css">
+
+    <!-- Thêm JS cho CodeMirror và các addon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/indent.js"></script>
+
+    <!-- Các mode cần thiết cho danh sách option -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script> <!-- Cho C/C++ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script> <!-- Cho Python -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script> <!-- Cho Java -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/pascal/pascal.min.js"></script> <!-- Cho Pascal -->
+
     <script src="/libraries/jQuery/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/libraries/fontawesome-free-6.6.0-web/css/all.min.css"/>
@@ -39,6 +58,7 @@
             
         </div>
     </main>
+    <button class="to-top-btn"><i class="fa-solid fa-chevron-up"></i></button>
 </body>
 <script src="/js/admin/index.js"></script>
 </html>

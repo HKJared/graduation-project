@@ -3,6 +3,8 @@ const JWTService = require("../../utils/jwtService");
 const LogModel = require("../../models/logModel");
 const UserModel = require("../../models/userModel");
 const VerificationModel = require("../../models/verificationModel");
+const { deleteFileFromCloudinary } = require("../../utils/upload");
+const moment = require('moment');
 
 function getLastChange(lastChange) {
     if (!lastChange) {
@@ -137,12 +139,34 @@ class UserController {
 
             const user = await UserModel.getUserById(user_id);
 
+            user.instructor = await UserModel.getInstructorByUserId(user_id);
+            user.identification = await UserModel.getInstructorIdentificationByUserId(user_id);
+
             // user.address = await UserModel.getAddressByUserId(user_id);
 
             return res.status(200).json({ user: user });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+            return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });
+        }
+    }
+
+    static async getAdmins(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = req.log_id;
+
+            const { keyword, page, itemsPerPage } = req.query;
+
+            await LogModel.updateDetailLog('Tìm kiếm tài khoản quản trị viên.', log_id);
+
+
+            const { users, totalPages } = await UserModel.getAdmins(keyword || '', page || 1, itemsPerPage || 15);
+
+            return res.status(200).json({ admins: users, totalPages: totalPages });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });
         }
     }
 
@@ -196,7 +220,9 @@ class UserController {
                 return res.status(400).json({ message: `Mật khẩu này đã được sử dụng và thay đổi vào ${ getLastChange(password_is_exist.changed_at) }.` });
             }
 
-            const is_changed = await UserModel.updateUser({user_id: user_id, password: hashPassword(new_password)});
+            const account = {id: user_id, password: hashPassword(new_password)}
+            console.log(account)
+            const is_changed = await UserModel.updateUser(account);
 
             if (!is_changed) {
                 await LogModel.updateDetailLog('Đổi mật khẩu không thành công.', log_id);
@@ -207,10 +233,38 @@ class UserController {
 
             await LogModel.updateStatusLog(log_id);
             await LogModel.updateDetailLog('Đổi mật khẩu thành công.', log_id);
-            return res.status(200).json({ message: 'Đổi mật khẩu thành công.' });
+            return res.status(200).json({ message: 'Đổi mật khẩu thành công.', code: 1 });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    // Đăng ký trở thành giảng viên
+    static async instructorRegister(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = await LogModel.createLog('instructor-registor', user_id);
+
+            const { instructor, instructor_identification } = req.body;
+
+            if (!instructor || !instructor_identification) {
+                await LogModel.updateDetailLog('Thông tin không đầy đủ', log_id);
+
+                return res.status(400).json({ message: 'Vui lòng nhập đầy đủ thông tin', code: 0 })
+            }
+
+            await UserModel.createInstructor(user_id, instructor);
+            await UserModel.createInstructorIdentification(user_id, instructor_identification);
+
+            await LogModel.updateStatusLog(log_id);
+
+            const instructor_registor = await UserModel.getInstructorByUserId(user_id);
+
+            return res.status(200).json({ message: "Đăng ký thành công.", code: 1, instructor_registor: instructor_registor });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });
         }
     }
 
@@ -294,6 +348,144 @@ class UserController {
             await LogModel.updateStatusLog(log_id);
             await LogModel.updateDetailLog(`Đăng nhập thành công.`, log_id);
             return res.status(200).json({ message: "Đăng nhập thành công", access_token: access_token, refresh_token: refresh_token })
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    // cập nhật thông tin cá nhân
+    static async updateInfo(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = await LogModel.createLog(`info-update`, user_id);
+
+            const info = req.body.info;
+
+            if (!info) {
+                await LogModel.updateDetailLog('Không có dữ liệu.', log_id);
+                return res.status(404).json({ message: 'Không có dữ liệu, vui lòng thử lại hoặc tải lại trang.' });
+            }
+
+            const user = await UserModel.getUserById(user_id);
+
+            if (info.avatar_url == null) {
+                info.avatar_url = user.avatar_url
+            }
+
+            info.id = user_id;
+            const is_update = await UserModel.updateUser(info);
+
+            if (!is_update) {
+                await LogModel.updateDetailLog('Cập nhật không thành công.', log_id);
+                return res.status(404).json({ message: 'Đã có lỗi xảy ra, vui lòng thử lại hoặc tải lại trang.' });
+            }
+
+            if (info.avatar_url != user.avatar_url) {
+                deleteFileFromCloudinary(user.avatar_url);
+            }
+
+            const newInfo = await UserModel.getUserById(user_id);console.log(info, newInfo)
+            newInfo.instructor = await UserModel.getInstructorByUserId(user_id);
+            newInfo.identification = await UserModel.getInstructorIdentificationByUserId(user_id);
+
+            await LogModel.updateDetailLog('Cập nhật thành công.', log_id);
+            await LogModel.updateStatusLog(log_id);
+            return res.status(200).json({ message: 'Cập nhật thành công.', newInfo: newInfo });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    // cập nhật thông tin giảng dạy
+    static async updateInstructor(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = await LogModel.createLog(`instructor-update`, user_id);
+
+            const instructor = req.body.instructor;
+
+            if (!instructor) {
+                await LogModel.updateDetailLog('Không có dữ liệu.', log_id);
+                return res.status(404).json({ message: 'Không có dữ liệu, vui lòng thử lại hoặc tải lại trang.' });
+            }
+
+            const userInstructor = await UserModel.getInstructorByUserId(user_id);
+
+            if (instructor.teaching_certificate_url == null) {
+                instructor.teaching_certificate_url = userInstructor.teaching_certificate_url
+            }
+            
+            const is_update = await UserModel.updateInstructorByUser(user_id, instructor);
+
+            if (!is_update) {
+                await LogModel.updateDetailLog('Cập nhật không thành công.', log_id);
+                return res.status(404).json({ message: 'Đã có lỗi xảy ra, vui lòng thử lại hoặc tải lại trang.' });
+            }
+
+            if (instructor.teaching_certificate_url != userInstructor.teaching_certificate_url) {
+                deleteFileFromCloudinary(userInstructor.teaching_certificate_url);
+            }
+
+            const newInfo = await UserModel.getUserById(user_id);
+            newInfo.instructor = await UserModel.getInstructorByUserId(user_id);
+            newInfo.identification = await UserModel.getInstructorIdentificationByUserId(user_id);
+
+            await LogModel.updateDetailLog('Cập nhật thành công.', log_id);
+            await LogModel.updateStatusLog(log_id);
+            return res.status(200).json({ message: 'Cập nhật thành công.', newInfo: newInfo });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    // cập nhật thông tin định danh
+    static async updateIdentification(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = await LogModel.createLog(`info-update`, user_id);
+
+            const { instructor_identification } = req.body;
+
+            if (!instructor_identification) {
+                await LogModel.updateDetailLog('Không có dữ liệu.', log_id);
+                return res.status(404).json({ message: 'Không có dữ liệu, vui lòng thử lại hoặc tải lại trang.' });
+            }
+
+            const user_identification = await UserModel.getInstructorIdentificationByUserId(user_id);
+
+            if (instructor_identification.id_image_url == null) {
+                instructor_identification.id_image_url = user_identification.id_image_url;
+            }
+            
+            if (instructor_identification.id_image_with_person_url == null) {
+                instructor_identification.id_image_with_person_url = user_identification.id_image_with_person_url;
+            }
+
+            const is_update = await UserModel.updateIdentificationByUser(user_id, instructor_identification);
+
+            if (!is_update) {
+                await LogModel.updateDetailLog('Cập nhật không thành công.', log_id);
+                return res.status(404).json({ message: 'Đã có lỗi xảy ra, vui lòng thử lại hoặc tải lại trang.' });
+            }
+
+            if (instructor_identification.id_image_url !== user_identification.id_image_url) {
+                deleteFileFromCloudinary(user_identification.id_image_url);
+            }
+            
+            if (instructor_identification.id_image_with_person_url !== user_identification.id_image_with_person_url) {
+                deleteFileFromCloudinary(user_identification.id_image_with_person_url);
+            }
+
+            const newInfo = await UserModel.getUserById(user_id);
+            newInfo.instructor = await UserModel.getInstructorByUserId(user_id);
+            newInfo.identification = await UserModel.getInstructorIdentificationByUserId(user_id);
+
+            await LogModel.updateDetailLog('Cập nhật thành công.', log_id);
+            await LogModel.updateStatusLog(log_id);
+            return res.status(200).json({ message: 'Cập nhật thành công.', newInfo: newInfo });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Lỗi từ phía server.' });

@@ -1,0 +1,349 @@
+.user-nav {
+    width: 220px;
+    padding: 16px 14px 36px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .12);
+    font-size: .875rem;
+    position: sticky;
+    top: 70px;
+}
+
+.user-nav .user-info {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.user-nav .user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.user-nav .user-account__container {
+    font-size: .875rem;
+    color: #999;
+    font-weight: 300;
+    width: calc(100% - 56px);
+}
+
+.user-nav .user-account__container #fullname {
+    color: #333;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-nav-items {
+    padding: 6px 0;
+}
+
+.user-nav-items .item a {
+    padding: 6px 8px;
+    color: #333;
+    border-radius: 4px;
+}
+
+.user-nav-items .item a:hover {
+    background-color: var(--color-white-90);
+}
+
+.user-nav-items .item .icon {
+    color: var(--color-primary);
+    width: 16px;
+}
+
+.user-nav-items .item a:hover, .user-nav-items .item a.active {
+    color: var(--color-primary);
+}
+
+@media only screen and (max-width: 768px) {
+    .user__container {
+        padding: 0;
+    }
+
+    .user__container .sub-body {
+        width: 100vw;
+    }
+
+    .user-nav {
+        width: 100vw;
+        border-radius: 0px;
+    }
+
+    .user-info {
+        transform: translateY(20px);
+    }
+}
+
+.sub-body .account_panel {
+    background-color: #fff;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .12);
+    /* overflow: hidden; */
+    border-radius: 4px;
+}
+
+.sub-body .panel__header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.sub-body .panel__header .title h3 {
+    font-weight: 400;
+    color: #333;
+}
+
+.sub-body .panel__header .title span {
+    font-size: .75rem;
+    color: #555;
+}
+
+.sub-body .panel__header .suggest {
+    font-size:  .875rem;
+    color: #999;
+}
+
+.sub-body .panel__box {
+    padding: 20px 16px;
+}
+
+.sub-body .input-box input {
+    height: 40px;
+    border-radius: 2px;
+    border: 1px solid #b7b7b7;
+    width: 100%;
+    padding-left: 12px;
+}
+
+.sub-body button {
+    opacity: .8;
+}
+
+.sub-body button:hover {
+    opacity: 1;
+}
+
+.sub-body .edit-form {
+    flex-grow: 1;
+}
+
+.sub-body .edit-row {
+    width: calc(100% - 80px);
+    color: #333;
+}
+
+.sub-body .edit-row .edit-label {
+    color: #888;
+}
+
+.sub-body .eye-icon {
+    color: #888;
+    font-size: .875rem;
+}
+
+/* ? account */
+/* profile */
+
+.sub-body .submit-btn {
+    height: 25px;
+    width: 100px;
+    color: #fff;
+    background-color: var(--color-primary);
+    border-radius: 2px;
+}
+
+.sub-body .edit-avatar__container {
+    padding: 60px 80px 0;
+    border-left: 1px solid #e5e5e5;
+}
+
+.sub-body .edit-avatar__container .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.sub-body .edit-avatar__container label {
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: .875rem;
+    padding: 4px 12px;
+    border-radius: 4px;
+}
+
+/*  change_password */
+#change_password .edit-label {
+    width: 340px;
+}
+
+#change_password .input-box {
+    width: 420px;
+}
+
+.condition-container span {
+    font-size: 14px;
+    color: #999;
+}
+
+.condition-container span.valid {
+    color: #66cc00;
+}
+
+#change_password .submit-btn:not(.submit-btn.allowed) {
+    cursor: not-allowed;
+}
+
+@media only screen and (max-width: 768px) {
+    .panel__container {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .panel__header {
+        padding: 12px 8px;
+    }
+
+    .item-box__form {
+        gap: 8px;
+        border-radius: 0;
+    }
+
+    .sub-body .account_panel {
+        border-radius: 0;
+        width: 100vw;
+    }
+
+    .sub-body .panel__box {
+        padding: 12px 8px;
+    }
+
+    .edit-row .edit-label {
+        width: 150px;
+    }
+
+    #profile .panel__box {
+        flex-direction: column-reverse;
+        padding-top: 20px;
+        gap: 20px;
+    }
+
+    .sub-body .edit-avatar__container {
+        padding: 0 0 20px;
+        border-left: 0;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    .sub-body .edit-row {
+        width: 100%;
+    }
+
+    #change_password .edit-row {
+        gap: 4px;
+    }
+
+    #change_password .edit-row .edit-label {
+        justify-content: start;
+    }
+}
+
+
+.user__container .sub-body {
+    width: calc(100% - 236px);
+}
+
+.item-box {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.item-box__form {
+    background-color: #fff;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .12);
+    border-radius: 4px;
+    position: sticky;
+    top: 0px;
+    z-index: 9;
+    position: relative; /* Để đảm bảo underline nằm đúng vị trí */
+    overflow: hidden;
+    padding: 8px 0;
+}
+
+.edit-row .edit-label {
+    display: flex;
+    width: 190px;
+    justify-content: end;
+    font-size: 14px;
+    color: #333;
+}
+
+/* ? instructor */
+#instructor_iden .image-action__container {
+    height: 96px;
+    width: 153px;
+    border-radius: .5rem;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    transition: all 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+.teaching_certificate__container .preview-image,
+.teaching_certificate__container .image-action__container {
+    height: 212px;
+    width: 150px;
+    border-radius: .25rem;
+    overflow: hidden;
+}
+
+.teaching_certificate__container .image-action__container {
+    opacity: 0;
+    top: 0;
+    left: 0;
+    transition: all 0.5s ease-in-out;
+}
+
+#instructor_iden .image-action__container > *:not(input),
+.teaching_certificate__container .edit-main a,
+.teaching_certificate__container .edit-main button,
+.teaching_certificate__container .edit-main label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 24px;
+    width: 24px;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#instructor_iden .image-action__container:hover,
+.teaching_certificate__container .image-action__container:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, .42);
+}
+
+#instructor_iden .preview-image {
+    height: 96px;
+    width: 153px;
+    border-radius: .5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .12);
+}
+
+@media only screen and (max-width: 768px) {
+    .user__container {
+        padding: 0;
+    }
+
+    .user__container .sub-body {
+        width: 100vw;
+    }
+}

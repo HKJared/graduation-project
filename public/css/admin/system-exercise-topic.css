@@ -1,0 +1,67 @@
+/* ? Thông tin chủ đề */
+.topic-info__container .info__box {
+    width: calc(100% - 300px);
+    font-size: .875rem;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+}
+
+.topic-info__container .info__box .label {
+    display: flex;
+    width: 220px;
+    justify-content: end;
+}
+
+.topic-info__container .info__box .content {
+    display: flex;
+    width: calc(100% - 228px);
+}
+
+.topic-info__container .preview {
+    width: 276px;
+}
+
+.metadata p {
+    font-size: .75rem;
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 0;
+    color: var(--color-black-70);
+}
+
+/* ? Giao diện biểu đồ */ 
+/* Biểu đồ về số lượng chủ đề */
+.main-view__chart {
+    width: calc(100% - 384px);
+}
+
+.main-view__chart .image_icon {
+    height: 76px;
+    width: 76px;
+    border-radius: 4px;
+    background-color: var(--color-white-80);
+    color: var(--color-black-100);
+    font-size: 34px;
+}
+
+.main-view__chart .statistics {
+    font-size: 1.5rem;
+    color: var(--color-success);
+    font-weight: 500;
+}
+
+/* Biểu đồ về số lượng bài tập */
+.side__chart {
+    width: 360px;
+}
+
+.side__chart .total_exercises__container  .panel__nav button {
+    padding: 4px 12px;
+    font-size: .875rem;
+    font-weight: 600;
+}
+
+/* ? Các phần tử sẽ bị ẩn đi nếu topic không thể chỉnh sửa */
+.topic-non-editable .add-btn {
+    display: none !important;
+}

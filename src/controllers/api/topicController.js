@@ -5,7 +5,7 @@ const { validateTopic } = require("../../validators/topicValidator");
 const moment = require('moment');
 const { deleteFileFromCloudinary } = require("../../utils/upload");
 
-// Đếm chủ đề theo Ngôn ngữ và traạng thái chỉnh sửa
+// Đếm chủ đề theo Ngôn ngữ và trạng thái chỉnh sửa
 function countTopicsByLanguageAndEditability(topics) {
     // Khởi tạo mảng chứa thống kê
     const total_topics = [
@@ -231,14 +231,41 @@ class TopicController {
 
     static async getTopicsByUser(req, res) {
         try {
-            const topics = await TopicModel.getNonEditableTopics();
+            const user_id = req.user_id;
+            const log_id = await LogModel.createLog('view-topics', user_id);
 
-            return req.status(200).json({ topics: topics });
+            await LogModel.updateDetailLog('Lấy danh sách chủ đề bài tập hệ thống.', log_id);
+    
+            // Lấy danh sách chủ đề và danh sách chủ đề đã hoàn thành
+            const topics = await TopicModel.getNonEditableTopics();
+            const topics_completed = await TopicModel.getUserCompletedTopicsByUserId(user_id);
+    
+            // Tạo danh sách các topic đã hoàn thành để kiểm tra nhanh
+            const completedTopicIds = new Set(topics_completed.map(topic => topic.topic_id));
+    
+            // Duyệt qua từng chủ đề
+            for (let i = 0; i < topics.length; i++) {
+                if (completedTopicIds.has(topics[i].id)) {
+                    // Nếu chủ đề đã hoàn thành
+                    topics[i].is_completed = true;
+                    topics[i].completed_exercises_percentage = 100;
+                } else {
+                    // Nếu chủ đề chưa hoàn thành, tính phần trăm hoàn thành
+                    const completedExercisesCount = await ExerciseModel.getUserCompletedExercisesByTopicId(user_id, topics[i].id);
+                    const totalExercises = topics[i].total_exercises || 1; // Tránh chia cho 0
+                    topics[i].is_completed = false;
+                    topics[i].completed_exercises_percentage = Math.round((completedExercisesCount.length / totalExercises) * 100);
+                }
+            }
+    
+            await LogModel.updateStatusLog(log_id);
+    
+            return res.status(200).json({ topics: topics });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Lỗi từ phía server.' });
         }
-    }
+    }    
 
     static async getTopicsByAdmin(req, res) {
         try {
@@ -263,7 +290,8 @@ class TopicController {
 
             await LogModel.updateDetailLog('Lấy thông tin chủ đề', log_id);
 
-            const topic_id = req.query.id;
+            const topic_id = req.query.topic_id;
+            const data_to_edit = req.query.data_to_edit || 0;
 
             const topic = await TopicModel.getTopicById(topic_id);
 
@@ -273,13 +301,102 @@ class TopicController {
                 return res.status(400).json({ message: 'Không tìm thấy chủ đề cần xem.', errors: 'Không tìm thấy chủ đề cần xem trong database.' });
             }
 
-            if (!topic.is_editable) {
+            const exercises = await ExerciseModel.getExercisesByTopicId(topic_id);
+            topic.exercises = exercises || [];
+
+            if (!topic.is_editable && !data_to_edit) {
                 // Tính toán thông số
+                const user_exercise_results = await ExerciseModel.getUserExerciseResultsByStarted();
+
+                const { topicAccessCountsByMonthData, totalTopicAccess, activeUserCount } = getTopicAccessCountsByMonthData(user_exercise_results);
+                const { averageExerciseSubmissions, totalUserAccess } = calculateAverageSubmissions(user_exercise_results);
+
+                const user_completed_topics = await TopicModel.getUserCompletedTopics();
+                const totalTopicCompleted = user_completed_topics.length;
+                // const topicCompletionCountsByMonthData = getTopicCompletionCountsByMonthData(user_completed_topics);
+                const topicCompletionCountsByMonthData = [15, 16, 19, 26, 34, 42, 46];
+                
+                // const total_exercises = countExercisesByLevelAndType(exercises);
+                const total_exercises = [
+                    { level: 'easy', multiple_choice: 1, code: 0 },
+                    { level: 'medium', multiple_choice: 1, code: 0 },
+                    { level: 'hard', multiple_choice: 0, code: 0 }
+                ]
+
+                const statistics = {
+                    topicAccessCountsByMonthData: topicAccessCountsByMonthData,
+                    topicCompletionCountsByMonthData: topicCompletionCountsByMonthData,
+                    totalTopicAccess: totalTopicAccess || 120,
+                    totalTopicCompleted: totalTopicCompleted || 100,
+
+                    total_exercises: total_exercises,
+                    totalExerciseResults: user_exercise_results.length || 475,
+                    averageExerciseSubmissions: averageExerciseSubmissions || 3,
+
+                    totalUserAccess: totalUserAccess || 25,
+                    activeUserCount: activeUserCount || 4
+                }
+
+                topic.statistics = statistics
             }
 
             return res.status(200).json({ topic: topic });
         } catch (error) {
-            
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    static async getTopicByUser(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = await LogModel.createLog('view-topic', user_id);
+
+            const topic_id = req.query.topic_id;
+
+            await LogModel.updateDetailLog('Lấy thông tin chủ đề chó ID: ' + topic_id, log_id);
+
+            const topic = await TopicModel.getTopicById(topic_id);
+
+            if (!topic || topic.is_editable) {
+                await LogModel.updateDetailLog('Chủ đề không tồn tại hoặc đang chỉnh sửa.' , log_id);
+
+                return res.status(400).json({ message: 'Không tìm thấy chủ đề cần xem.', errors: 'Không tìm thấy chủ đề cần xem trong database.' });
+            }
+
+            const exercises = await ExerciseModel.getExercisesByTopicId(topic.id);
+
+            const excercise_results = await ExerciseModel.getUserExerciseResultsByTopicId(user_id, topic.id);
+
+            // Tạo một Map để nhanh chóng tra cứu trạng thái bài tập từ excercise_results
+            const resultsMap = new Map(
+                excercise_results.map(result => [result.exercise_id, result])
+            );
+
+            // Duyệt qua mảng exercises và cập nhật trạng thái
+            for (let i = 0; i < exercises.length; i++) {
+                const result = resultsMap.get(exercises[i].id);
+
+                if (!result) {
+                    // Exercise not started
+                    exercises[i].status = 0; // Not started
+                } else if (result.is_completed) {
+                    // Exercise completed
+                    exercises[i].status = 2; // Completed
+                } else {
+                    // Exercise in progress
+                    exercises[i].status = 1; // In progress
+                }
+            }
+
+            topic.exercises = exercises;
+
+            await LogModel.updateStatusLog(log_id);
+
+            return res.status(200).json({ topic: topic });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
         }
     }
 
@@ -504,10 +621,6 @@ class TopicController {
 
             await LogModel.updateDetailLog(`Xóa chủ đề: ${ topic.name } (ID: ${ topic_id }).` , log_id);
 
-            deleteFileFromCloudinary(topic.document_url);
-            if (topic.image_url) {
-                deleteFileFromCloudinary(topic.image_url)
-            }
 
             const is_deleted = await TopicModel.deleteTopic(topic_id);
 
@@ -516,7 +629,12 @@ class TopicController {
 
                 return res.status(400).json({ message: 'Xóa không thành công.', errors: 'Xóa chủ đề trong database không thành công.' });
             }
+            deleteFileFromCloudinary(topic.document_url);
 
+            if (topic.image_url) {
+                deleteFileFromCloudinary(topic.image_url)
+            }
+            
             await LogModel.updateStatusLog(log_id);
 
             return res.status(200).json({ message: 'Xóa thành công.' });

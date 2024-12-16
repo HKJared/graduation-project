@@ -1,4 +1,8 @@
 $(document).ready(async function() {
+    $(document).on('userUpdated', function() {
+        setUserInfo(user_info)
+    });
+
     if (localStorage.getItem('wiseowlUserAccessToken')) {
         refreshToken();
 
@@ -6,12 +10,11 @@ $(document).ready(async function() {
             refreshToken();
         }, 840000);
 
-        const response = await getUserInfo();
+        const response = await userApi('info');
 
-        if (response.user) {
+        if (response && response.user) { console.log(response.user)
             user_info = response.user;
             $(document).trigger('userUpdated', [user_info]);
-            setUserInfo(user_info);
         }
     }
 
@@ -34,6 +37,31 @@ $(document).ready(async function() {
         getElementByHref(window.location.pathname);
     });
 });
+
+function clearDataUser() {
+    user_info = {}
+
+    topics = []
+}
+
+function hideFullScreen() {
+    $(".process-bar__fill").css("width", "100%");
+
+    setTimeout(function () {
+        // Di chuyển top lên và bot xuống
+        $(".top__full-screen").css("transform", "translateY(-100%)");
+        $(".bot__full-screen").css("transform", "translateY(100%)");
+
+        setTimeout(function () {
+            $(".full-screen").remove();
+            $(".logo__container").css("top", "-5px");
+            
+            // Lấy element từ server khi vừa load lại trang
+            const currentHref = window.location.href;
+            updateViewBasedOnPath(currentHref);
+        }, 900);
+    }, 2000);
+}
 
 // Hàm xử lý giao diện
 function updateViewBasedOnPath(href) {
@@ -85,9 +113,19 @@ function setUserInfo(user) {
     }
 
     $('.avatar__container').empty().append(`
-        <a href="/user/profile" class="full-height full-width center spa-action">            
-            <img src="${ user.avatar_url }" alt="" srcset="${ user.avatar_url }, ${ user.avatar_url }" 
-                 onerror="this.onerror=null; this.src='${ user.avatar_url }';">
+        <a href="/info#account" class="full-height full-width center spa-action">            
+            <img src="${ user.avatar_url || '/images/dark-user.png' }" alt="" srcset="${ user.avatar_url || '/images/dark-user.png' }" 
+                 onerror="this.onerror=null; this.src='${ user.avatar_url || '/images/dark-user.png' }';">
+        </a>
+        <div class="tooltip__container">
+                <div class="tooltip__box">
+                    <div class="tooltip__triangle"></div>
+                    <div class="tooltip__content col">
+                        <a href="/info#account" class="tooltip-item spa-action center">Tài Khoản Của Tôi</a>
+                        <button class="tooltip-item logout-btn">Đăng Xuất</button>
+                    </div>
+                </div>
+            </div>
         </a>
     `);
 
@@ -126,20 +164,35 @@ function refreshToken() {
     });
 }
 
-async function getUserInfo() {
+async function userApi(url, method = 'GET', body) {
     const token = localStorage.getItem('wiseowlUserRefreshToken');
     if (!token) {
         return null
     }
 
-    try {
-        const response = await fetch(`/api/user/info`, {
-            method: 'GET',
+    let configuration;
+    if (method == 'GET') {
+        configuration = {
+            method: method,
             headers: {
                 "Content-Type": "application/json",
                 "authentication": token
             }
-        });
+        }
+    } else {
+        configuration = {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "authentication": token
+            },
+            body: JSON.stringify(body)
+        }
+    }
+
+    addProgressBar(40);
+    try {
+        const response = await fetch('/api/user/' + url, configuration);
 
         const result = await response.json();
 
@@ -151,6 +204,12 @@ async function getUserInfo() {
         return result; 
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        return [];
+        return null;
+    } finally {
+        removeProgressBar();
     }
+}
+
+function setTitle(title = '') {
+    document.title = 'WiseOwl | ' + title;
 }

@@ -1,0 +1,16 @@
+footer .container {
+    height: 46px;
+    border-top: 1px solid var(--color-border);
+    font-size: .75rem;
+    color: var(--color-black-60);
+}
+
+footer li {
+    padding: 2px 16px;
+    border-right: 1px solid var(--color-border);
+}
+
+footer li:last-child {
+    padding-right: 0;
+    border-right: 0;
+}

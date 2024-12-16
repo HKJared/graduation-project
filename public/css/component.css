@@ -87,6 +87,10 @@
     cursor: pointer;
 }
 
+.wo-select.unchangeable {
+    cursor: not-allowed;
+}
+
 .wo-select .selected-text {
     font-size: .875rem;
     color: var(--color-black-100);
@@ -226,4 +230,285 @@
     top: -18px;
     left: 66px;
     transform: rotate(35deg);
+}
+
+/* ? question component */
+.edit-question-item {
+    color: var(--color-text-primary);
+    font-size: .875rem;
+    border-bottom: .8px dashed var(--color-border);
+    padding: 12px 0;
+}
+
+.edit-question-item label span {
+    color: var(--color-danger);
+}
+
+.edit-question-item .wo-textarea {
+    min-height: 32px;
+}
+
+.edit-question-item textarea {
+    min-height: 32px;
+    padding: 4px 12px;
+    height: auto;
+}
+
+.edit-question-item .wo-select {
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 220px;
+}
+
+.edit-question-item .image_col {
+    margin-top: 16px;
+    font-size: 24px;
+}
+
+.edit-question-item .question_col {
+    flex-grow: 1;
+}
+
+.edit-question-item .question_col textarea {
+    border-radius: 0;
+    border: 0;
+    border-bottom: 2px solid var(--color-primary);
+}
+
+.edit-question-item .question_col textarea:focus {
+    background-color: var(--color-neutral-90);
+}
+
+.edit-question-item .question-option {
+    margin: 8px 0;
+}
+
+.edit-question-item .question-option .icon {
+    padding: 12px 0 12px 12px;
+}
+
+.edit-question-item .question-option .content {
+    flex-grow: 1;
+}
+
+.edit-question-item .question-option .content textarea {
+    border: 0;
+    border-bottom: .8px solid var(--color-border);
+}
+
+.edit-question-item .question-option .content textarea:focus {
+    border-bottom: .8px solid var(--color-primary);
+}
+
+.edit-question-item .change-question-image, .edit-question-item .icon {
+    cursor: pointer;
+}
+
+.edit-question-item .icon {
+    color: var(--color-white-60);
+}
+
+.edit-question-item .question-option.is_correct .icon {
+    color: var(--color-primary);
+}
+
+.edit-question-item .question-option .change-question-image, .edit-question-item .question-option .remove-option-btn {
+    font-size: 20px;
+}
+
+.edit-question-item .question__action {
+    justify-content: end;
+    padding-top: 20px;
+    color: var(--color-black-100);
+}
+
+.edit-question-item .question__action .remove-question-btn, .edit-question-item .question__action .add-option-btn {
+    font-size: 20px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.edit-question-item .question__action .remove-question-btn:hover, .edit-question-item .question__action .add-option-btn:hover {
+    background-color: var(--color-neutral-90);
+}
+
+.edit-question-item .question-option .preview-image {
+    max-width: 420px;
+}
+
+/* ? Nút toggle */ 
+.wo-toggle {
+    width: 40px;
+    height: 20px;
+}
+
+.wo-toggle input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.wo-toggle label {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 40px;
+    height: 20px;
+    background: grey;
+    display: block;
+    border-radius: 20px; 
+    position: relative;
+}
+
+.wo-toggle label:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.wo-toggle input:checked + label {
+    background: #bada55;
+}
+
+.wo-toggle input:checked + label:after {
+    left: calc(100% - 3px);
+    transform: translateX(-100%);
+}
+
+.wo-toggle label:active:after {
+    width: 18px;
+}
+
+/* ? testcase component */
+.edit-testcase-item button {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    transition: color 0.3s ease-in-out;
+}
+
+.edit-testcase-item button:hover {
+    color: var(--color-danger);
+}
+
+.edit-testcase-item .wo-textarea, .edit-testcase-item .wo-textarea textarea {
+    min-height: 12px;
+}
+
+.edit-testcase-item .wo-textarea {
+    flex: 1 1 50%;
+}
+
+/* ? Bài tập chủ đề */
+.topic-exercise-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.topic-exercise-header {
+    font-size: .875rem;
+    font-weight: 700;
+    color: var(--color-black-60);
+    height: 24px;
+}
+
+.topic-exercise-item {
+    font-size: .875rem;
+    height: 56px;
+    border-bottom: 1px solid #e5e5e5;
+    background-color: var(--color-neutral-100);
+    color: var(--color-text-primary);
+}
+
+.topic-exercise-item:hover {
+    border-bottom: 1px solid #b7b7b7;
+}
+
+.topic-exercise-item .icon_col, .topic-exercise-header .icon_col {
+    width: 7%;   
+    font-size: 1.25rem; 
+}
+
+.topic-exercise-item .title_col, .topic-exercise-header .title_col {
+    width: 43%;
+}
+
+.topic-exercise-item .title_col {
+    font-weight: 500;
+}
+
+.topic-exercise-item .type_col, .topic-exercise-header .type_col {
+    width: 10.67%; 
+    color: var(--color-black-60);
+}
+
+.topic-exercise-item .level_col, .topic-exercise-header .level_col {
+    width: 8.67%;
+    font-weight: 500;
+    opacity: .9;
+}
+
+.topic-exercise-item .level_col span::first-letter {
+    text-transform: uppercase;
+}
+
+.topic-exercise-item .bonus_scores_col, .topic-exercise-header .bonus_scores_col {
+    width: 12.67%;    
+}
+
+.topic-exercise-item .action_col, .topic-exercise-header .action_col {
+    display: flex;
+    justify-content: end;
+    width: 18%;    
+}
+
+.topic-exercise-item .action_col a, .topic-exercise-item .action_col button {
+    padding: 4px 16px;
+    font-size: .75rem;
+    color: var(--color-neutral-100);
+    border-radius: 4px;
+}
+
+/* ? Câu hỏi bài tập trắc nghiệm */
+.list-preview-question {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.preview-question-item {
+    width: calc(25% - 12px);
+    display: flex;
+    aspect-ratio: 1;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: .875rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--color-black-100);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.preview-question-item.selected {
+    background-color: var(--color-white-70);
+}
+
+.question-item {
+    color: var(--color-black-100);
+}
+
+.question-item .question-option .icon {
+    color: var(--color-white-60);
+}
+
+.question-item .question-option.is_selected .icon {
+    color: var(--color-primary);
 }

@@ -1,0 +1,91 @@
+.role__container, .role_permission___container {
+    height: calc(100vh - 152px);
+    min-width: 280px;
+}
+
+.role_permission___container .panel__body {
+    overflow-y: auto;
+}
+
+.role__container .panel__body {
+    padding-top: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+    overflow-y: auto;
+}
+
+.role__container li {
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.role__container li:hover {
+    background-color: #f5f5f5;
+}
+
+.role__container li.active {
+    background-color: #e4efff;
+    color: var(--color-primary);
+}
+
+.role_permission___container input {
+    cursor: pointer;
+}
+
+.role_permission___container .permission__box {
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+    height: 220px;
+}
+
+.role_permission___container .permission__box > * {
+    padding: 12px;
+}
+
+.role_permission___container .permission__box .box__header {
+    background-color: var(--color-neutral-80);
+}
+
+
+
+.role_manage___box {
+    width: 540px;
+    font-size: 1rem;
+}
+
+.role_manage___box ul {
+    height: 320px;
+    overflow-y: auto;
+}
+
+.role_manage___box ul button {
+    font-size: 1rem;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s ease-in-out;
+}
+
+.role_manage___box ul button:hover {
+    background-color: #f5f5f5;
+}
+
+.role_manage___box ul li {
+    height: 40px;
+    color: var(--color-black-100);
+}
+
+.permission__box ul li span {
+    padding: 0 12px;
+}
+
+.role_manage___box ul input {
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
+    font-size: 1rem;
+}

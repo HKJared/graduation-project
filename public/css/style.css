@@ -12,6 +12,8 @@
 }
 
 * {
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
 }
 
@@ -63,6 +65,11 @@ body {
     display: flex;
 }
 
+.flex-layout {
+    display: flex;
+    flex-direction: row; /* Bình thường là hàng ngang */
+}
+
 .col {
     display: flex;
     flex-direction: column;
@@ -82,6 +89,26 @@ body {
     height: 100%;
 }
 
+.w-full-screen {
+    width: 100vw;
+}
+
+.h-full-screen {
+    height: 100vh;
+}
+
+.resize-x {
+    resize: horizontal;
+}
+
+.resize-y {
+    resize: vertical;
+}
+
+.hide {
+    display: none !important;
+}
+
 .flex-1 {
     flex-grow: 1;
 }
@@ -89,6 +116,14 @@ body {
 .flex-box {
     display: flex;
     justify-content: space-between;
+}
+
+.flex-start {
+    justify-content: start;
+}
+
+.flex-end {
+    justify-content: end;
 }
 
 .item-center {
@@ -177,8 +212,8 @@ body {
 }
 
 .eye-icon {
-    right: 10px; /* Khoảng cách từ bên phải */
-    top: 50%;
+    right: 10px !important; /* Khoảng cách từ bên phải */
+    top: 50% !important;
     transform: translateY(-50%);
     cursor: pointer;
     font-size: 18px; /* Kích thước icon */
@@ -196,6 +231,18 @@ body {
 
 .hard, .danger {
     color: var(--color-danger) !important;
+}
+
+.easy-bg, .success-bg {
+    background-color: var(--color-success) !important;
+}
+
+.medium-bg, .warning-bg {
+    background-color: var(--color-warning) !important;
+}
+
+.hard-bg, .danger-bg {
+    background-color: var(--color-danger) !important;
 }
 
 a, button, select {
@@ -223,6 +270,16 @@ input {
     border: 0;
 }
 
+input:disabled, 
+textarea:disabled, 
+select:disabled {
+    cursor: not-allowed;
+    background-color: #f5f5f5; /* Màu nền nhạt để biểu thị trạng thái bị khóa */
+    color: #999; /* Màu chữ xám nhạt */
+    border-color: #ddd; /* Đổi màu viền để nhấn mạnh trạng thái bị khóa */
+    user-select: none;
+}
+
 input[type="file"] {
     display: none;
 }
@@ -232,8 +289,8 @@ input:focus {
     border: 0;
 }
 
-button.not-allowed {
-    cursor: not-allowed;
+button.not-allowed, label.not-allowed {
+    cursor: not-allowed !important;
 }
 
 button:hover:not(.not-allowed) {
@@ -401,6 +458,42 @@ ul, li {
 }
 
 
+/* tooltip */
+.tooltip__container {
+    position: absolute;    
+    transform: scale(0);
+    transform-origin: calc(100% - 10px) calc(0% - 8px);
+    transition: transform 0.4s ease-in-out;
+    right: 0;
+    z-index: 99999;
+}
+
+.tooltip__box {
+    position: relative;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .22);
+    background-color: #fff;
+}
+
+.tooltip__triangle {
+    position: absolute;
+    transform: rotate(45deg);
+    height: 10px;
+    width: 10px;
+    top: -4px;
+    right: 6px;
+    background-color: #fff;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .22);
+    z-index: 0;
+}
+
+.tooltip__content {
+    position: relative;
+    background-color: #fff;
+    z-index: 1;
+    padding: 4px 0;    
+}
+
+
 /* alert in screen */
 .alert-not-found, .alert-success {
     margin-top: 48px;
@@ -446,6 +539,30 @@ ul, li {
     color: var(--color-white-100);
 }
 
+.to-top-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    z-index: 999;
+    user-select: none;
+    font-size: 25px;
+    border: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background-color: #fff;
+    color: var(--color-primary);
+    box-shadow: 0px 0px 5px #c7c7c7;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.to-top-btn:hover {
+    background-color: var(--color-neutral-90);
+}
+
 
 ion-icon {
     pointer-events: none;
@@ -476,5 +593,37 @@ ion-icon {
 @media only screen and (max-width: 1540px) {
     .hide-on-4 {
         display: none;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .limit-view {
+        width: 100vw !important; /* 100% chiều rộng viewport */
+        max-width: 100vw !important;
+    }
+
+    .container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .flex-layout {
+        flex-direction: column; /* Ở điện thoại thì chuyển thành hàng dọc */
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    .hide-on-mobile {
+        display: none !important; /* Ẩn đi khi ở điện thoại */
+    }
+
+    .show-on-mobile {
+        display: flex !important; 
+    }
+
+    .notification {
+        top: 40px;
     }
 }

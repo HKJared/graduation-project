@@ -55,6 +55,10 @@
     --shadow: 0 2px 8px rgba(255, 255, 255, .12);
 }
 
+body {
+    width: 100vw;
+}
+
 .full-screen {
     width: 100vw;
     height: 100vh;
@@ -93,5 +97,44 @@
 }
 
 .main-body {
-    min-height: calc(100vh - 50px);
+    min-height: calc(100vh - 104px);
+}
+
+.user__container {
+    width: 100%;
+    min-height: calc(100vh - 160px);
+    margin: 24px 0;
+}
+
+.panel {
+    background-color: var(--color-white-100);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.sub_nav-item {
+    position: relative;
+    padding: 8px 24px;
+    transition: all 0.3s ease-in-out;
+}
+
+.sub_nav-item::before {
+    content: '';
+    display: flex;
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-primary);
+    transition: all 0.5s ease-in-out;
+}
+
+.sub_nav-item.active, .sub_nav-item:hover {
+    color: var(--color-primary);
+}
+
+.sub_nav-item.active::before {
+    width: 100%;
 }

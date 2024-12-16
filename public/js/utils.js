@@ -6,6 +6,10 @@ $(document).ready(function() {
 
     $(document).on('click', '.wo-select', function(event) {
         event.stopPropagation();
+
+        if ($(this).hasClass('unchangeable')) {
+            return
+        }
         
         if ($(this).hasClass('focus')) {
             $(this).removeClass('focus');
@@ -39,6 +43,14 @@ $(document).ready(function() {
         woSelect.trigger('change');
     });
 
+    $(document).on('click', '.wo-toggle label', function() {
+        const label = $(this);
+        const checkbox = label.prev('input[type="checkbox"]');
+        
+        // Chuyển đổi trạng thái checkbox
+        checkbox.trigger('click');
+    });
+
     //Đếm ký tự
     $(document).on('input', '.wo-input input, .wo-textarea textarea', function() {
         const maxChars = $(this).next('.char-count').text().split('/')[1]; // Lấy số ký tự tối đa
@@ -50,11 +62,122 @@ $(document).ready(function() {
             $(this).next('.char-count').text(`${maxChars}/${maxChars}`);
         }
     });
+
+    $(document).on('click', '.to-top-btn', function(event) {
+        event.stopPropagation();
+
+        $('.main-body, body').animate({scrollTop: 0}, 700);
+    });
 });
+
+function checkUserLogin() {
+    const token = localStorage.getItem('wiseowlUserRefreshToken');
+
+    if (token) {
+        return true;
+    }
+
+    return false
+}
 
 function renderLoading() {}
 
 function removeLoading() {}
+
+function createEditor(placeholder = '') {
+    CKEDITOR.ClassicEditor
+        .create(document.getElementById("editor"), {
+            toolbar: {
+                items: [
+                    'bold', 'italic', 'strikethrough', 'underline',
+                    'bulletedList', 'numberedList',
+                    'fontSize', 'fontFamily', 'fontColor',
+                    'alignment',
+                    'link', 'uploadImage', 'blockQuote', 'codeBlock',
+                    'specialCharacters'
+                ],
+                shouldNotGroupWhenFull: true
+            },
+            list: {
+                properties: {
+                    styles: true,
+                    startIndex: true,
+                    reversed: true
+                }
+            },
+            placeholder: placeholder, // Thiết lập placeholder
+            fontFamily: {
+                options: [
+                    'default',
+                    'Arial, Helvetica, sans-serif',
+                    'Courier New, Courier, monospace',
+                    'Georgia, serif',
+                    'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                    'Tahoma, Geneva, sans-serif',
+                    'Times New Roman, Times, serif',
+                    'Trebuchet MS, Helvetica, sans-serif',
+                    'Verdana, Geneva, sans-serif'
+                ],
+                supportAllValues: true
+            },
+            fontSize: {
+                options: [10, 12, 14, 16, 18, 20, 22],
+                supportAllValues: true
+            },
+            fontColor: {
+                default: '#222E3C' // Màu chữ mặc định
+            },
+            htmlSupport: {
+                allow: [
+                    {
+                        name: /.*/,
+                        attributes: true,
+                        classes: true,
+                        styles: true
+                    }
+                ]
+            },
+            htmlEmbed: {
+                showPreviews: true
+            },
+            removePlugins: [
+                'AIAssistant',
+                'CKBox',
+                'CKFinder',
+                'EasyImage',
+                'MultiLevelList',
+                'RealTimeCollaborativeComments',
+                'RealTimeCollaborativeTrackChanges',
+                'RealTimeCollaborativeRevisionHistory',
+                'PresenceList',
+                'Comments',
+                'TrackChanges',
+                'TrackChangesData',
+                'RevisionHistory',
+                'Pagination',
+                'WProofreader',
+                'MathType',
+                'SlashCommand',
+                'Template',
+                'DocumentOutline',
+                'FormatPainter',
+                'TableOfContents',
+                'PasteFromOfficeEnhanced',
+                'CaseChange'
+            ],
+            contentsCss: [
+                'body { font-size: 14px; color: #222E3C; font-family: Arial, sans-serif; line-height: 1.5; }'
+            ]
+        })
+        .then(newEditor => {
+            removeLoading();
+            editor = newEditor;
+        })
+        .catch(error => {
+            removeLoading();
+            console.error(error);
+        });
+}
 
 function showNotification(message) {
     let notificationHTML = `
@@ -79,6 +202,37 @@ function showNotification(message) {
             $('#notification').remove();
         }, 500);
     }, 3000); 
+}
+
+function validatePhoneNumber(phoneNumber) {
+    // Xóa tất cả khoảng trắng khỏi số điện thoại
+    phoneNumber = phoneNumber.replace(/\s+/g, '');
+
+    // Kiểm tra độ dài của số điện thoại (thường là 10 chữ số)
+    if (phoneNumber.length !== 10) {
+        return false;
+    }
+
+    // Đầu số hợp lệ ở Việt Nam
+    const validPrefixes = [
+        "032", "033", "034", "035", "036", "037", "038", "039", "086", "096", "097", "098",  // Viettel
+        "070", "076", "077", "078", "079", "089",                                           // Mobifone
+        "081", "082", "083", "084", "085", "088", "091", "094",                            // Vinaphone
+        "056", "058", "092",                                                              // Vietnamobile
+        "099", "059",                                                                    // Gmobile
+        "087"                                                                           // Itelecom
+    ];
+
+    // Lấy 3 ký tự đầu của số điện thoại để kiểm tra
+    const prefix = phoneNumber.substring(0, 3);
+
+    // Kiểm tra xem đầu số có hợp lệ không
+    if (!validPrefixes.includes(prefix)) {
+        return false;
+    }
+
+    // Nếu qua được tất cả các kiểm tra, số điện thoại là hợp lệ
+    return true;
 }
 
 function showStackedNotification(message, id) {
@@ -234,25 +388,6 @@ function removeProgressBar() {
     }, 700)
 }
 
-function hideFullScreen() {
-    $(".process-bar__fill").css("width", "100%");
-
-    setTimeout(function () {
-        // Di chuyển top lên và bot xuống
-        $(".top__full-screen").css("transform", "translateY(-100%)");
-        $(".bot__full-screen").css("transform", "translateY(100%)");
-
-        setTimeout(function () {
-            $(".full-screen").remove();
-            $(".logo__container").removeClass('hide')
-            
-            // Lấy element từ server khi vừa load lại trang
-            const currentHref = window.location.href;
-            updateViewBasedOnPath(currentHref);
-        }, 700);
-    }, 2000);
-}
-
 function countUp(element, start, end, duration) {
     var startTime = null;
     var range = end - start;
@@ -273,6 +408,12 @@ function countUp(element, start, end, duration) {
     }
     
     requestAnimationFrame(animate); // Bắt đầu animation
+}
+
+function hasAnyPermission(permissions, requiredPermissions) {
+    return requiredPermissions.some(reqPerm => 
+        permissions.some(permission => permission.name === reqPerm)
+    );
 }
 
 // Hàm tạo mảng các tháng gần nhất

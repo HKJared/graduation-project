@@ -8,8 +8,10 @@ class RoleModel {
                 id, name
             FROM
                 roles
+            WHERE
+                id != 1 AND id != 2
         `;
-
+        
         try {
             const [rows] = await pool.execute(queryString);
             return rows;
@@ -35,6 +37,26 @@ class RoleModel {
             return rows[0];
         } catch (error) {
             console.error('Error executing getRoleById() query:', error);
+            throw error;
+        }
+    }
+
+    // Lấy thông tin của một vai trò theo Tên
+    static async getRoleByName(name) {
+        const queryString = `
+            SELECT
+                id, name
+            FROM
+                roles
+            WHERE
+                name = ?
+        `;
+
+        try {
+            const [rows] = await pool.execute(queryString, [name]);
+            return rows[0];
+        } catch (error) {
+            console.error('Error executing getRoleByName() query:', error);
             throw error;
         }
     }
@@ -111,30 +133,36 @@ class RoleModel {
     }
 
     // Thêm quyền hạn cho một vai trò
-    static async addPermissionToRole(role_id, permission_id) {
+    static async addPermissionsToRole(role_id, permission_ids) {
+        // Tạo phần giá trị `(?, ?)` lặp lại cho mỗi permission_id
+        const placeholders = permission_ids.map(() => '(?, ?)').join(', ');
+    
+        // Chuẩn bị giá trị để chèn
+        const values = permission_ids.flatMap(permission_id => [role_id, permission_id]);
+    
         const queryString = `
             INSERT INTO role_permissions (role_id, permission_id)
-            VALUES (?, ?)
+            VALUES ${placeholders}
         `;
-
+    
         try {
-            const [result] = await pool.execute(queryString, [role_id, permission_id]);
-            return result.affectedRows > 0;
+            const [result] = await pool.execute(queryString, values);
+            return result.affectedRows === permission_ids.length;
         } catch (error) {
-            console.error('Error executing addPermissionToRole() query:', error);
+            console.error('Error executing addPermissionsToRole() query:', error);
             throw error;
         }
     }
 
     // Xóa quyền hạn khỏi một vai trò
-    static async removePermissionFromRole(role_id, permission_id) {
+    static async removePermissionsFromRole(role_id) {
         const queryString = `
             DELETE FROM role_permissions
-            WHERE role_id = ? AND permission_id = ?
+            WHERE role_id = ?
         `;
 
         try {
-            const [result] = await pool.execute(queryString, [role_id, permission_id]);
+            const [result] = await pool.execute(queryString, [role_id]);
             return result.affectedRows > 0;
         } catch (error) {
             console.error('Error executing removePermissionFromRole() query:', error);

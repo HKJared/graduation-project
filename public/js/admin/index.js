@@ -3,21 +3,10 @@ $(document).ready(async function() {
     if (!localStorage.getItem('wiseowlAdminRefreshToken')) {
         window.location.href = '/admin/login'
     }
-    refreshToken();
 
     setInterval(function() {
         refreshToken();
     }, 840000);
-
-
-    if (admin_info != {}) {
-        const response = await apiWithAccessToken('info', 'GET');
-        if (response.admin) {
-            admin_info = response.admin;
-            $(document).trigger('AdminUpdated', [admin_info]);
-            setAdminInfo(admin_info);
-        }
-    }
 
     const currentHref = window.location.href;
     updateViewBasedOnPath(currentHref);
@@ -58,6 +47,10 @@ $(document).ready(async function() {
     $(window).on('popstate', function() {
         getElementByHref(window.location.pathname);
     });
+
+    $(document).on('click', '.hide-blur-container', function() {
+        $(this).closest('.blur__container').css('display', 'none');
+    })
 });
 
 //hàm xử lí giao diện
@@ -169,22 +162,6 @@ function updateUnderlinePosition() {
     }
 }
 
-// hàm cập nhật người dùng (đã đăng nhập/ chưa đăng nhập)
-function setAdminInfo(admin_info) {
-    if (!admin_info) {
-        return
-    }
-
-    $('.avatar__container').empty().append(`
-        <a href="/admin/profile" class="full-height full-width center spa-action" style="background-color: var(--color-black-100)">            
-            <img src="${ admin_info.avatar_url }" alt="" srcset="${ admin_info.avatar_url }, ${ admin_info.avatar_url }" 
-                 onerror="this.onerror=null; this.src='/images/logo-oval.png';">
-        </a>
-    `);
-
-    $('body').addClass('logged-in');
-}
-
 // hàm gọi API
 function logout() {
     const token = localStorage.getItem('wiseowlAdminRefreshToken');
@@ -220,41 +197,54 @@ function logout() {
     });
 }
 
-function refreshToken() {
-    const token = localStorage.getItem('wiseowlAdminRefreshToken');
-    fetch('/api/admin/refresh-token', {
-        method: 'GET',
-        headers: {
-            "Content-Type": "application/json",
-            "authentication": token
-        }
-    })
-    .then(response => {
-        return response.json().then(result => {
-            if (!response.ok) {
-                localStorage.removeItem('wiseowlAdminAccessToken');
-                localStorage.removeItem('wiseowlAdminRefreshToken');
-                showNotification('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
-
-                setTimeout(function() {
-                    window.location.href = '/admin/login'
-                }, 2000);
-                throw new Error('Network response was not ok');
-            }
-            return result;
-        });
-    })
-    .then(result => {
-        // Lưu token mới vào localStorage
-        localStorage.setItem('wiseowlAdminAccessToken', result.access_token);
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-    });
-}
-
 async function apiWithAccessToken(url, method, body) {
     const token = localStorage.getItem('wiseowlAdminAccessToken');
+    if (!token) {
+        return null
+    }
+
+    let configuration;
+    if (method == 'GET') {
+        configuration = {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "authentication": token
+            }
+        }
+    } else {
+        configuration = {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "authentication": token
+            },
+            body: JSON.stringify(body)
+        }
+    }
+
+    addProgressBar(40);
+    try {
+        const response = await fetch('/api/admin/' + url, configuration);
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            showNotification(result.message);
+            throw new Error('Network response was not ok');
+        }
+        
+        return result; 
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        return null;
+    } finally {
+        removeProgressBar();
+    }
+}
+
+async function apiWithRefreshToken(url, method, body) {
+    const token = localStorage.getItem('wiseowlAdminRefreshToken');
     if (!token) {
         return null
     }

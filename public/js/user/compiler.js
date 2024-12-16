@@ -1,50 +1,50 @@
-// Khởi tạo CodeMirror cho phần editor
-var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-    mode: "text/x-c++src",
-    theme: "default",
-    tabSize: 4,
-    indentWithTabs: true,
-    lineWrapping: true,
-    indentUnit: 4,
-    autoCloseBrackets: true,
-    extraKeys: {
-        "Enter": function(cm) {
-            // Lấy số lượng khoảng trắng cần thêm
-            var tabSize = cm.getOption("tabSize");
-            var indent = " ".repeat(tabSize); // Tạo chuỗi khoảng trắng
-            cm.replaceSelection("\n" + indent, "end"); // Chèn newline và indent
-            cm.execCommand("goLineEnd"); // Di chuyển con trỏ về cuối dòng
-        }
-    }
-});
-
-// Khởi tạo CodeMirror cho ô input (nếu cần)
-var inputEditor = CodeMirror.fromTextArea(document.getElementById("input"), {
-    mode: "text/plain",
-    theme: "default",
-    tabSize: 4,
-    lineWrapping: true
-});
-
-// Khởi tạo CodeMirror cho ô output (chỉ để hiển thị output, không sửa được)
-var outputEditor = CodeMirror.fromTextArea(document.getElementById("output"), {
-    mode: "text/plain",
-    theme: "default",
-    tabSize: 4,
-    lineWrapping: true,
-    readOnly: true               // Chỉ đọc
-});
-
-editor.getWrapperElement().style.fontSize = ".875rem";
-inputEditor.getWrapperElement().style.fontSize = ".875rem";
-outputEditor.getWrapperElement().style.fontSize = ".875rem";
-
 // set view
 $(document).ready(function() {
     // Thêm lớp active vào nav-item tương ứng
     $('.nav-item').removeClass('active');
     $('#compiler_nav').addClass('active');
     updateUnderline();
+
+    setTitle('Compiler')
+
+    // Khởi tạo CodeMirror cho phần editor
+    editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+        mode: "text/x-c++src",
+        theme: "default",
+        tabSize: 4,
+        indentWithTabs: true,
+        lineWrapping: true,
+        indentUnit: 4,
+        autoCloseBrackets: true,
+        extraKeys: {
+            "Enter": function(cm) {
+                // Lấy số lượng khoảng trắng cần thêm
+                var tabSize = cm.getOption("tabSize");
+                var indent = " ".repeat(tabSize); // Tạo chuỗi khoảng trắng
+                cm.replaceSelection("\n" + indent, "end"); // Chèn newline và indent
+                cm.execCommand("goLineEnd"); // Di chuyển con trỏ về cuối dòng
+            }
+        }
+    });
+    // Khởi tạo CodeMirror cho ô input (nếu cần)
+    inputEditor = CodeMirror.fromTextArea(document.getElementById("input"), {
+        mode: "text/plain",
+        theme: "default",
+        tabSize: 4,
+        lineWrapping: true
+    });
+    // Khởi tạo CodeMirror cho ô output (chỉ để hiển thị output, không sửa được)
+    outputEditor = CodeMirror.fromTextArea(document.getElementById("output"), {
+        mode: "text/plain",
+        theme: "default",
+        tabSize: 4,
+        lineWrapping: true,
+        readOnly: true               // Chỉ đọc
+    });
+
+    editor.getWrapperElement().style.fontSize = ".875rem";
+    inputEditor.getWrapperElement().style.fontSize = ".875rem";
+    outputEditor.getWrapperElement().style.fontSize = ".875rem";
 
     editor.setValue('#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}');
 });
@@ -154,7 +154,6 @@ $(document).ready(function () {
     });
 });
 
-// Hàm để chạy code
 // Hàm để chạy code
 async function runCode() {
     const code = editor.getValue();

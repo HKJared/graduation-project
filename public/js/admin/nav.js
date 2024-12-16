@@ -1,12 +1,23 @@
 $(document).ready(async function() {
+    await refreshToken();
+
     if (!permissions.length) {
-        const response = await apiWithAccessToken('role-permissions', 'GET');
+        const response = await apiWithRefreshToken('role-permissions', 'GET');
         if (response && response.permissions) {
             permissions = response.permissions;
             
             displayNavByPermissions(permissions);
             // Phát ra sự kiện tùy chỉnh 'permissionsUpdated' sau khi permissions đã được cập nhật
             $(document).trigger('permissionsUpdated', [permissions]);
+        }
+    }
+
+    if (admin_info != {}) {
+        const response = await apiWithAccessToken('info', 'GET');
+        if (response.admin) {
+            admin_info = response.admin;
+            $(document).trigger('AdminUpdated', [admin_info]);
+            setAdminInfo(admin_info);
         }
     }
 });
@@ -49,4 +60,53 @@ function displayNavByPermissions(permissions) {
             `);
         }
     });
+}
+
+async function refreshToken() {
+    const token = localStorage.getItem('wiseowlAdminRefreshToken');
+    fetch('/api/admin/refresh-token', {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "authentication": token
+        }
+    })
+    .then(response => {
+        return response.json().then(result => {
+            if (!response.ok) {
+                localStorage.removeItem('wiseowlAdminAccessToken');
+                localStorage.removeItem('wiseowlAdminRefreshToken');
+                showNotification('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.');
+
+                setTimeout(function() {
+                    window.location.href = '/admin/login'
+                }, 2000);
+                throw new Error('Network response was not ok');
+            }
+            return result;
+        });
+    })
+    .then(result => {
+        // Lưu token mới vào localStorage
+        localStorage.setItem('wiseowlAdminAccessToken', result.access_token);
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+// hàm cập nhật người dùng (đã đăng nhập/ chưa đăng nhập)
+function setAdminInfo(admin_info) {
+    if (!admin_info) {
+        return
+    }
+
+    $('.avatar__container').empty().append(`
+        <a href="/admin/profile" class="full-height full-width center spa-action" style="background-color: var(--color-black-100)">            
+            <img src="${ admin_info.avatar_url }" alt="" srcset="${ admin_info.avatar_url }, ${ admin_info.avatar_url }" 
+                 onerror="this.onerror=null; this.src='/images/logo-oval.png';">
+        </a>
+    `);
+
+    $('body').addClass('logged-in');
 }

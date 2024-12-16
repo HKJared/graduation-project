@@ -156,3 +156,23 @@ a.view-document {
     color: var(--color-primary);
     margin-top: 12px;
 }
+
+.admin__container {
+    min-height: calc(100vh - 56px);
+}
+
+.action-btn {
+    font-size: .875rem;
+    font-weight: 400;
+    padding: 4px 12px;
+    border-radius: 4px;
+    color: var(--color-white-100);
+}
+
+.add-btn {
+    background-color: var(--color-primary);
+}
+
+.edit-btn {
+    background-color: var(--color-warning);
+}

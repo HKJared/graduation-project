@@ -18,6 +18,15 @@ $(document).ready(function() {
         // Cập nhật vị trí underline
         updateUnderline();
     });
+
+    $(document).on('click', '.logout-btn', function() {
+       localStorage.removeItem('wiseowlUserRefreshToken');
+       localStorage.removeItem('wiseowlUserAccessToken');
+
+       clearDataUser();
+
+       window.location.href = '/login'
+    });
 })
 
 function updateUnderline() {
@@ -37,7 +46,9 @@ function updateUnderline() {
             width: 189,
             left: leftPosition
         });
+    } else {
+        $underline.css({
+            width: 0
+        });
     }
 }
-
-
