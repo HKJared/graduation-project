@@ -80,11 +80,10 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on('click.woEvent', '.reset-btn', async function () {
-        const starter_code = $(this).attr('data-starter-code');
+    $(document).on('click.woEvent', '.reset-btn', function () {
         showConfirm('Xác nhận loại bỏ những thay đổi của bạn.', 'Xác nhận', function(result) {
             if (result) {
-                exerciseEditor.setValue(starter_code);
+                exerciseEditor.setValue(code_exercise.starter_code || '');
             }
         });
     });
@@ -153,6 +152,7 @@ function createDisplayMultipleChoiceExercise(exercise) {
 }
 
 function createDisplayCodeExercise(exercise) {
+    code_exercise = exercise.code_exercise
     return `
        <div class="row gap-16 w-full-screen container">
             <div class="content__container col panel">

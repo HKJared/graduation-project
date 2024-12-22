@@ -239,6 +239,18 @@ $(document).ready(function() {
         }
     });
 
+    $(document).on("click.wiseowlEvent", ".add-topic-exercise__container  .cancel-btn", function () {
+        const topicId = $(this).attr('data-topic-id');
+
+        const topic = topics.find(t => t.id == topicId);
+
+        showConfirm('Xác hậy loại bỏ nội dung đã thêm trước đó.', 'Xác nhận', function(result) {
+            if (result) {
+                updateViewBasedOnPath(`/admin/system-exercise-topic?name=${ topic.name }&id=${topic.id}`)
+            }
+        })
+    });
+
     // TODO: Lưu bài tập
     $(document).on("click.wiseowlEvent", ".submit-btn", function () {
         const is_valid_exercise = checkExercise();
@@ -387,7 +399,7 @@ function createAddForm(topic) {
                     </div>
                 </div>
                 <div class="action row gap-16 center sticky-bot">
-                    <button class="cancel-btn">Hủy</button>
+                    <button class="cancel-btn"  data-topic-id="${ topic.id }">Hủy</button>
                     <button class="submit-btn" data-topic-id="${ topic.id }">Xác nhận</button>
                 </div>
             </div>

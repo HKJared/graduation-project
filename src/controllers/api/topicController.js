@@ -290,7 +290,8 @@ class TopicController {
 
             await LogModel.updateDetailLog('Lấy thông tin chủ đề', log_id);
 
-            const topic_id = req.query.topic_id;
+            console.log(req.query)
+            const topic_id = req.query.id || req.query.topic_id;
             const data_to_edit = req.query.data_to_edit || 0;
 
             const topic = await TopicModel.getTopicById(topic_id);

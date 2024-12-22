@@ -436,6 +436,10 @@
     font-size: 1.25rem; 
 }
 
+.topic-exercise-item .id_col, .topic-exercise-header .id_col {
+    width: 50px;
+}
+
 .topic-exercise-item .title_col, .topic-exercise-header .title_col {
     width: 43%;
 }
@@ -466,7 +470,7 @@
 .topic-exercise-item .action_col, .topic-exercise-header .action_col {
     display: flex;
     justify-content: end;
-    width: 18%;    
+    flex-grow: 1;    
 }
 
 .topic-exercise-item .action_col a, .topic-exercise-item .action_col button {

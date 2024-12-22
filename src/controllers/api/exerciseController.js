@@ -84,11 +84,18 @@ class ExerciseController {
     // Lấy thông tin bài tập theo ID
     static async getExercise(req, res) {
         try {
-            const exerciseId = req.params.id; // Lấy ID từ URL
+            const exerciseId = req.query.id; // Lấy ID từ URL
+            
             const exercise = await ExerciseModel.getExerciseById(exerciseId);
 
             if (!exercise) {
                 return res.status(404).json({ message: "Bài tập không tồn tại." });
+            }
+
+            if (exercise.type === 'multiple_choice') {
+                exercise.multiple_choice_exercise = await ExerciseModel.getMultipleChoiceExercisesByExerciseId(exerciseId);
+            } else {
+                exercise.code_exercise = await ExerciseModel.getCodeExercise(exerciseId);
             }
 
             return res.status(200).json({ exercise });
@@ -295,7 +302,7 @@ class ExerciseController {
                     userOptions.length == correctOptions.length &&
                     userOptions.every(uo =>
                         correctOptions.some(co =>
-                            co.text == uo.text && co.image_url == uo.image_url
+                            co.text == uo.text
                         )
                     );
 

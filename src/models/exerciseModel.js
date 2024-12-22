@@ -108,11 +108,17 @@ class ExerciseModel {
         const queryString = `
             SELECT
                 e.*, 
-                t.is_editable
+                t.is_editable, t.name as topic_name,
+                u_created.username AS created_by_username,
+                u_updated.username AS updated_by_username
             FROM
                 exercises e
             JOIN
                 system_exercise_topics t ON e.topic_id = t.id
+            LEFT JOIN
+                users u_created ON e.created_by = u_created.id
+            LEFT JOIN
+                users u_updated ON e.updated_by = u_updated.id
             WHERE 
                 e.id = ?
         `;

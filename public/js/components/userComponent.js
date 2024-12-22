@@ -224,7 +224,6 @@ function createListPreviewQuestionComponent(numberQuestions) {
 }
 
 function createExerciseQuestionComponent(question, order) {
-    console.log(question)
     if (!question || !question.id) {
         return ``;
     }

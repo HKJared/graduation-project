@@ -137,7 +137,7 @@ function setView() {
 
 function updateViewPermission() {
     const role_id = $('.role-items.active').attr('data-role-id');
-
+    console.log(role_id)
     // Reset tất cả các checkbox trong $permissionContainerBody
     const $permissionContainerBody = $('.role_permission___container .panel__body');
     $permissionContainerBody.find('input[type="checkbox"]').prop('checked', false);
@@ -145,12 +145,12 @@ function updateViewPermission() {
     const role = roles.find(r => r.id == role_id);
 
     const permissions = role.permissions;
+    $('.role_permission___container .submit-role-permissions-btn').attr('data-role-id', role.id);
 
-    if (!permissions || !permissions.length) {
+    if (!permissions) {
         $('.role_permission___container .submit-role-permissions-btn').removeAttr('data-role-id');
         return
     }
-    $('.role_permission___container .submit-role-permissions-btn').attr('data-role-id', role.id);
 
     // Tích vào các checkbox có id trong mảng permissions
     permissions.forEach(permission => {
@@ -369,6 +369,21 @@ async function updateRole(id, name) {
 
 async function createRole(name) {
     const { message, new_role } = await apiWithAccessToken('role', 'POST', {name});
+
+    if (message && new_role) {
+        roles.push(new_role);
+
+        showRoles(roles, new_role.id);
+
+        showNotification(message)
+        return true
+    }
+
+    return false
+}
+
+async function updateRolePermissions(id, permission_ids) {
+    const { message, new_role } = await apiWithAccessToken('role-permissions', 'PUT', {id, permission_ids});
 
     if (message && new_role) {
         roles.push(new_role);

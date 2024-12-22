@@ -71,11 +71,15 @@ apiRouter.delete('/topic', (req, res, next) => {
     authorize(req, res, 'topic-delete', next);
 }, TopicController.deleteTopic);
 
+
 apiRouter.post('/exercise', (req, res, next) => {
     authorize(req, res, 'exercise-creation', next);
 }, ExerciseController.createExercise);
 apiRouter.get('/topic-exercises', (req, res, next) => {
     authorize(req, res, 'admin', next);
 }, ExerciseController.getTopicExercisesByAdmin);
+apiRouter.get('/exercise', (req, res, next) => {
+    authorize(req, res, 'admin', next);
+}, ExerciseController.getExercise);
 
 module.exports = apiRouter;

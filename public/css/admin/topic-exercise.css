@@ -1,0 +1,50 @@
+/* ? Thông tin bài tập */
+.exercise-info__container .info__box {
+    width: calc(100% - 300px);
+    font-size: .875rem;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+}
+
+.exercise-info__container .info__box .label {
+    display: flex;
+    width: 220px;
+    justify-content: end;
+}
+
+.exercise-info__container .info__box .content {
+    display: flex;
+    width: calc(100% - 228px);
+}
+
+.exercise-info__container .preview {
+    width: 276px;
+}
+
+.metadata p {
+    font-size: .75rem;
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 0;
+    color: var(--color-black-70);
+}
+
+
+/* ? Thông tin bài tập lập trình */
+.testcase-table {
+    border-collapse: collapse;
+}
+
+.testcase-table th, 
+.testcase-table td {
+    border: 1px solid #ddd; /* Đường kẻ giữa các ô */
+    padding: 8px; /* Khoảng cách bên trong ô */
+}
+
+.testcase-table thead tr {
+    background-color: var(--color-white-90);
+}
+
+.testcase-table span {
+    padding: 12px;
+}
