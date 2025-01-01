@@ -18,22 +18,31 @@ $(document).ready(async function() {
     // lấy topic_id
     const url = window.location.href;
     const urlParams = new URLSearchParams(new URL(url).search);
-    const topicId = urlParams.get('topic_id');
+    const exerciseId = urlParams.get('id');
+
+    const response = await apiWithAccessToken(`exercise?id=${ exerciseId }`);
+
+    if (!response || !response.exercise) {
+        $('.admin__container').append(createAlertNotFoundComponent('Không tìm thấy bài tập'))    
+
+        return
+    }
+    exercise = response.exercise
     
     // Tìm topic dựa trên topicId
-    const topic = topics.find(t => t.id == topicId);
+    const topic = topics.find(t => t.id == exercise.topic_id);
 
     // Cập nhật breadcrumd
     $('ul.breadcrumb').append(`
-        <li class="breadcrumb-item"><a href="/admin/system-exercise-topic?name=${ topic.name }&id=${ topic.id }" class="spa-action">Quản lý chủ đề</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Thêm bài tập chủ đề</li>
+        <li class="breadcrumb-item"><a href="/admin/system-exercise-topic?name=${ topic.name || '' }&id=${ topic.id || '' }" class="spa-action">Quản lý chủ đề</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Chỉnh sửa bài tập chủ đề</li>
     `);
 
     // Hiển thị form thêm bài tập
-    createAddForm(topic);
+    createEditForm(exercise, topic);
 
-    createEditor('Đề bài');
-    createCodeEditor(topic);
+    // createEditor('Đề bài');
+    // createCodeEditor(topic);
 
     if (topic.programming_language != 'Multi') {
         $('#language').addClass('unchangeable');
@@ -152,6 +161,7 @@ $(document).ready(function() {
     
         // Thêm câu hỏi mới vào cuối danh sách
         const newElement = $(newQuestionHtml).appendTo('.question-list');
+        newElement.addClass('new-question')
     
         // Cuộn xuống phần câu hỏi vừa được thêm
         $('.main-body').animate({
@@ -265,7 +275,7 @@ $(document).ready(function() {
     });
 });
 
-function createAddForm(topic) {
+function createEditForm(exercise, topic) {
     const $addTopicContainer = $('.admin__container');
 
     const type_options = [
@@ -288,124 +298,136 @@ function createAddForm(topic) {
         { value: '100', text: '100 điểm', is_selected: 0 }
     ];
 
-    let language_options;
-    if (topic.programming_language == 'Multi') {
-        language_options = [
-            { value: 'Cpp', text: 'C/C++', is_selected: 0 },
-            { value: 'Java', text: 'Java', is_selected: 0 },
-            { value: 'Pascal', text: 'Pascal', is_selected: 1 },
-            { value: 'Python', text: 'Python', is_selected: 0 }
-        ];
-    } else {
-        language_options = [
-            { value: 'Cpp', text: 'C/C++', is_selected: topic.programming_language == 'Cpp' ? 1 : 0 },
-            { value: 'Java', text: 'Java', is_selected: topic.programming_language == 'Java' ? 1 : 0 },
-            { value: 'Pascal', text: 'Pascal', is_selected: topic.programming_language == 'Pascal' ? 1 : 0 },
-            { value: 'Python', text: 'Python', is_selected: topic.programming_language == 'Python' ? 1 : 0 }
-        ];
-    }
-
-    const starter_code_options = [
-        { value: '0', text: 'Không', is_selected: 1 },
-        { value: '1', text: 'Có', is_selected: 0 },
-    ];
-
     $addTopicContainer.append(`
         <div class="row gap-24 full-width">
-            <div class="add-topic-exercise__container full-width col panel">
-                <div class="panel__header row center">
-                    <span>Thêm bài tập cho chủ đề: ${ topic.name }</span>
-                </div>
-                <div class="panel__body col gap-24">
-                    <div class="main__form col gap-16">
-                        <div class="edit-row row gap-16">
-                            <div class="col">
-                                <label for="">Tiêu đề bài tập</label>
-                                <p>Tiêu đề phải phù hợp nội dung của bài tập yêu cầu.</p>
-                                <div class="wo-input">
-                                    <input type="text" id="title">
-                                    <span class="char-count">0/50</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="edit-row row gap-16">
-                            <div class="col">
-                                <label for="">Mô tả</label>
-                                <p>Mô tả ngắn gọn nội dung, kiến thức mà bài tập mang lại.</p>
-                                <div class="wo-textarea">
-                                    <textarea name="" id="description"></textarea>
-                                    <span class="char-count">0/500</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="edit-row row gap-16">
-                            <div class="col">
-                                <label for="">Phân loại bài tập</label>
-                                ${ createSelectComponent(type_options, 'type') }
-                            </div>
-                            <div class="col">
-                                <label for="">Cấp độ</label>
-                                ${ createSelectComponent(level_options, 'level') }
-                            </div>
-                            <div class="col">
-                                <label for="">Điểm thưởng</label>
-                                ${ createSelectComponent(bonus_scores_options, 'bonus_scores') }
-                            </div>
-                        </div>
+            <div class="add-topic-exercise__container col gap-24 flex-1">
+                <div class="full-width col panel">
+                    <div class="panel__header row center">
+                        <span>Thông tin bài tập chủ đề</span>
                     </div>
-                    <div class="col gap-16 exercise-body" id="multiple_choice_exercise">
-                        <div class="box__title">
-                            <span>Danh sách câu hỏi trắc nghiệm</span>
-                        </div>
-                        <div class="box__body">
-                            ${ createListNewQuestionComponent(40) }
-                        </div>
-                        <div class="box__action row flex-box item-center">
-                            <button class="add-btn action-btn add-question-btn">Thêm câu hỏi</button>
-                            <div class="row gap-16">
-                                <p>Số câu hỏi: <span id="total_questions">40</span></p>
-                                <p>Số câu hỏi bắt buộc: <span id="total_required_questions">0</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col gap-16 exercise-body full-width" id="code_exercise" style="display: none">
-                        <div class="box__title">
-                            <span>Nội dung bài tập lập trình</span>
-                        </div>
-                        <div class="box__body scale-up-ver-top col gap-24 ">
+                    <div class="panel__body col gap-24">
+                        <div class="main__form col gap-16">
                             <div class="edit-row row gap-16">
                                 <div class="col">
-                                    <textarea name="" id="editor"></textarea>
+                                    <label for="">Tiêu đề bài tập</label>
+                                    <p>Tiêu đề phải phù hợp nội dung của bài tập yêu cầu.</p>
+                                    <div class="wo-input">
+                                        <input type="text" id="title" value="${ exercise.title }">
+                                        <span class="char-count">0/50</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="edit-row row gap-16">
                                 <div class="col">
-                                    <label for="">Ngôn ngữ</label>
-                                    ${ createSelectComponent(language_options, 'language') }
+                                    <label for="">Mô tả</label>
+                                    <p>Mô tả ngắn gọn nội dung, kiến thức mà bài tập mang lại.</p>
+                                    <div class="wo-textarea">
+                                        <textarea name="" id="description" value="${ exercise.description }">${ exercise.description }</textarea>
+                                        <span class="char-count">0/500</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="edit-row row gap-16">
+                                <div class="col">
+                                    <label for="">Phân loại bài tập</label>
+                                    ${ createSelectComponent(type_options, 'type') }
                                 </div>
                                 <div class="col">
-                                    <label for="">Code khởi đầu</label>
-                                    ${ createSelectComponent(starter_code_options, 'has_starter_code') }
+                                    <label for="">Cấp độ</label>
+                                    ${ createSelectComponent(level_options, 'level') }
                                 </div>
-                            </div>
-                            <div class="starter_code__container hide scale-up-ver-top">
-                                <textarea id="code_editor"></textarea>
-                            </div>
-                            <div class="col">
-                                <label>Test case</label>
-                                ${ createListNewTestcaseComponent() }
+                                <div class="col">
+                                    <label for="">Điểm thưởng</label>
+                                    ${ createSelectComponent(bonus_scores_options, 'bonus_scores') }
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="action row gap-16 center">
+                        <button class="cancel-btn"  data-exercise-id="${ exercise.id }">Hủy</button>
+                        <button class="submit-btn" data-exercise-id="${ exercise.id }">Xác nhận</button>
+                    </div>
                 </div>
-                <div class="action row gap-16 center sticky-bot">
-                    <button class="cancel-btn"  data-topic-id="${ topic.id }">Hủy</button>
-                    <button class="submit-btn" data-topic-id="${ topic.id }">Xác nhận</button>
-                </div>
+                ${
+                    exercise.type == "code_exercide" ?
+                    createEditCodeExercise(exercise.code_exercise) :
+                    createEditMultipleChoiceExercise(exercise.multiple_choice_exercise)
+                }
             </div>
             ${ createSide() }
         </div>
     `);
+
+    // ?: Những thông tin không thể thay đổi
+    $('#type').addClass('unchangeable');
+}
+
+function createEditMultipleChoiceExercise(multiple_choice_exercise) {
+    return `
+        <div class="col gap-16 exercise-body panel" id="multiple_choice_exercise">
+            <div class="panel__header row center">
+                <span>Danh sách câu hỏi trắc nghiệm</span>
+            </div>
+            <div class="panel__body col gap-24">
+                ${ createListEditQuestionComponent(multiple_choice_exercise) }
+                <div class="row flex-box item-center">
+                    <button class="add-btn action-btn add-question-btn">Thêm câu hỏi</button>
+                    <div class="row gap-16">
+                        <p>Số câu hỏi: <span id="total_questions">${ multiple_choice_exercise.length }</span></p>
+                        <p>Số câu hỏi bắt buộc: <span id="total_required_questions">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+function createEditCodeExercise(code_exercise) {
+    const language_options = [
+        { value: 'Cpp', text: 'C/C++', is_selected: code_exercise.language == 'Cpp' ? 1 : 0 },
+        { value: 'Java', text: 'Java', is_selected: code_exercise.language == 'Java' ? 1 : 0 },
+        { value: 'Pascal', text: 'Pascal', is_selected: code_exercise.language == 'Pascal' ? 1 : 0 },
+        { value: 'Python', text: 'Python', is_selected: code_exercise.language == 'Python' ? 1 : 0 }
+    ];
+
+    const starter_code_options = [
+        { value: '0', text: 'Không', is_selected: code_exercise.starter_code ? 1 : 0 },
+        { value: '1', text: 'Có', is_selected: code_exercise.starter_code ? 1 : 0 },
+    ];
+
+    return `
+        <div id="code_exercise" class="full-width col panel">
+            <div class="panel__header row center">
+                <span>Thông tin bài tập lập trình</span>
+            </div>
+            <div class="panel__body col gap-24">
+                <div class="box__body scale-up-ver-top col gap-24 ">
+                    <div class="edit-row row gap-16">
+                        <div class="col">
+                            <textarea name="" id="editor"></textarea>
+                        </div>
+                    </div>
+                    <div class="edit-row row gap-16">
+                        <div class="col">
+                            <label for="">Ngôn ngữ</label>
+                            ${ createSelectComponent(language_options, 'language') }
+                        </div>
+                        <div class="col">
+                            <label for="">Code khởi đầu</label>
+                            ${ createSelectComponent(starter_code_options, 'has_starter_code') }
+                        </div>
+                    </div>
+                    <div class="starter_code__container hide scale-up-ver-top">
+                        <textarea id="code_editor"></textarea>
+                    </div>
+                    <div class="col">
+                        <label>Test case</label>
+                        ${ createListNewTestcaseComponent(code_exercise.test_cases) }
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
 }
 
 function createSide() {
@@ -427,6 +449,10 @@ function createSide() {
                             <i class="fa-solid fa-circle-check"></i>
                             <span class="suggest">Mô tả bài tập phải có ít nhất 100 ký tự</span>
                         </div>
+                        <div class="suggest-item suggest_5 row gap-8">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span class="suggest">Không thể thay đổi phân loại bài tập</span>
+                        </div>
                     </div>
                 </div>
                 <div class="side-body suggest-message show panel col" data-suggest-id="multiple_choice">
@@ -446,6 +472,12 @@ function createSide() {
                             <p>- Bài tập trắc nghiệm cần tối thiểu 40 câu hỏi, 20 câu trong đó sẽ được lấy ra để làm nội dung bài tập ở phía người dùng.</p>
                             <p>- Có thể đánh dấu một câu hỏi là bắt buộc để luôn xuất hiện trong nội dung bài tập.</p>
                             <p>- Chỉ có thể đánh dấu 10 câu hỏi là bắt buộc.</p>
+                        </div>
+                        <div class="title row gap-8">
+                            <h4>Câu hỏi trắc nghiệm</h4>
+                        </div>
+                        <div class="col full-width">
+                            <p>- Với mỗi câu hỏi trắc nghiệm sau khi được chỉnh sửa hoặc thêm mới đều phải lưu.</p>
                         </div>
                     </div>
                 </div>

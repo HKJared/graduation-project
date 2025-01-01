@@ -322,14 +322,22 @@
     color: var(--color-black-100);
 }
 
-.edit-question-item .question__action .remove-question-btn, .edit-question-item .question__action .add-option-btn {
+.edit-question-item .question__action .remove-question-btn,
+.edit-question-item .question__action .add-option-btn,
+.edit-question-item .question__action .submit-question-btn {
     font-size: 20px;
     padding: 4px;
     border-radius: 4px;
     transition: all 0.2s ease;
 }
 
-.edit-question-item .question__action .remove-question-btn:hover, .edit-question-item .question__action .add-option-btn:hover {
+.edit-question-item .question__action .submit-question-btn {
+    color: var(--color-primary);
+}
+
+.edit-question-item .question__action .remove-question-btn:hover,
+.edit-question-item .question__action .submit-question-btn:hover,
+.edit-question-item .question__action .add-option-btn:hover {
     background-color: var(--color-neutral-90);
 }
 

@@ -15,7 +15,7 @@ $(document).ready(async function() {
         }
     }
 
-    // lấy topic_id
+    // lấy exercise_id
     const url = window.location.href;
     const urlParams = new URLSearchParams(new URL(url).search);
     const exerciseId = urlParams.get('id');
@@ -68,7 +68,7 @@ function showExercise(exercise) {
         }
         function createEditBtn() {
             if (exercise.is_editable && permissions.some(p => p.id === 10)) {
-                return `<a href="/admin/edit-system-exercise?title=${ exercise.title }&id=${ exercise.id }" class="spa-action edit-btn action-btn">Chỉnh sửa</a>`
+                return `<a href="/admin/edit-topic-exercise?title=${ exercise.title }&id=${ exercise.id }" class="spa-action edit-btn action-btn">Chỉnh sửa</a>`
             }
 
             return ``;
@@ -171,7 +171,7 @@ function createCodeExerciseInfo (code_exercise) {
 
     return `
         <div class="row full-width gap-24">
-            <div class="panel code-exercise-info__container col flex-1 scale-up-ver-top">
+            <div class="panel code-exercise-info__container col scale-up-ver-top" style="width: calc(50% - 12px)">
                 <div class="panel__header row flex-box item-center">
                     <span>Thông tin bài tập lập trình</span>
                     <div>
@@ -192,7 +192,7 @@ function createCodeExerciseInfo (code_exercise) {
                     </div>
                 </div>
             </div>
-            <div class="panel code-exercise-info__container col flex-1 scale-up-ver-top">
+            <div class="panel code-exercise-info__container col scale-up-ver-top" style="width: calc(50% - 12px)">
                 <div class="panel__header row flex-box item-center">
                     <span>Danh sách testcase</span>
                     <div>

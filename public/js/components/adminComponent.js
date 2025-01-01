@@ -149,7 +149,8 @@ function createEditQuestionComponent(question) {
                 </div>
                 <div class="question__action row gap-16 item-center">
                     <button class="add-option-btn" title="Thêm đáp án"><ion-icon name="add-circle-outline"></ion-icon></button>
-                    <button class="remove-question-btn" title="Xóa câu hỏi"><ion-icon name="trash-outline"></ion-icon></button>
+                    <button class="remove-question-btn" title="Xóa câu hỏi" data-question-id="${ question.id }"><ion-icon name="trash-outline"></ion-icon></button>
+                    <button class="submit-question-btn primary" title="Lưu câu hỏi" data-question-id="${ question.id }"><ion-icon name="save-outline"></ion-icon></button>
                     <div class="row gap-4 item-center is_required">
                         <span>Bắt buộc</span>
                         <div class="wo-toggle center" title="Đánh dấu là bắt buộc">
@@ -250,6 +251,23 @@ function createListNewQuestionComponent(quantity = 40) {
     let listNewQuestionComponent = ``
     for (let i = 1; i <= quantity; i++) {
         listNewQuestionComponent += createEditQuestionComponent({ id: i });
+    }
+
+    return `
+        <div class="question-list col gap-48">
+            ${ listNewQuestionComponent }
+        </div>
+    `
+}
+
+function createListEditQuestionComponent(questions) {
+    if (!questions || questions.length == 0) {
+        return createAlertNotFoundComponent('Danh sách câu hỏi trống')
+    }
+
+    let listNewQuestionComponent = ``
+    for (let i = 1; i <= questions.length; i++) {
+        listNewQuestionComponent += createEditQuestionComponent(questions[i]);
     }
 
     return `
