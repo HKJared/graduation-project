@@ -178,18 +178,70 @@ class ExerciseController {
     // Cập nhật thông tin bài tập
     static async updateExercise(req, res) {
         try {
-            const exerciseId = req.params.id; // Lấy ID từ URL
-            const exerciseData = req.body; // Dữ liệu cập nhật từ request body
-            const log_id = await LogModel.createLog('Cập nhật bài tập', req.user_id);
+            const {
+                id,
+                title,
+                description,
+                level,
+                bonus_scores
+            } = req.body.exercise; // Dữ liệu cập nhật từ request body
 
-            const isUpdated = await ExerciseModel.updateExercise(exerciseId, exerciseData);
+            const log_id = req.log_id;
+            const user_id = req.user_id;
+
+            const isUpdated = await ExerciseModel.updateExercise(id, {
+                title,
+                description,
+                level,
+                bonus_scores,
+                updated_by: user_id
+            });
             if (!isUpdated) {
                 await LogModel.updateDetailLog(`Cập nhật bài tập không thành công với ID: ${exerciseId}`, log_id);
                 return res.status(400).json({ message: "Cập nhật bài tập không thành công." });
             }
 
             await LogModel.updateStatusLog(log_id);
-            await LogModel.updateDetailLog(`Cập nhật bài tập thành công với ID: ${exerciseId}`, log_id);
+            await LogModel.updateDetailLog(`Cập nhật bài tập thành công với ID: ${id}`, log_id);
+            return res.status(200).json({ message: "Cập nhật bài tập thành công." });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    // Cập nhật thông tin bài tập
+    static async updateCodeExercise(req, res) {
+        try {
+            const {
+                exercise_id,
+                content,
+                language,
+                starter_code,
+                test_cases
+            } = req.body.code_exercise; // Dữ liệu cập nhật từ request body
+
+            const log_id = req.log_id;
+            const user_id = req.user_id;
+
+            const isUpdated = await ExerciseModel.updateCodeExercise(exercise_id, {
+                content,
+                language,
+                starter_code,
+                test_cases
+            });
+
+            if (!isUpdated) {
+                await LogModel.updateDetailLog(`Cập nhật bài tập không thành công với ID: ${exercise_id}`, log_id);
+                return res.status(400).json({ message: "Cập nhật bài tập không thành công." });
+            }
+
+            await ExerciseModel.updateExercise(exercise_id, {
+                updated_by: user_id
+            })
+
+            await LogModel.updateStatusLog(log_id);
+            await LogModel.updateDetailLog(`Cập nhật bài tập thành công với ID: ${exercise_id}`, log_id);
             return res.status(200).json({ message: "Cập nhật bài tập thành công." });
         } catch (error) {
             console.error(error);
@@ -200,17 +252,19 @@ class ExerciseController {
     // Xóa bài tập theo ID
     static async deleteExercise(req, res) {
         try {
-            const exerciseId = req.params.id; // Lấy ID từ URL
-            const log_id = await LogModel.createLog('Xóa bài tập', req.user_id);
+            const exercise_id = req.body.exercise_id; // Lấy ID từ URL
 
-            const isDeleted = await ExerciseModel.deleteExercise(exerciseId);
+            const user_id = req.user_id
+            const log_id = req.log_id;
+
+            const isDeleted = await ExerciseModel.deleteExercise(exercise_id);
             if (!isDeleted) {
                 await LogModel.updateDetailLog(`Không thành công: Bài tập không tồn tại với ID: ${exerciseId}`, log_id);
                 return res.status(404).json({ message: 'Không tìm thấy bài tập muốn xóa.' });
             }
 
             await LogModel.updateStatusLog(log_id);
-            await LogModel.updateDetailLog(`Xóa bài tập thành công với ID: ${exerciseId}`, log_id);
+            await LogModel.updateDetailLog(`Xóa bài tập thành công với ID: ${exercise_id}`, log_id);
             return res.status(200).json({ message: 'Đã xóa bài tập.' });
         } catch (error) {
             console.error(error);
@@ -480,6 +534,70 @@ class ExerciseController {
             await LogModel.updateStatusLog(log_id);
 
             return res.status(200).json({ message: 'Chấm điểm thành công', score: score, last_score: last_score, result_id: result_id, completed_topic_id: completed_topic_id })
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    // Tạo mới hoặc cập nhật câu hỏi trắc nghiệm
+    static async createOrUpdateMultipleChoiceExercise(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = req.log_id;
+
+            const question = req.body.question;
+
+            const old_question = await ExerciseModel.getMultipleChoiceExercisesById(question.id);
+
+            // nếu có thì cập nhật, nấu không có thì tạo mới
+            if (old_question) {
+                if (question.question_image_url !== old_question.question_image_url) {
+                    deleteFileFromCloudinary(old_question.question_image_url)
+                }
+
+                await ExerciseModel.updateMultipleChoiceExercises(question);
+                await LogModel.updateDetailLog(`Cập nhật câu hỏi thành công với ID: ${question.id}`, log_id);
+                await LogModel.updateStatusLog(log_id);
+                return res.status(200).json({ message: "Cập nhật câu hỏi thành công." });
+            } else {
+                await ExerciseModel.createMultipleChoiceExercises(question.exercise_id, [question]);
+                await LogModel.updateDetailLog(`Thêm câu hỏi thành công.`, log_id);
+                await LogModel.updateStatusLog(log_id);
+                return res.status(200).json({ message: "Thêm câu hỏi thành công." });
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.' });
+        }
+    }
+
+    // Lấy thông tin bài làm của một bài tập bởi người dùng
+    static async getExerciseResultByUser(req, res) {
+        try {
+            const user_id = req.user_id;
+            const exercise_id = req.query.exercise_id;
+
+            if (!exercise_id) {
+                return res.status(400).json({ message: 'Không có ID bài làm được cung cấp.' })
+            }
+
+            const exercise_result = await ExerciseModel.getUserExerciseResultByExerciseIdAndUserId(exercise_id, user_id);
+            
+            if (!exercise_result) {
+                return res.status(404).json({ message: "Không tìm thấy thông tin bài làm của bạn" });
+            }
+
+            exercise_result.exercise_data = await ExerciseModel.getExerciseById(exercise_id)
+
+            if (exercise_result.exercise_data.type === "code") {
+                exercise_result.code_data = await ExerciseModel.getCodeExerciseSubmissionByResultId(exercise_result.id);
+                exercise_result.exercise_data.code_exercise = await ExerciseModel.getCodeExercise(exercise_id);
+            } else {
+                exercise_result.multiple_choice_data = await ExerciseModel.getMultipleChoiceExerciseAnswerByResultId(exercise_result.id);
+            }
+
+            return res.status(200).json({ exercise_result: exercise_result });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Lỗi từ phía server.' });

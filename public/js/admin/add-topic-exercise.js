@@ -179,7 +179,7 @@ $(document).ready(function() {
         const $allQuestions = $(".edit-question-item");
 
         // Kiểm tra số lượng câu hỏi hiện tại
-        if ($allQuestions.length > 40) {
+        if ($allQuestions.length > 25) {
             $questionItem.slideUp()
             setTimeout( function() {
                 $questionItem.remove();
@@ -187,7 +187,7 @@ $(document).ready(function() {
                 updateTotalRequiredQuestions();
             }, 1000)
         } else {
-            showStackedNotification(`Không thể xóa câu hỏi! Phải có tối thiểu 40 câu.`, 'min_question');
+            showStackedNotification(`Không thể xóa câu hỏi! Phải có tối thiểu 25 câu.`, 'min_question');
         }
     });
 
@@ -358,12 +358,12 @@ function createAddForm(topic) {
                             <span>Danh sách câu hỏi trắc nghiệm</span>
                         </div>
                         <div class="box__body">
-                            ${ createListNewQuestionComponent(40) }
+                            ${ createListNewQuestionComponent(25) }
                         </div>
                         <div class="box__action row flex-box item-center">
                             <button class="add-btn action-btn add-question-btn">Thêm câu hỏi</button>
                             <div class="row gap-16">
-                                <p>Số câu hỏi: <span id="total_questions">40</span></p>
+                                <p>Số câu hỏi: <span id="total_questions">25</span></p>
                                 <p>Số câu hỏi bắt buộc: <span id="total_required_questions">0</span></p>
                             </div>
                         </div>
@@ -443,7 +443,7 @@ function createSide() {
                             <h4>Bài tập trắc nghiệm</h4>
                         </div>
                         <div class="col full-width">
-                            <p>- Bài tập trắc nghiệm cần tối thiểu 40 câu hỏi, 20 câu trong đó sẽ được lấy ra để làm nội dung bài tập ở phía người dùng.</p>
+                            <p>- Bài tập trắc nghiệm cần tối thiểu 25 câu hỏi, 20 câu trong đó sẽ được lấy ra để làm nội dung bài tập ở phía người dùng.</p>
                             <p>- Có thể đánh dấu một câu hỏi là bắt buộc để luôn xuất hiện trong nội dung bài tập.</p>
                             <p>- Chỉ có thể đánh dấu 10 câu hỏi là bắt buộc.</p>
                         </div>
@@ -552,9 +552,13 @@ function checkExercise() {
                 if (!optionText && !optionImage) {
                     $option.find('textarea').addClass('danger-border');
 
-                    // Cuộn đến câu hỏi không hợp lệ
+                    // // Cuộn đến câu hỏi không hợp lệ
+                    // $('.main-body').animate({
+                    //     scrollTop: $question.offset().top - 96
+                    // }, 500);
+                    let scrollPosition = $question.position().top + $('.main-body').scrollTop();
                     $('.main-body').animate({
-                        scrollTop: $question.offset().top - 96
+                        scrollTop: scrollPosition - 96
                     }, 500);
 
                     showStackedNotification('Đáp án không được để trống, phải nhập nội dung hoặc thêm một hình ảnh minh họa.', 'option_err');

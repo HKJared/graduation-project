@@ -39,7 +39,8 @@
     border-bottom: 1px solid var(--color-white-90);
 }
 
-.content__container .panel_header {
+.content__container .panel_header,
+.questions_container .panel_header {
     font-weight: 600;
     font-size: 1rem;
     color: var(--color-primary);

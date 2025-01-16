@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 15, 2024 lúc 03:40 AM
+-- Thời gian đã tạo: Th12 22, 2024 lúc 08:13 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
--- Phiên bản PHP: 8.2.12
+-- Phiên bản PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,12 +29,20 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `code_exercises` (
   `exercise_id` int(11) NOT NULL,
-  `prompt` longtext NOT NULL,
+  `content` longtext NOT NULL,
   `language` enum('Cpp','Java','Pascal','Python') NOT NULL,
   `starter_code` text DEFAULT NULL,
   `time_limit` int(11) DEFAULT NULL,
   `test_cases` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`test_cases`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `code_exercises`
+--
+
+INSERT INTO `code_exercises` (`exercise_id`, `content`, `language`, `starter_code`, `time_limit`, `test_cases`) VALUES
+(3, 'In ra màn hình dòng chữ Hello, World!', 'Pascal', 'program HelloWorld;\r\nbegin\r\n    Writeln(\'Hello, World!\');\r\nend.', NULL, '[\r\n{\"input\":\"\", \"output\": \"Hello, World!\"},\r\n{\"input\":\"\", \"output\": \"Hello, World!\"},\r\n{\"input\":\"\", \"output\": \"Hello, World!\"},\r\n{\"input\":\"\", \"output\": \"Hello, World!\"}\r\n]'),
+(5, '<p>sdfsdfsdfsdfsdf</p>', 'Pascal', NULL, NULL, '[{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"},{\"input\":\"\",\"output\":\"\"}]');
 
 -- --------------------------------------------------------
 
@@ -64,11 +72,62 @@ CREATE TABLE `exercises` (
   `description` text NOT NULL,
   `type` enum('multiple_choice','code') NOT NULL,
   `level` enum('easy','medium','hard') NOT NULL DEFAULT 'easy',
+  `bonus_scores` int(11) NOT NULL,
   `is_key_exercise` tinyint(1) NOT NULL DEFAULT 0,
   `created_by` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_by` int(11) DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `exercises`
+--
+
+INSERT INTO `exercises` (`id`, `topic_id`, `title`, `description`, `type`, `level`, `bonus_scores`, `is_key_exercise`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
+(1, 18, 'Bài tập đầu tiên cùng WiseOwl', 'Khời đầu cùng chúng tôi trong mảng lập trình là sự lựa chọn đúng đắn của bạn. Giờ đây chúng ta cùng đến với một bài trắc nghiệm nhỏ giúp bạn làm quen với lập trình nhé.', 'multiple_choice', 'easy', 50, 0, 1, '2024-12-18 04:31:22', NULL, NULL),
+(2, 19, 'Trắc nghiệm với Pascal', 'Một bài trắc nghiệm nhỏ sau khi bạn đã đọc tài liệu mà chúng tôi cung cấp, đồng thời kiểm tra kiens thức mở rộng của bạn.', 'multiple_choice', 'easy', 50, 0, 1, '2024-12-18 05:11:39', NULL, NULL),
+(3, 19, 'Bắt cầu lập trình với Pascal', 'Một bài tập lập trình nhỏ giúp bạn khởi động lập trình.', 'code', 'easy', 50, 0, 1, '2024-12-18 05:20:01', NULL, NULL),
+(4, 21, 'adasdasdasdasd', 'ádasdasdasdasdasấdfadfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfssdfsdfsdf', 'multiple_choice', 'easy', 50, 0, 1, '2024-12-18 07:39:01', NULL, NULL),
+(5, 22, 'sdfsdfsd', 'âsdasdasdasdasâsdasdasdasdas\nâsdasdasdasdasâsdasdasdasdasâsdasdasdasdasâsdasdasdasdasâsdasdasdasdasâsdasdasdasdas', 'code', 'easy', 50, 0, 1, '2024-12-18 07:47:18', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `instructors`
+--
+
+CREATE TABLE `instructors` (
+  `user_id` int(11) NOT NULL,
+  `phone_number` varchar(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `teaching_levels` enum('THPT','Cao đẳng','Đại học','') NOT NULL,
+  `teaching_certificate_url` text NOT NULL,
+  `is_approved` tinyint(1) NOT NULL DEFAULT 0,
+  `approved_by` int(11) DEFAULT NULL,
+  `approved_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `instructor_identifications`
+--
+
+CREATE TABLE `instructor_identifications` (
+  `user_id` int(11) NOT NULL,
+  `id_type` varchar(50) NOT NULL,
+  `id_value` varchar(255) NOT NULL,
+  `fullname` varchar(255) NOT NULL,
+  `id_image_url` varchar(255) DEFAULT NULL,
+  `id_image_with_person_url` varchar(255) DEFAULT NULL,
+  `is_verified` tinyint(1) DEFAULT 0,
+  `verified_by` int(11) DEFAULT NULL,
+  `verified_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -2230,7 +2289,486 @@ INSERT INTO `logs` (`id`, `user_id`, `action`, `status`, `detail`, `created_at`)
 (2133, 1, 'admin', 1, '[2024:11:14 17:35:25]: Thấy thông tin cá nhân', '2024-11-14 10:35:25'),
 (2134, 1, 'admin', 1, '[2024:11:14 17:40:48]: Xem số liệu thống kê bài tập hệ thống.', '2024-11-14 10:40:48'),
 (2135, 1, 'admin', 1, '[2024:11:14 17:40:48]: Xem toàn bộ bài tập hệ thống.', '2024-11-14 10:40:48'),
-(2136, 1, 'admin', 0, '[2024:11:14 19:14:45]: Lấy thông tin chủ đề', '2024-11-14 12:14:45');
+(2136, 1, 'admin', 0, '[2024:11:14 19:14:45]: Lấy thông tin chủ đề', '2024-11-14 12:14:45'),
+(2137, 2, 'view-topics', 1, '[2024:12:18 10:59:35]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 03:59:35'),
+(2138, 2, 'view-topic', 0, '[2024:12:18 11:08:27]: Lấy thông tin chủ đề chó ID: 18', '2024-12-18 04:08:27'),
+(2139, 2, 'view-topics', 1, '[2024:12:18 11:09:33]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 04:09:33'),
+(2140, 2, 'view-topic', 1, '[2024:12:18 11:09:33]: Lấy thông tin chủ đề chó ID: 18', '2024-12-18 04:09:33'),
+(2141, 1, 'role_permissions', 1, '[2024:12:18 11:09:47]: Lấy danh sách quyền hạn', '2024-12-18 04:09:47'),
+(2142, 1, 'admin', 1, '[2024:12:18 11:09:47]: Thấy thông tin cá nhân', '2024-12-18 04:09:47'),
+(2143, 1, 'admin', 1, '[2024:12:18 11:09:49]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 04:09:49'),
+(2144, 1, 'admin', 1, '[2024:12:18 11:09:49]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:09:49'),
+(2145, 1, 'admin', 0, '[2024:12:18 11:09:57]: Lấy thông tin chủ đề', '2024-12-18 04:09:57'),
+(2146, 1, 'admin', 1, '[2024:12:18 11:09:57]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:09:57'),
+(2147, 1, 'admin', 1, '[2024:12:18 11:15:46]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 04:15:46'),
+(2148, 1, 'admin', 0, '[2024:12:18 11:15:53]: Lấy thông tin chủ đề', '2024-12-18 04:15:53'),
+(2149, 1, 'admin', 1, '[2024:12:18 11:15:53]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-18 04:15:53'),
+(2150, 1, 'admin', 1, '[2024:12:18 11:15:57]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 04:15:57'),
+(2151, 1, 'topic-lock', 1, '[2024:12:18 11:16:03]: Mở khóa chỉnh sửa chủ đề: Khởi đầu cùng WiseOwl (ID: 18).\n[2024:12:18 11:16:03]: Không có dữ liệu chủ đề hoàn thành được xóa.\n[2024:12:18 11:16:03]: Không có dữ liệu bài làm của người dùng được xóa.', '2024-12-18 04:16:03'),
+(2152, 1, 'admin', 0, '[2024:12:18 11:16:05]: Lấy thông tin chủ đề', '2024-12-18 04:16:05'),
+(2153, 1, 'admin', 1, '[2024:12:18 11:16:05]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:16:05'),
+(2154, 1, 'admin', 1, '[2024:12:18 11:16:30]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 04:16:30'),
+(2155, 1, 'admin', 0, '[2024:12:18 11:17:25]: Lấy thông tin chủ đề', '2024-12-18 04:17:25'),
+(2156, 1, 'admin', 1, '[2024:12:18 11:17:25]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:17:25'),
+(2157, 1, 'admin', 0, '[2024:12:18 11:20:02]: Lấy thông tin chủ đề', '2024-12-18 04:20:02'),
+(2158, 1, 'admin', 1, '[2024:12:18 11:20:02]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:20:02'),
+(2159, 1, 'admin', 0, '[2024:12:18 11:20:47]: Lấy thông tin chủ đề', '2024-12-18 04:20:47'),
+(2160, 1, 'admin', 1, '[2024:12:18 11:20:47]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:20:47'),
+(2161, 1, 'role_permissions', 1, '[2024:12:18 11:21:43]: Lấy danh sách quyền hạn', '2024-12-18 04:21:43'),
+(2162, 1, 'admin', 1, '[2024:12:18 11:21:44]: Thấy thông tin cá nhân', '2024-12-18 04:21:44'),
+(2163, 1, 'admin', 1, '[2024:12:18 11:21:44]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:21:44'),
+(2164, 1, 'role_permissions', 1, '[2024:12:18 11:22:05]: Lấy danh sách quyền hạn', '2024-12-18 04:22:05'),
+(2165, 1, 'admin', 1, '[2024:12:18 11:22:06]: Thấy thông tin cá nhân', '2024-12-18 04:22:06'),
+(2166, 1, 'admin', 1, '[2024:12:18 11:22:06]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:22:06'),
+(2167, 1, 'role_permissions', 1, '[2024:12:18 11:22:18]: Lấy danh sách quyền hạn', '2024-12-18 04:22:18'),
+(2168, 1, 'admin', 1, '[2024:12:18 11:22:19]: Thấy thông tin cá nhân', '2024-12-18 04:22:19'),
+(2169, 1, 'admin', 1, '[2024:12:18 11:22:19]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:22:19'),
+(2170, 1, 'role_permissions', 1, '[2024:12:18 11:22:45]: Lấy danh sách quyền hạn', '2024-12-18 04:22:45'),
+(2171, 1, 'admin', 1, '[2024:12:18 11:22:46]: Thấy thông tin cá nhân', '2024-12-18 04:22:46'),
+(2172, 1, 'admin', 1, '[2024:12:18 11:22:46]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:22:46'),
+(2173, 1, 'role_permissions', 1, '[2024:12:18 11:24:15]: Lấy danh sách quyền hạn', '2024-12-18 04:24:15'),
+(2174, 1, 'admin', 1, '[2024:12:18 11:24:16]: Thấy thông tin cá nhân', '2024-12-18 04:24:16'),
+(2175, 1, 'admin', 1, '[2024:12:18 11:24:16]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:24:16'),
+(2176, 1, 'role_permissions', 1, '[2024:12:18 11:24:54]: Lấy danh sách quyền hạn', '2024-12-18 04:24:54'),
+(2177, 1, 'admin', 1, '[2024:12:18 11:24:55]: Thấy thông tin cá nhân', '2024-12-18 04:24:55'),
+(2178, 1, 'admin', 1, '[2024:12:18 11:24:55]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:24:55'),
+(2179, 1, 'role_permissions', 1, '[2024:12:18 11:25:16]: Lấy danh sách quyền hạn', '2024-12-18 04:25:16'),
+(2180, 1, 'admin', 1, '[2024:12:18 11:25:17]: Thấy thông tin cá nhân', '2024-12-18 04:25:17'),
+(2181, 1, 'admin', 1, '[2024:12:18 11:25:17]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:25:17'),
+(2182, 1, 'role_permissions', 1, '[2024:12:18 11:25:28]: Lấy danh sách quyền hạn', '2024-12-18 04:25:28'),
+(2183, 1, 'admin', 1, '[2024:12:18 11:25:29]: Thấy thông tin cá nhân', '2024-12-18 04:25:29'),
+(2184, 1, 'admin', 1, '[2024:12:18 11:25:29]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:25:29'),
+(2185, 1, 'role_permissions', 1, '[2024:12:18 11:25:44]: Lấy danh sách quyền hạn', '2024-12-18 04:25:44'),
+(2186, 1, 'admin', 1, '[2024:12:18 11:25:45]: Thấy thông tin cá nhân', '2024-12-18 04:25:45'),
+(2187, 1, 'admin', 1, '[2024:12:18 11:25:45]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:25:45'),
+(2188, 1, 'role_permissions', 1, '[2024:12:18 11:26:19]: Lấy danh sách quyền hạn', '2024-12-18 04:26:19'),
+(2189, 1, 'admin', 1, '[2024:12:18 11:26:20]: Thấy thông tin cá nhân', '2024-12-18 04:26:20'),
+(2190, 1, 'admin', 1, '[2024:12:18 11:26:20]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 04:26:20'),
+(2191, 1, 'admin', 0, '[2024:12:18 11:26:23]: Lấy thông tin chủ đề', '2024-12-18 04:26:23'),
+(2192, 1, 'admin', 1, '[2024:12:18 11:26:23]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:26:23'),
+(2193, 1, 'admin', 0, '[2024:12:18 11:26:30]: Lấy thông tin chủ đề', '2024-12-18 04:26:30'),
+(2194, 1, 'admin', 1, '[2024:12:18 11:26:30]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:26:30'),
+(2195, 1, 'admin', 1, '[2024:12:18 11:26:41]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 04:26:41'),
+(2196, 1, 'admin', 0, '[2024:12:18 11:26:49]: Lấy thông tin chủ đề', '2024-12-18 04:26:49'),
+(2197, 1, 'admin', 1, '[2024:12:18 11:26:49]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 04:26:49'),
+(2198, 1, 'admin', 1, '[2024:12:18 12:04:21]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 05:04:21'),
+(2199, 1, 'admin', 0, '[2024:12:18 12:04:25]: Lấy thông tin chủ đề', '2024-12-18 05:04:25'),
+(2200, 1, 'admin', 1, '[2024:12:18 12:04:25]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 05:04:25'),
+(2201, 1, 'role_permissions', 1, '[2024:12:18 12:04:50]: Lấy danh sách quyền hạn', '2024-12-18 05:04:50'),
+(2202, 1, 'admin', 1, '[2024:12:18 12:04:51]: Thấy thông tin cá nhân', '2024-12-18 05:04:51'),
+(2203, 1, 'admin', 1, '[2024:12:18 12:04:59]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 05:04:59'),
+(2204, 1, 'admin', 1, '[2024:12:18 12:04:59]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 05:04:59'),
+(2205, 1, 'admin', 0, '[2024:12:18 12:05:04]: Lấy thông tin chủ đề', '2024-12-18 05:05:04'),
+(2206, 1, 'admin', 1, '[2024:12:18 12:05:04]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 05:05:04'),
+(2207, 1, 'admin', 1, '[2024:12:18 12:05:12]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 05:05:12'),
+(2208, 1, 'admin', 0, '[2024:12:18 12:05:20]: Lấy thông tin chủ đề', '2024-12-18 05:05:20'),
+(2209, 1, 'admin', 1, '[2024:12:18 12:05:20]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 05:05:20'),
+(2210, 1, 'admin', 1, '[2024:12:18 12:05:22]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 05:05:22'),
+(2211, 1, 'topic-lock', 1, '[2024:12:18 12:05:25]: Khóa chỉnh sửa chủ đề: Khởi đầu cùng WiseOwl (ID: 18).', '2024-12-18 05:05:25'),
+(2212, 2, 'view-topic', 1, '[2024:12:18 12:05:30]: Lấy thông tin chủ đề chó ID: 18', '2024-12-18 05:05:30'),
+(2213, 2, 'do-system-exercise', 1, '[2024:12:18 12:05:32]: Làm bài tập có ID: 1.', '2024-12-18 05:05:32'),
+(2214, 2, 'view-topics', 1, '[2024:12:18 12:06:07]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 05:06:07'),
+(2215, 2, 'do-system-exercise', 1, '[2024:12:18 12:06:07]: Làm bài tập có ID: 1.', '2024-12-18 05:06:07'),
+(2216, 2, 'view-topics', 1, '[2024:12:18 12:06:44]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 05:06:44'),
+(2217, 2, 'do-system-exercise', 1, '[2024:12:18 12:06:44]: Làm bài tập có ID: 1.', '2024-12-18 05:06:44'),
+(2218, 2, 'view-topics', 1, '[2024:12:18 12:08:02]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 05:08:02'),
+(2219, 2, 'do-system-exercise', 1, '[2024:12:18 12:08:02]: Làm bài tập có ID: 1.', '2024-12-18 05:08:02'),
+(2220, 2, 'view-topic', 1, '[2024:12:18 12:08:33]: Lấy thông tin chủ đề chó ID: 18', '2024-12-18 05:08:33'),
+(2221, 1, 'admin', 0, '[2024:12:18 12:08:54]: Lấy thông tin chủ đề', '2024-12-18 05:08:54'),
+(2222, 1, 'admin', 1, '[2024:12:18 12:08:54]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-18 05:08:54'),
+(2223, 1, 'admin', 1, '[2024:12:18 12:23:22]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 05:23:22'),
+(2224, 1, 'topic-lock', 1, '[2024:12:18 12:23:25]: Khóa chỉnh sửa chủ đề: Khởi đầu lập trình với Pascal (ID: 19).', '2024-12-18 05:23:25'),
+(2225, 1, 'admin', 0, '[2024:12:18 12:23:27]: Lấy thông tin chủ đề', '2024-12-18 05:23:27'),
+(2226, 1, 'admin', 1, '[2024:12:18 12:23:27]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-18 05:23:27'),
+(2227, 1, 'admin', 1, '[2024:12:18 12:23:35]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 05:23:35'),
+(2228, 2, 'view-topics', 1, '[2024:12:18 12:23:40]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 05:23:39'),
+(2229, 2, 'view-topic', 1, '[2024:12:18 12:23:40]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:23:40'),
+(2230, 2, 'do-system-exercise', 1, '[2024:12:18 12:23:43]: Làm bài tập có ID: 3.', '2024-12-18 05:23:43'),
+(2231, 2, 'view-topics', 1, '[2024:12:18 12:24:52]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 05:24:52'),
+(2232, 2, 'do-system-exercise', 1, '[2024:12:18 12:24:52]: Làm bài tập có ID: 3.', '2024-12-18 05:24:52'),
+(2233, 2, 'view-topics', 1, '[2024:12:18 12:25:49]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 05:25:49'),
+(2234, 2, 'do-system-exercise', 1, '[2024:12:18 12:25:49]: Làm bài tập có ID: 3.', '2024-12-18 05:25:49'),
+(2235, 2, 'exercise-submit', 0, '[2024:12:18 12:25:55]: Điểm bài làm mới: 0', '2024-12-18 05:25:52'),
+(2236, 2, 'exercise-submit', 1, '[2024:12:18 12:26:52]: Điểm bài làm mới: 0', '2024-12-18 05:26:52'),
+(2237, 2, 'view-topic', 1, '[2024:12:18 12:27:33]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:27:33'),
+(2238, 2, 'view-topic', 1, '[2024:12:18 12:27:45]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:27:45'),
+(2239, 2, 'do-system-exercise', 1, '[2024:12:18 12:27:47]: Làm bài tập có ID: 3.', '2024-12-18 05:27:47'),
+(2240, 2, 'view-topic', 1, '[2024:12:18 12:27:54]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:27:54'),
+(2241, 2, 'do-system-exercise', 1, '[2024:12:18 12:27:58]: Làm bài tập có ID: 2.', '2024-12-18 05:27:58'),
+(2242, 2, 'exercise-submit', 0, '[2024:12:18 12:28:24]: Điểm bài làm mới: 0', '2024-12-18 05:28:24'),
+(2243, 2, 'exercise-submit', 1, '[2024:12:18 12:29:54]: Điểm bài làm cũ: 0. Điểm bài làm mới: 0', '2024-12-18 05:29:54'),
+(2244, 2, 'view-topic', 1, '[2024:12:18 12:30:01]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:30:01'),
+(2245, 2, 'do-system-exercise', 1, '[2024:12:18 12:30:02]: Làm bài tập có ID: 2.', '2024-12-18 05:30:02'),
+(2246, 2, 'view-topic', 1, '[2024:12:18 12:30:04]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:30:04'),
+(2247, 2, 'view-topic', 1, '[2024:12:18 12:30:32]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:30:32'),
+(2248, 2, 'do-system-exercise', 1, '[2024:12:18 12:30:33]: Làm bài tập có ID: 3.', '2024-12-18 05:30:33'),
+(2249, 2, 'exercise-submit', 1, '[2024:12:18 12:30:38]: Điểm bài làm cũ: 0. Điểm bài làm mới: 0', '2024-12-18 05:30:38'),
+(2250, 2, 'view-topics', 1, '[2024:12:18 12:31:11]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 05:31:11'),
+(2251, 2, 'do-system-exercise', 1, '[2024:12:18 12:31:11]: Làm bài tập có ID: 3.', '2024-12-18 05:31:11'),
+(2252, 2, 'view-topic', 1, '[2024:12:18 12:31:45]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:31:45'),
+(2253, 2, 'do-system-exercise', 1, '[2024:12:18 12:31:47]: Làm bài tập có ID: 3.', '2024-12-18 05:31:47'),
+(2254, 2, 'exercise-submit', 1, '[2024:12:18 12:31:51]: Điểm bài làm cũ: 0. Điểm bài làm mới: 100', '2024-12-18 05:31:50'),
+(2255, 2, 'view-topic', 1, '[2024:12:18 12:31:53]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:31:53'),
+(2256, 2, 'view-topic', 1, '[2024:12:18 12:54:29]: Lấy thông tin chủ đề chó ID: 18', '2024-12-18 05:54:29'),
+(2257, 2, 'view-topic', 1, '[2024:12:18 12:54:34]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:54:34'),
+(2258, 2, 'do-system-exercise', 1, '[2024:12:18 12:55:34]: Làm bài tập có ID: 2.', '2024-12-18 05:55:34'),
+(2259, 2, 'view-topic', 1, '[2024:12:18 12:56:11]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 05:56:11'),
+(2260, 2, 'do-system-exercise', 1, '[2024:12:18 12:56:12]: Làm bài tập có ID: 3.', '2024-12-18 05:56:12'),
+(2261, 2, 'view-topic', 1, '[2024:12:18 13:02:15]: Lấy thông tin chủ đề chó ID: 18', '2024-12-18 06:02:15'),
+(2262, 2, 'view-topic', 1, '[2024:12:18 13:04:57]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 06:04:57'),
+(2263, 2, 'do-system-exercise', 1, '[2024:12:18 13:04:58]: Làm bài tập có ID: 2.', '2024-12-18 06:04:58'),
+(2264, 2, 'exercise-submit', 1, '[2024:12:18 13:05:49]: Điểm bài làm cũ: 0. Điểm bài làm mới: 0', '2024-12-18 06:05:49'),
+(2265, 2, 'view-topic', 1, '[2024:12:18 13:06:04]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 06:06:04'),
+(2266, 2, 'do-system-exercise', 1, '[2024:12:18 13:07:53]: Làm bài tập có ID: 2.', '2024-12-18 06:07:53'),
+(2267, 2, 'exercise-submit', 1, '[2024:12:18 13:09:10]: Điểm bài làm cũ: 0. Điểm bài làm mới: 25', '2024-12-18 06:09:10'),
+(2268, 2, 'view-topic', 1, '[2024:12:18 13:09:17]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 06:09:17'),
+(2269, 2, 'do-system-exercise', 1, '[2024:12:18 13:11:35]: Làm bài tập có ID: 2.', '2024-12-18 06:11:35'),
+(2270, 2, 'view-topic', 1, '[2024:12:18 13:20:13]: Lấy thông tin chủ đề chó ID: 19', '2024-12-18 06:20:13'),
+(2271, 2, 'do-system-exercise', 1, '[2024:12:18 13:20:15]: Làm bài tập có ID: 3.', '2024-12-18 06:20:15'),
+(2272, 2, 'view-topics', 1, '[2024:12:18 13:24:52]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 06:24:52'),
+(2273, 2, 'do-system-exercise', 1, '[2024:12:18 13:24:52]: Làm bài tập có ID: 3.', '2024-12-18 06:24:52'),
+(2274, 1, 'admin', 0, '[2024:12:18 13:27:23]: Lấy thông tin chủ đề', '2024-12-18 06:27:23'),
+(2275, 1, 'admin', 1, '[2024:12:18 13:27:23]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 06:27:23'),
+(2276, 1, 'admin', 1, '[2024:12:18 13:27:30]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 06:27:30'),
+(2277, 1, 'admin', 0, '[2024:12:18 13:27:32]: Lấy thông tin chủ đề', '2024-12-18 06:27:32'),
+(2278, 1, 'admin', 1, '[2024:12:18 13:27:32]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-18 06:27:32'),
+(2279, 1, 'admin', 0, '[2024:12:18 13:29:59]: Lấy thông tin chủ đề', '2024-12-18 06:29:59'),
+(2280, 1, 'admin', 1, '[2024:12:18 13:29:59]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-18 06:29:59'),
+(2281, 1, 'admin', 1, '[2024:12:18 13:39:09]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 06:39:09'),
+(2282, 1, 'topic-lock', 1, '[2024:12:18 13:39:21]: Mở khóa chỉnh sửa chủ đề: Khởi đầu cùng WiseOwl (ID: 18).\n[2024:12:18 13:39:21]: Không có dữ liệu chủ đề hoàn thành được xóa.\n[2024:12:18 13:39:21]: Không có dữ liệu bài làm của người dùng được xóa.', '2024-12-18 06:39:21'),
+(2283, 1, 'admin', 0, '[2024:12:18 13:39:22]: Lấy thông tin chủ đề', '2024-12-18 06:39:22'),
+(2284, 1, 'admin', 1, '[2024:12:18 13:39:22]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-18 06:39:22'),
+(2285, 1, 'admin', 0, '[2024:12:18 13:41:24]: Tìm kiếm tài khoản quản trị viên.', '2024-12-18 06:41:24'),
+(2286, 1, 'admin-authorization', 1, '[2024:12:18 13:41:33]: get_roles', '2024-12-18 06:41:33'),
+(2287, 1, 'admin-authorization', 1, '[2024:12:18 13:41:48]: Tạo chức vụ mới.', '2024-12-18 06:41:48'),
+(2288, 1, 'role_permissions', 1, '[2024:12:18 13:42:32]: Lấy danh sách quyền hạn', '2024-12-18 06:42:32'),
+(2289, 1, 'admin-authorization', 1, '[2024:12:18 13:42:32]: get_roles', '2024-12-18 06:42:32'),
+(2290, 1, 'admin', 1, '[2024:12:18 13:42:32]: Thấy thông tin cá nhân', '2024-12-18 06:42:32'),
+(2291, 1, 'role_permissions', 1, '[2024:12:18 13:46:16]: Lấy danh sách quyền hạn', '2024-12-18 06:46:16'),
+(2292, 1, 'admin', 1, '[2024:12:18 13:46:17]: Thấy thông tin cá nhân', '2024-12-18 06:46:17'),
+(2293, 1, 'admin-authorization', 1, '[2024:12:18 13:46:17]: get_roles', '2024-12-18 06:46:17'),
+(2294, 1, 'role_permissions', 1, '[2024:12:18 13:48:57]: Lấy danh sách quyền hạn', '2024-12-18 06:48:57'),
+(2295, 1, 'admin', 1, '[2024:12:18 13:48:57]: Thấy thông tin cá nhân', '2024-12-18 06:48:57'),
+(2296, 1, 'admin-authorization', 1, '[2024:12:18 13:48:57]: get_roles', '2024-12-18 06:48:57'),
+(2297, 1, 'admin-authorization', 1, '[2024:12:18 13:49:01]: Chỉnh sửa quyền hạn chức vụ.', '2024-12-18 06:49:01'),
+(2298, 1, 'role_permissions', 1, '[2024:12:18 13:49:04]: Lấy danh sách quyền hạn', '2024-12-18 06:49:04'),
+(2299, 1, 'admin', 1, '[2024:12:18 13:49:04]: Thấy thông tin cá nhân', '2024-12-18 06:49:04'),
+(2300, 1, 'admin-authorization', 1, '[2024:12:18 13:49:04]: get_roles', '2024-12-18 06:49:04'),
+(2301, 1, 'admin', 0, '[2024:12:18 13:49:47]: Tìm kiếm tài khoản quản trị viên.', '2024-12-18 06:49:47'),
+(2302, 1, 'admin', 1, '[2024:12:18 13:49:48]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 06:49:48'),
+(2303, 1, 'admin', 1, '[2024:12:18 13:49:48]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 06:49:48'),
+(2304, 1, 'admin', 0, '[2024:12:18 13:53:29]: Lấy thông tin chủ đề', '2024-12-18 06:53:29'),
+(2305, 1, 'admin', 1, '[2024:12:18 13:53:34]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 06:53:34'),
+(2306, 1, 'admin', 0, '[2024:12:18 13:53:37]: Lấy thông tin chủ đề', '2024-12-18 06:53:37'),
+(2307, 1, 'role_permissions', 1, '[2024:12:18 13:54:28]: Lấy danh sách quyền hạn', '2024-12-18 06:54:28'),
+(2308, 1, 'admin', 1, '[2024:12:18 13:54:28]: Thấy thông tin cá nhân', '2024-12-18 06:54:28'),
+(2309, 1, 'admin', 1, '[2024:12:18 13:54:28]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 06:54:28'),
+(2310, 1, 'admin', 0, '[2024:12:18 13:54:28]: Lấy thông tin chủ đề', '2024-12-18 06:54:28'),
+(2311, 1, 'role_permissions', 1, '[2024:12:18 13:55:04]: Lấy danh sách quyền hạn', '2024-12-18 06:55:04'),
+(2312, 1, 'admin', 1, '[2024:12:18 13:55:04]: Thấy thông tin cá nhân', '2024-12-18 06:55:04'),
+(2313, 1, 'admin', 1, '[2024:12:18 13:55:04]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 06:55:04'),
+(2314, 1, 'admin', 0, '[2024:12:18 13:55:04]: Lấy thông tin chủ đề', '2024-12-18 06:55:04'),
+(2315, 1, 'admin', 1, '[2024:12:18 13:58:21]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 06:58:21'),
+(2316, 1, 'admin', 0, '[2024:12:18 13:59:13]: Lấy thông tin chủ đề', '2024-12-18 06:59:13'),
+(2317, 1, 'admin', 1, '[2024:12:18 14:13:04]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 07:13:04'),
+(2318, 1, 'topic-creation', 1, '[2024:12:18 14:15:31]: Tạo chủ đề mới thành công.', '2024-12-18 07:15:31'),
+(2319, 1, 'topic-creation', 1, '[2024:12:18 14:20:07]: Tạo chủ đề mới thành công.', '2024-12-18 07:20:07'),
+(2320, 1, 'admin', 0, '[2024:12:18 14:20:16]: Lấy thông tin chủ đề', '2024-12-18 07:20:16'),
+(2321, 1, 'role_permissions', 1, '[2024:12:18 14:21:04]: Lấy danh sách quyền hạn', '2024-12-18 07:21:04'),
+(2322, 1, 'admin', 1, '[2024:12:18 14:21:04]: Thấy thông tin cá nhân', '2024-12-18 07:21:04'),
+(2323, 1, 'admin', 1, '[2024:12:18 14:21:04]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 07:21:04'),
+(2324, 1, 'admin', 0, '[2024:12:18 14:21:04]: Lấy thông tin chủ đề', '2024-12-18 07:21:04'),
+(2325, 1, 'role_permissions', 1, '[2024:12:18 14:21:13]: Lấy danh sách quyền hạn', '2024-12-18 07:21:13'),
+(2326, 1, 'admin', 1, '[2024:12:18 14:21:13]: Xem toàn bộ bài tập hệ thống.', '2024-12-18 07:21:13'),
+(2327, 1, 'admin', 1, '[2024:12:18 14:21:13]: Thấy thông tin cá nhân', '2024-12-18 07:21:13'),
+(2328, 1, 'admin', 0, '[2024:12:18 14:21:13]: Lấy thông tin chủ đề', '2024-12-18 07:21:13'),
+(2329, 1, 'admin', 1, '[2024:12:18 14:21:13]: Lấy danh sách bài tập của chủ đề có Id: 22', '2024-12-18 07:21:13'),
+(2330, 1, 'admin', 0, '[2024:12:18 14:22:30]: Lấy thông tin chủ đề', '2024-12-18 07:22:30'),
+(2331, 1, 'topic-edit', 1, '[2024:12:18 14:30:59]: Cập nhật thông tin chủ đề: ádasd (ID: 22).', '2024-12-18 07:30:58'),
+(2332, 1, 'admin', 0, '[2024:12:18 14:31:01]: Lấy thông tin chủ đề', '2024-12-18 07:31:01'),
+(2333, 1, 'admin', 1, '[2024:12:18 14:31:01]: Lấy danh sách bài tập của chủ đề có Id: 22', '2024-12-18 07:31:01'),
+(2334, 1, 'admin', 0, '[2024:12:18 14:31:13]: Lấy thông tin chủ đề', '2024-12-18 07:31:13'),
+(2335, 1, 'admin', 1, '[2024:12:18 14:33:08]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 07:33:08'),
+(2336, 1, 'admin', 0, '[2024:12:18 14:33:14]: Lấy thông tin chủ đề', '2024-12-18 07:33:14'),
+(2337, 1, 'admin', 1, '[2024:12:18 14:33:14]: Lấy danh sách bài tập của chủ đề có Id: 21', '2024-12-18 07:33:14'),
+(2338, 1, 'exercise-creation', 1, '[2024:12:18 14:39:01]: Tạo bài tập thành công với ID: 4', '2024-12-18 07:39:01'),
+(2339, 1, 'admin', 1, '[2024:12:18 14:39:05]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 07:39:05'),
+(2340, 1, 'admin', 0, '[2024:12:18 14:45:07]: Lấy thông tin chủ đề', '2024-12-18 07:45:07'),
+(2341, 1, 'admin', 1, '[2024:12:18 14:45:07]: Lấy danh sách bài tập của chủ đề có Id: 22', '2024-12-18 07:45:07'),
+(2342, 1, 'exercise-creation', 1, '[2024:12:18 14:47:18]: Tạo bài tập thành công với ID: 5', '2024-12-18 07:47:18'),
+(2343, 1, 'admin', 1, '[2024:12:18 14:47:21]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-18 07:47:21'),
+(2344, 1, 'admin', 0, '[2024:12:18 14:47:25]: Lấy thông tin chủ đề', '2024-12-18 07:47:25'),
+(2345, 1, 'admin', 1, '[2024:12:18 14:47:25]: Lấy danh sách bài tập của chủ đề có Id: 22', '2024-12-18 07:47:25'),
+(2346, 2, 'view-topic', 0, '[2024:12:18 16:13:20]: Lấy thông tin chủ đề chó ID: 18\n[2024:12:18 16:13:20]: Chủ đề không tồn tại hoặc đang chỉnh sửa.', '2024-12-18 09:13:20'),
+(2347, 2, 'view-topics', 1, '[2024:12:18 16:13:35]: Lấy danh sách chủ đề bài tập hệ thống.', '2024-12-18 09:13:35'),
+(2348, 1, 'role_permissions', 1, '[2024:12:21 17:53:17]: Lấy danh sách quyền hạn', '2024-12-21 10:53:17'),
+(2349, 1, 'admin', 1, '[2024:12:21 17:53:17]: Thấy thông tin cá nhân', '2024-12-21 10:53:17'),
+(2350, 1, 'admin', 1, '[2024:12:21 17:53:18]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 10:53:18'),
+(2351, 1, 'admin', 1, '[2024:12:21 17:53:18]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 10:53:18'),
+(2352, 1, 'admin', 0, '[2024:12:21 17:53:23]: Lấy thông tin chủ đề', '2024-12-21 10:53:23'),
+(2353, 1, 'admin', 1, '[2024:12:21 17:53:23]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-21 10:53:23'),
+(2354, 1, 'admin', 1, '[2024:12:21 17:53:50]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 10:53:49'),
+(2355, 1, 'admin', 0, '[2024:12:21 17:53:54]: Lấy thông tin chủ đề', '2024-12-21 10:53:54'),
+(2356, 1, 'admin', 1, '[2024:12:21 17:53:54]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 10:53:54'),
+(2357, 1, 'admin', 1, '[2024:12:21 17:55:40]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 10:55:40'),
+(2358, 1, 'admin', 0, '[2024:12:21 17:55:42]: Lấy thông tin chủ đề', '2024-12-21 10:55:42'),
+(2359, 1, 'admin', 1, '[2024:12:21 17:55:42]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 10:55:42'),
+(2360, 1, 'role_permissions', 1, '[2024:12:21 17:55:49]: Lấy danh sách quyền hạn', '2024-12-21 10:55:49'),
+(2361, 1, 'admin', 1, '[2024:12:21 17:55:49]: Thấy thông tin cá nhân', '2024-12-21 10:55:49'),
+(2362, 1, 'admin', 1, '[2024:12:21 17:55:49]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 10:55:49'),
+(2363, 1, 'admin', 0, '[2024:12:21 17:55:50]: Lấy thông tin chủ đề', '2024-12-21 10:55:50'),
+(2364, 1, 'admin', 1, '[2024:12:21 17:55:50]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 10:55:50'),
+(2365, 1, 'admin', 1, '[2024:12:21 17:56:24]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 10:56:24'),
+(2366, 1, 'admin', 0, '[2024:12:21 17:56:27]: Lấy thông tin chủ đề', '2024-12-21 10:56:27'),
+(2367, 1, 'admin', 1, '[2024:12:21 17:56:27]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 10:56:27'),
+(2368, 1, 'admin', 0, '[2024:12:21 17:57:09]: Lấy thông tin chủ đề', '2024-12-21 10:57:09'),
+(2369, 1, 'admin', 1, '[2024:12:21 17:57:09]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 10:57:09'),
+(2370, 1, 'admin', 1, '[2024:12:21 17:59:43]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 10:59:43'),
+(2371, 1, 'admin', 0, '[2024:12:21 17:59:48]: Lấy thông tin chủ đề', '2024-12-21 10:59:48'),
+(2372, 1, 'admin', 1, '[2024:12:21 17:59:48]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 10:59:48'),
+(2373, 1, 'admin', 1, '[2024:12:21 17:59:55]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 10:59:55'),
+(2374, 1, 'admin', 0, '[2024:12:21 18:00:13]: Lấy thông tin chủ đề', '2024-12-21 11:00:13'),
+(2375, 1, 'admin', 1, '[2024:12:21 18:00:13]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 11:00:13'),
+(2376, 1, 'admin', 0, '[2024:12:21 18:01:15]: Lấy thông tin chủ đề', '2024-12-21 11:01:15'),
+(2377, 1, 'admin', 1, '[2024:12:21 18:01:15]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 11:01:15'),
+(2378, 1, 'role_permissions', 1, '[2024:12:21 18:07:02]: Lấy danh sách quyền hạn', '2024-12-21 11:07:02'),
+(2379, 1, 'admin', 1, '[2024:12:21 18:07:02]: Thấy thông tin cá nhân', '2024-12-21 11:07:02'),
+(2380, 1, 'admin', 1, '[2024:12:21 18:07:02]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:07:02'),
+(2381, 1, 'admin', 1, '[2024:12:21 18:08:12]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:08:12'),
+(2382, 1, 'role_permissions', 1, '[2024:12:21 18:08:12]: Lấy danh sách quyền hạn', '2024-12-21 11:08:12'),
+(2383, 1, 'admin', 1, '[2024:12:21 18:08:12]: Thấy thông tin cá nhân', '2024-12-21 11:08:12'),
+(2384, 1, 'role_permissions', 1, '[2024:12:21 18:08:54]: Lấy danh sách quyền hạn', '2024-12-21 11:08:54'),
+(2385, 1, 'admin', 1, '[2024:12:21 18:08:54]: Thấy thông tin cá nhân', '2024-12-21 11:08:54'),
+(2386, 1, 'admin', 1, '[2024:12:21 18:08:54]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:08:54'),
+(2387, 1, 'role_permissions', 1, '[2024:12:21 18:09:36]: Lấy danh sách quyền hạn', '2024-12-21 11:09:36'),
+(2388, 1, 'admin', 1, '[2024:12:21 18:09:36]: Thấy thông tin cá nhân', '2024-12-21 11:09:36'),
+(2389, 1, 'admin', 1, '[2024:12:21 18:09:36]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:09:36'),
+(2390, 1, 'admin', 0, '[2024:12:21 18:09:36]: Không có id chủ đề được cung cấp.', '2024-12-21 11:09:36'),
+(2391, 1, 'role_permissions', 1, '[2024:12:21 18:09:52]: Lấy danh sách quyền hạn', '2024-12-21 11:09:52'),
+(2392, 1, 'admin', 1, '[2024:12:21 18:09:52]: Thấy thông tin cá nhân', '2024-12-21 11:09:52'),
+(2393, 1, 'admin', 1, '[2024:12:21 18:09:52]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:09:52'),
+(2394, 1, 'admin', 0, '', '2024-12-21 11:09:52'),
+(2395, 1, 'role_permissions', 1, '[2024:12:21 18:11:54]: Lấy danh sách quyền hạn', '2024-12-21 11:11:54'),
+(2396, 1, 'admin', 1, '[2024:12:21 18:11:54]: Thấy thông tin cá nhân', '2024-12-21 11:11:54'),
+(2397, 1, 'admin', 1, '[2024:12:21 18:11:54]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:11:54'),
+(2398, 1, 'admin', 0, '', '2024-12-21 11:11:54'),
+(2399, 1, 'role_permissions', 1, '[2024:12:21 18:12:29]: Lấy danh sách quyền hạn', '2024-12-21 11:12:28'),
+(2400, 1, 'admin', 1, '[2024:12:21 18:12:29]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:12:29'),
+(2401, 1, 'admin', 1, '[2024:12:21 18:12:29]: Thấy thông tin cá nhân', '2024-12-21 11:12:29'),
+(2402, 1, 'admin', 0, '', '2024-12-21 11:12:29'),
+(2403, 1, 'role_permissions', 1, '[2024:12:21 18:13:50]: Lấy danh sách quyền hạn', '2024-12-21 11:13:50'),
+(2404, 1, 'admin', 1, '[2024:12:21 18:13:50]: Thấy thông tin cá nhân', '2024-12-21 11:13:50'),
+(2405, 1, 'admin', 1, '[2024:12:21 18:13:50]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:13:50'),
+(2406, 1, 'admin', 0, '', '2024-12-21 11:13:50'),
+(2407, 1, 'role_permissions', 1, '[2024:12:21 18:14:24]: Lấy danh sách quyền hạn', '2024-12-21 11:14:24'),
+(2408, 1, 'admin', 1, '[2024:12:21 18:14:24]: Thấy thông tin cá nhân', '2024-12-21 11:14:24'),
+(2409, 1, 'admin', 1, '[2024:12:21 18:14:24]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:14:24'),
+(2410, 1, 'admin', 0, '', '2024-12-21 11:14:24'),
+(2411, 1, 'role_permissions', 1, '[2024:12:21 18:14:37]: Lấy danh sách quyền hạn', '2024-12-21 11:14:37'),
+(2412, 1, 'admin', 1, '[2024:12:21 18:14:37]: Thấy thông tin cá nhân', '2024-12-21 11:14:37'),
+(2413, 1, 'admin', 1, '[2024:12:21 18:14:37]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:14:37'),
+(2414, 1, 'admin', 0, '', '2024-12-21 11:14:37'),
+(2415, 1, 'admin', 1, '[2024:12:21 18:14:57]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:14:57'),
+(2416, 1, 'role_permissions', 1, '[2024:12:21 18:14:57]: Lấy danh sách quyền hạn', '2024-12-21 11:14:57'),
+(2417, 1, 'admin', 0, '', '2024-12-21 11:14:57'),
+(2418, 1, 'admin', 1, '[2024:12:21 18:14:57]: Thấy thông tin cá nhân', '2024-12-21 11:14:57'),
+(2419, 1, 'role_permissions', 1, '[2024:12:21 18:15:17]: Lấy danh sách quyền hạn', '2024-12-21 11:15:17'),
+(2420, 1, 'admin', 1, '[2024:12:21 18:15:17]: Thấy thông tin cá nhân', '2024-12-21 11:15:17'),
+(2421, 1, 'admin', 1, '[2024:12:21 18:15:17]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:15:17'),
+(2422, 1, 'admin', 0, '', '2024-12-21 11:15:17'),
+(2423, 1, 'role_permissions', 1, '[2024:12:21 18:15:36]: Lấy danh sách quyền hạn', '2024-12-21 11:15:36'),
+(2424, 1, 'admin', 1, '[2024:12:21 18:15:36]: Thấy thông tin cá nhân', '2024-12-21 11:15:36'),
+(2425, 1, 'admin', 1, '[2024:12:21 18:15:36]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:15:36'),
+(2426, 1, 'admin', 0, '', '2024-12-21 11:15:36'),
+(2427, 1, 'role_permissions', 1, '[2024:12:21 18:19:05]: Lấy danh sách quyền hạn', '2024-12-21 11:19:05'),
+(2428, 1, 'admin', 1, '[2024:12:21 18:19:05]: Thấy thông tin cá nhân', '2024-12-21 11:19:05'),
+(2429, 1, 'admin', 1, '[2024:12:21 18:19:05]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:19:05'),
+(2430, 1, 'admin', 0, '', '2024-12-21 11:19:05'),
+(2431, 1, 'admin', 1, '[2024:12:21 18:21:12]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 11:21:12'),
+(2432, 1, 'admin', 0, '[2024:12:21 18:21:21]: Lấy thông tin chủ đề', '2024-12-21 11:21:21'),
+(2433, 1, 'admin', 1, '[2024:12:21 18:21:21]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-21 11:21:21'),
+(2434, 1, 'admin', 0, '', '2024-12-21 11:28:12'),
+(2435, 1, 'role_permissions', 1, '[2024:12:21 18:28:32]: Lấy danh sách quyền hạn', '2024-12-21 11:28:32'),
+(2436, 1, 'admin', 1, '[2024:12:21 18:28:32]: Thấy thông tin cá nhân', '2024-12-21 11:28:32'),
+(2437, 1, 'admin', 1, '[2024:12:21 18:28:32]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:28:32'),
+(2438, 1, 'admin', 0, '', '2024-12-21 11:28:32'),
+(2439, 1, 'role_permissions', 1, '[2024:12:21 18:28:55]: Lấy danh sách quyền hạn', '2024-12-21 11:28:55'),
+(2440, 1, 'admin', 1, '[2024:12:21 18:28:55]: Thấy thông tin cá nhân', '2024-12-21 11:28:55'),
+(2441, 1, 'admin', 1, '[2024:12:21 18:28:56]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 11:28:56'),
+(2442, 1, 'admin', 1, '[2024:12:21 18:28:56]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:28:56'),
+(2443, 1, 'admin', 0, '[2024:12:21 18:28:58]: Lấy thông tin chủ đề', '2024-12-21 11:28:58'),
+(2444, 1, 'admin', 1, '[2024:12:21 18:28:58]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 11:28:58'),
+(2445, 1, 'role_permissions', 1, '[2024:12:21 18:32:09]: Lấy danh sách quyền hạn', '2024-12-21 11:32:09'),
+(2446, 1, 'admin', 1, '[2024:12:21 18:32:10]: Thấy thông tin cá nhân', '2024-12-21 11:32:09'),
+(2447, 1, 'admin', 1, '[2024:12:21 18:32:10]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:32:10'),
+(2448, 1, 'admin', 0, '', '2024-12-21 11:32:10'),
+(2449, 1, 'role_permissions', 1, '[2024:12:21 18:33:57]: Lấy danh sách quyền hạn', '2024-12-21 11:33:57'),
+(2450, 1, 'admin', 1, '[2024:12:21 18:33:57]: Thấy thông tin cá nhân', '2024-12-21 11:33:57'),
+(2451, 1, 'admin', 1, '[2024:12:21 18:33:57]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:33:57'),
+(2452, 1, 'admin', 0, '', '2024-12-21 11:33:57'),
+(2453, 1, 'role_permissions', 1, '[2024:12:21 18:34:34]: Lấy danh sách quyền hạn', '2024-12-21 11:34:34'),
+(2454, 1, 'admin', 1, '[2024:12:21 18:34:35]: Thấy thông tin cá nhân', '2024-12-21 11:34:35'),
+(2455, 1, 'admin', 1, '[2024:12:21 18:34:35]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:34:35'),
+(2456, 1, 'admin', 0, '', '2024-12-21 11:34:35'),
+(2457, 1, 'admin', 0, '', '2024-12-21 11:35:24'),
+(2458, 1, 'admin', 0, '[2024:12:21 18:35:26]: Lấy thông tin chủ đề', '2024-12-21 11:35:26'),
+(2459, 1, 'admin', 1, '[2024:12:21 18:35:26]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-21 11:35:26'),
+(2460, 1, 'role_permissions', 1, '[2024:12:21 18:39:08]: Lấy danh sách quyền hạn', '2024-12-21 11:39:08'),
+(2461, 1, 'admin', 1, '[2024:12:21 18:39:08]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:39:08'),
+(2462, 1, 'admin', 1, '[2024:12:21 18:39:09]: Thấy thông tin cá nhân', '2024-12-21 11:39:09'),
+(2463, 1, 'admin', 0, '', '2024-12-21 11:39:09'),
+(2464, 1, 'role_permissions', 1, '[2024:12:21 18:40:12]: Lấy danh sách quyền hạn', '2024-12-21 11:40:12'),
+(2465, 1, 'admin', 1, '[2024:12:21 18:40:12]: Thấy thông tin cá nhân', '2024-12-21 11:40:12'),
+(2466, 1, 'admin', 1, '[2024:12:21 18:40:12]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:40:12'),
+(2467, 1, 'admin', 0, '', '2024-12-21 11:40:12'),
+(2468, 1, 'role_permissions', 1, '[2024:12:21 18:52:17]: Lấy danh sách quyền hạn', '2024-12-21 11:52:17'),
+(2469, 1, 'admin', 1, '[2024:12:21 18:52:17]: Thấy thông tin cá nhân', '2024-12-21 11:52:17'),
+(2470, 1, 'admin', 1, '[2024:12:21 18:52:17]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:52:17'),
+(2471, 1, 'admin', 0, '', '2024-12-21 11:52:17'),
+(2472, 1, 'role_permissions', 1, '[2024:12:21 18:54:09]: Lấy danh sách quyền hạn', '2024-12-21 11:54:09'),
+(2473, 1, 'admin', 1, '[2024:12:21 18:54:09]: Thấy thông tin cá nhân', '2024-12-21 11:54:09'),
+(2474, 1, 'admin', 1, '[2024:12:21 18:54:10]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:54:09'),
+(2475, 1, 'admin', 0, '', '2024-12-21 11:54:10'),
+(2476, 1, 'role_permissions', 1, '[2024:12:21 18:54:31]: Lấy danh sách quyền hạn', '2024-12-21 11:54:31'),
+(2477, 1, 'admin', 1, '[2024:12:21 18:54:31]: Thấy thông tin cá nhân', '2024-12-21 11:54:31'),
+(2478, 1, 'admin', 1, '[2024:12:21 18:54:31]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:54:31'),
+(2479, 1, 'admin', 0, '', '2024-12-21 11:54:31'),
+(2480, 1, 'role_permissions', 1, '[2024:12:21 18:57:59]: Lấy danh sách quyền hạn', '2024-12-21 11:57:59'),
+(2481, 1, 'admin', 1, '[2024:12:21 18:57:59]: Thấy thông tin cá nhân', '2024-12-21 11:57:59'),
+(2482, 1, 'admin', 1, '[2024:12:21 18:57:59]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:57:59'),
+(2483, 1, 'admin', 0, '', '2024-12-21 11:57:59'),
+(2484, 1, 'role_permissions', 1, '[2024:12:21 18:58:53]: Lấy danh sách quyền hạn', '2024-12-21 11:58:53'),
+(2485, 1, 'admin', 1, '[2024:12:21 18:58:53]: Thấy thông tin cá nhân', '2024-12-21 11:58:53'),
+(2486, 1, 'admin', 1, '[2024:12:21 18:58:53]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 11:58:53'),
+(2487, 1, 'admin', 0, '', '2024-12-21 11:58:53'),
+(2488, 1, 'admin', 1, '[2024:12:21 19:02:43]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-21 12:02:43'),
+(2489, 1, 'admin', 0, '[2024:12:21 19:02:46]: Lấy thông tin chủ đề', '2024-12-21 12:02:46'),
+(2490, 1, 'admin', 1, '[2024:12:21 19:02:46]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-21 12:02:46'),
+(2491, 1, 'admin', 0, '', '2024-12-21 12:02:50'),
+(2492, 1, 'admin', 0, '[2024:12:21 19:03:00]: Lấy thông tin chủ đề', '2024-12-21 12:03:00'),
+(2493, 1, 'admin', 1, '[2024:12:21 19:03:00]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-21 12:03:00'),
+(2494, 1, 'role_permissions', 1, '[2024:12:21 19:04:12]: Lấy danh sách quyền hạn', '2024-12-21 12:04:12'),
+(2495, 1, 'admin', 1, '[2024:12:21 19:04:13]: Thấy thông tin cá nhân', '2024-12-21 12:04:12'),
+(2496, 1, 'admin', 1, '[2024:12:21 19:04:13]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 12:04:13'),
+(2497, 1, 'admin', 0, '[2024:12:21 19:04:13]: Lấy thông tin chủ đề', '2024-12-21 12:04:13'),
+(2498, 1, 'admin', 1, '[2024:12:21 19:04:13]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-21 12:04:13');
+INSERT INTO `logs` (`id`, `user_id`, `action`, `status`, `detail`, `created_at`) VALUES
+(2499, 1, 'role_permissions', 1, '[2024:12:21 19:05:07]: Lấy danh sách quyền hạn', '2024-12-21 12:05:07'),
+(2500, 1, 'admin', 1, '[2024:12:21 19:05:07]: Thấy thông tin cá nhân', '2024-12-21 12:05:07'),
+(2501, 1, 'admin', 1, '[2024:12:21 19:05:07]: Xem toàn bộ bài tập hệ thống.', '2024-12-21 12:05:07'),
+(2502, 1, 'admin', 0, '[2024:12:21 19:05:07]: Lấy thông tin chủ đề', '2024-12-21 12:05:07'),
+(2503, 1, 'admin', 1, '[2024:12:21 19:05:07]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-21 12:05:07'),
+(2504, 1, 'admin', 0, '', '2024-12-21 12:05:22'),
+(2505, 1, 'role_permissions', 1, '[2024:12:22 13:24:39]: Lấy danh sách quyền hạn', '2024-12-22 06:24:39'),
+(2506, 1, 'admin', 1, '[2024:12:22 13:24:40]: Thấy thông tin cá nhân', '2024-12-22 06:24:40'),
+(2507, 1, 'admin', 1, '[2024:12:22 13:24:41]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-22 06:24:41'),
+(2508, 1, 'admin', 1, '[2024:12:22 13:24:41]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 06:24:41'),
+(2509, 1, 'admin', 0, '[2024:12:22 13:24:47]: Lấy thông tin chủ đề', '2024-12-22 06:24:47'),
+(2510, 1, 'admin', 1, '[2024:12:22 13:24:47]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-22 06:24:47'),
+(2511, 1, 'admin', 0, '', '2024-12-22 06:24:56'),
+(2512, 1, 'admin', 0, '[2024:12:22 13:24:58]: Lấy thông tin chủ đề', '2024-12-22 06:24:58'),
+(2513, 1, 'admin', 1, '[2024:12:22 13:24:58]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-22 06:24:58'),
+(2514, 1, 'admin', 0, '', '2024-12-22 06:25:01'),
+(2515, 1, 'role_permissions', 1, '[2024:12:22 13:34:15]: Lấy danh sách quyền hạn', '2024-12-22 06:34:15'),
+(2516, 1, 'admin', 1, '[2024:12:22 13:34:15]: Thấy thông tin cá nhân', '2024-12-22 06:34:15'),
+(2517, 1, 'admin', 1, '[2024:12:22 13:34:16]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-22 06:34:16'),
+(2518, 1, 'admin', 1, '[2024:12:22 13:34:16]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 06:34:16'),
+(2519, 1, 'admin', 0, '[2024:12:22 13:34:18]: Lấy thông tin chủ đề', '2024-12-22 06:34:18'),
+(2520, 1, 'admin', 1, '[2024:12:22 13:34:18]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-22 06:34:18'),
+(2521, 1, 'role_permissions', 1, '[2024:12:22 13:37:50]: Lấy danh sách quyền hạn', '2024-12-22 06:37:50'),
+(2522, 1, 'admin', 1, '[2024:12:22 13:37:51]: Thấy thông tin cá nhân', '2024-12-22 06:37:51'),
+(2523, 1, 'admin', 1, '[2024:12:22 13:37:51]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 06:37:51'),
+(2524, 1, 'admin', 0, '', '2024-12-22 06:37:51'),
+(2525, 1, 'role_permissions', 1, '[2024:12:22 13:38:34]: Lấy danh sách quyền hạn', '2024-12-22 06:38:34'),
+(2526, 1, 'admin', 1, '[2024:12:22 13:38:34]: Thấy thông tin cá nhân', '2024-12-22 06:38:34'),
+(2527, 1, 'admin', 1, '[2024:12:22 13:38:34]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 06:38:34'),
+(2528, 1, 'admin', 0, '', '2024-12-22 06:38:34'),
+(2529, 1, 'role_permissions', 1, '[2024:12:22 13:57:55]: Lấy danh sách quyền hạn', '2024-12-22 06:57:55'),
+(2530, 1, 'admin', 1, '[2024:12:22 13:57:55]: Thấy thông tin cá nhân', '2024-12-22 06:57:55'),
+(2531, 1, 'admin', 1, '[2024:12:22 13:57:55]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 06:57:55'),
+(2532, 1, 'admin', 0, '', '2024-12-22 06:57:55'),
+(2533, 1, 'role_permissions', 1, '[2024:12:22 13:59:40]: Lấy danh sách quyền hạn', '2024-12-22 06:59:40'),
+(2534, 1, 'admin', 1, '[2024:12:22 13:59:40]: Thấy thông tin cá nhân', '2024-12-22 06:59:40'),
+(2535, 1, 'admin', 1, '[2024:12:22 13:59:40]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 06:59:40'),
+(2536, 1, 'admin', 0, '', '2024-12-22 06:59:40'),
+(2537, 1, 'role_permissions', 1, '[2024:12:22 14:02:53]: Lấy danh sách quyền hạn', '2024-12-22 07:02:53'),
+(2538, 1, 'admin', 1, '[2024:12:22 14:02:53]: Thấy thông tin cá nhân', '2024-12-22 07:02:53'),
+(2539, 1, 'admin', 1, '[2024:12:22 14:02:53]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:02:53'),
+(2540, 1, 'admin', 0, '', '2024-12-22 07:02:54'),
+(2541, 1, 'role_permissions', 1, '[2024:12:22 14:04:06]: Lấy danh sách quyền hạn', '2024-12-22 07:04:06'),
+(2542, 1, 'admin', 1, '[2024:12:22 14:04:07]: Thấy thông tin cá nhân', '2024-12-22 07:04:07'),
+(2543, 1, 'admin', 1, '[2024:12:22 14:04:07]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:04:07'),
+(2544, 1, 'admin', 0, '', '2024-12-22 07:04:07'),
+(2545, 1, 'role_permissions', 1, '[2024:12:22 14:04:37]: Lấy danh sách quyền hạn', '2024-12-22 07:04:37'),
+(2546, 1, 'admin', 1, '[2024:12:22 14:04:37]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:04:37'),
+(2547, 1, 'admin', 1, '[2024:12:22 14:04:37]: Thấy thông tin cá nhân', '2024-12-22 07:04:37'),
+(2548, 1, 'admin', 0, '', '2024-12-22 07:04:37'),
+(2549, 1, 'role_permissions', 1, '[2024:12:22 14:05:07]: Lấy danh sách quyền hạn', '2024-12-22 07:05:07'),
+(2550, 1, 'admin', 1, '[2024:12:22 14:05:07]: Thấy thông tin cá nhân', '2024-12-22 07:05:07'),
+(2551, 1, 'admin', 1, '[2024:12:22 14:05:07]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:05:07'),
+(2552, 1, 'admin', 0, '', '2024-12-22 07:05:07'),
+(2553, 1, 'role_permissions', 1, '[2024:12:22 14:05:31]: Lấy danh sách quyền hạn', '2024-12-22 07:05:31'),
+(2554, 1, 'admin', 1, '[2024:12:22 14:05:31]: Thấy thông tin cá nhân', '2024-12-22 07:05:31'),
+(2555, 1, 'admin', 1, '[2024:12:22 14:05:31]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:05:31'),
+(2556, 1, 'admin', 0, '', '2024-12-22 07:05:31'),
+(2557, 1, 'role_permissions', 1, '[2024:12:22 14:06:06]: Lấy danh sách quyền hạn', '2024-12-22 07:06:06'),
+(2558, 1, 'admin', 1, '[2024:12:22 14:06:06]: Thấy thông tin cá nhân', '2024-12-22 07:06:06'),
+(2559, 1, 'admin', 1, '[2024:12:22 14:06:06]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:06:06'),
+(2560, 1, 'admin', 0, '', '2024-12-22 07:06:06'),
+(2561, 1, 'role_permissions', 1, '[2024:12:22 14:06:37]: Lấy danh sách quyền hạn', '2024-12-22 07:06:37'),
+(2562, 1, 'admin', 1, '[2024:12:22 14:06:37]: Thấy thông tin cá nhân', '2024-12-22 07:06:37'),
+(2563, 1, 'admin', 1, '[2024:12:22 14:06:37]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:06:37'),
+(2564, 1, 'admin', 0, '', '2024-12-22 07:06:37'),
+(2565, 1, 'role_permissions', 1, '[2024:12:22 14:06:51]: Lấy danh sách quyền hạn', '2024-12-22 07:06:51'),
+(2566, 1, 'admin', 1, '[2024:12:22 14:06:51]: Thấy thông tin cá nhân', '2024-12-22 07:06:51'),
+(2567, 1, 'admin', 1, '[2024:12:22 14:06:51]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:06:51'),
+(2568, 1, 'admin', 0, '', '2024-12-22 07:06:51'),
+(2569, 1, 'role_permissions', 1, '[2024:12:22 14:07:02]: Lấy danh sách quyền hạn', '2024-12-22 07:07:02'),
+(2570, 1, 'admin', 1, '[2024:12:22 14:07:02]: Thấy thông tin cá nhân', '2024-12-22 07:07:02'),
+(2571, 1, 'admin', 1, '[2024:12:22 14:07:02]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:07:02'),
+(2572, 1, 'admin', 0, '', '2024-12-22 07:07:02'),
+(2573, 1, 'role_permissions', 1, '[2024:12:22 14:07:28]: Lấy danh sách quyền hạn', '2024-12-22 07:07:28'),
+(2574, 1, 'admin', 1, '[2024:12:22 14:07:28]: Thấy thông tin cá nhân', '2024-12-22 07:07:28'),
+(2575, 1, 'admin', 1, '[2024:12:22 14:07:28]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:07:28'),
+(2576, 1, 'admin', 0, '', '2024-12-22 07:07:28'),
+(2577, 1, 'role_permissions', 1, '[2024:12:22 14:07:58]: Lấy danh sách quyền hạn', '2024-12-22 07:07:58'),
+(2578, 1, 'admin', 1, '[2024:12:22 14:07:58]: Thấy thông tin cá nhân', '2024-12-22 07:07:58'),
+(2579, 1, 'admin', 1, '[2024:12:22 14:07:58]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:07:58'),
+(2580, 1, 'admin', 0, '', '2024-12-22 07:07:58'),
+(2581, 1, 'role_permissions', 1, '[2024:12:22 14:08:13]: Lấy danh sách quyền hạn', '2024-12-22 07:08:13'),
+(2582, 1, 'admin', 1, '[2024:12:22 14:08:13]: Thấy thông tin cá nhân', '2024-12-22 07:08:13'),
+(2583, 1, 'admin', 1, '[2024:12:22 14:08:13]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:08:13'),
+(2584, 1, 'admin', 0, '', '2024-12-22 07:08:13'),
+(2585, 1, 'role_permissions', 1, '[2024:12:22 14:08:26]: Lấy danh sách quyền hạn', '2024-12-22 07:08:26'),
+(2586, 1, 'admin', 1, '[2024:12:22 14:08:26]: Thấy thông tin cá nhân', '2024-12-22 07:08:26'),
+(2587, 1, 'admin', 1, '[2024:12:22 14:08:26]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:08:26'),
+(2588, 1, 'admin', 0, '', '2024-12-22 07:08:26'),
+(2589, 1, 'role_permissions', 1, '[2024:12:22 14:10:43]: Lấy danh sách quyền hạn', '2024-12-22 07:10:43'),
+(2590, 1, 'admin', 1, '[2024:12:22 14:10:43]: Thấy thông tin cá nhân', '2024-12-22 07:10:43'),
+(2591, 1, 'admin', 1, '[2024:12:22 14:10:43]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:10:43'),
+(2592, 1, 'admin', 0, '', '2024-12-22 07:10:43'),
+(2593, 1, 'role_permissions', 1, '[2024:12:22 14:10:57]: Lấy danh sách quyền hạn', '2024-12-22 07:10:57'),
+(2594, 1, 'admin', 1, '[2024:12:22 14:10:57]: Thấy thông tin cá nhân', '2024-12-22 07:10:57'),
+(2595, 1, 'admin', 1, '[2024:12:22 14:10:57]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:10:57'),
+(2596, 1, 'admin', 0, '', '2024-12-22 07:10:57'),
+(2597, 1, 'admin', 1, '[2024:12:22 14:12:19]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-22 07:12:19'),
+(2598, 1, 'admin', 0, '[2024:12:22 14:12:22]: Lấy thông tin chủ đề', '2024-12-22 07:12:22'),
+(2599, 1, 'admin', 1, '[2024:12:22 14:12:22]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-22 07:12:22'),
+(2600, 1, 'admin', 0, '', '2024-12-22 07:12:33'),
+(2601, 1, 'role_permissions', 1, '[2024:12:22 14:12:55]: Lấy danh sách quyền hạn', '2024-12-22 07:12:55'),
+(2602, 1, 'admin', 1, '[2024:12:22 14:12:55]: Thấy thông tin cá nhân', '2024-12-22 07:12:55'),
+(2603, 1, 'admin', 1, '[2024:12:22 14:12:58]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-22 07:12:58'),
+(2604, 1, 'admin', 1, '[2024:12:22 14:12:58]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:12:58'),
+(2605, 1, 'admin', 0, '[2024:12:22 14:13:01]: Lấy thông tin chủ đề', '2024-12-22 07:13:01'),
+(2606, 1, 'admin', 1, '[2024:12:22 14:13:01]: Lấy danh sách bài tập của chủ đề có Id: 18', '2024-12-22 07:13:01'),
+(2607, 1, 'admin', 1, '[2024:12:22 14:13:04]: Xem số liệu thống kê bài tập hệ thống.', '2024-12-22 07:13:04'),
+(2608, 1, 'admin', 0, '[2024:12:22 14:13:07]: Lấy thông tin chủ đề', '2024-12-22 07:13:07'),
+(2609, 1, 'admin', 1, '[2024:12:22 14:13:07]: Lấy danh sách bài tập của chủ đề có Id: 19', '2024-12-22 07:13:07'),
+(2610, 1, 'admin', 0, '', '2024-12-22 07:13:09'),
+(2611, 1, 'role_permissions', 1, '[2024:12:22 14:13:12]: Lấy danh sách quyền hạn', '2024-12-22 07:13:12'),
+(2612, 1, 'admin', 1, '[2024:12:22 14:13:12]: Thấy thông tin cá nhân', '2024-12-22 07:13:12'),
+(2613, 1, 'admin', 1, '[2024:12:22 14:13:12]: Xem toàn bộ bài tập hệ thống.', '2024-12-22 07:13:12'),
+(2614, 1, 'admin', 0, '', '2024-12-22 07:13:12');
 
 -- --------------------------------------------------------
 
@@ -2244,8 +2782,115 @@ CREATE TABLE `multiple_choice_exercises` (
   `type` enum('single','multi') NOT NULL DEFAULT 'single',
   `question` text NOT NULL,
   `question_image_url` varchar(500) NOT NULL,
-  `options` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`options`))
+  `options` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`options`)),
+  `is_required` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `multiple_choice_exercises`
+--
+
+INSERT INTO `multiple_choice_exercises` (`id`, `exercise_id`, `type`, `question`, `question_image_url`, `options`, `is_required`) VALUES
+(2, 1, 'single', 'Lập trình là gì?', '', '[\r\n{\"text\": \"Viết thư cho máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Giao tiếp với máy tính để yêu cầu thực hiện công việc\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Viết bài văn cho người khác đọc\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Vẽ hình ảnh trên máy tính\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(3, 1, 'single', 'Ngôn ngữ lập trình là gì?', '', '[\r\n{\"text\": \"Ngôn ngữ máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Ngôn ngữ con người\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Ngôn ngữ đặc biệt máy tính hiểu được\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Ngôn ngữ đơn giản để học\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(4, 1, 'single', 'Pascal là ngôn ngữ lập trình như thế nào?', '', '[\r\n{\"text\": \"Dễ hiểu, như một cuốn sách giáo khoa\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Khó học, chỉ dành cho chuyên gia\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Giống như máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Ngôn ngữ không có cú pháp rõ ràng\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(5, 1, 'single', 'C/C++ có gì đặc biệt?', '', '[\r\n{\"text\": \"Dễ học và sử dụng\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cung cấp các tính năng cơ bản và mạnh mẽ\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Không được sử dụng nhiều\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cần kiến thức sâu về máy tính\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(6, 1, 'single', 'Java là ngôn ngữ lập trình như thế nào?', '', '[\r\n{\"text\": \"Dễ sử dụng và phổ biến\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Rất khó học và phức tạp\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Chỉ chạy trên một loại thiết bị\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Là ngôn ngữ lỗi thời\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(7, 1, 'single', 'Python thích hợp cho đối tượng nào?', '', '[\r\n{\"text\": \"Người mới bắt đầu học lập trình\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Người đã có kinh nghiệm lập trình\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Người học ngôn ngữ máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Chỉ dành cho các nhà nghiên cứu\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(8, 1, 'single', 'Tại sao lập trình quan trọng?', '', '[\r\n{\"text\": \"Giúp phát triển kỹ năng giải quyết vấn đề\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Giúp bạn giao tiếp với máy tính mà không cần biết gì\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Chỉ dùng để viết phần mềm\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Không có tác dụng thực tiễn\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(9, 1, 'single', 'Lập trình có thể giúp bạn tạo ra những gì?', '', '[\r\n{\"text\": \"Các ứng dụng mà mọi người sẽ sử dụng mỗi ngày\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Các công cụ để chơi game\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Các bức tranh đẹp\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Chỉ có thể viết văn bản\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(10, 1, 'single', 'Khi học lập trình, bạn cần làm gì đầu tiên?', '', '[\r\n{\"text\": \"Học cách sử dụng máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Học cú pháp cơ bản của ngôn ngữ lập trình\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Đọc sách về lập trình\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cài đặt các công cụ lập trình\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(11, 1, 'single', 'Lập trình giống như việc giải quyết gì?', '', '[\r\n{\"text\": \"Các câu đố dễ dàng\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Các bài toán trong sách giáo khoa\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Các bài thi trắc nghiệm\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Các câu hỏi khó không có lời giải\", \"image_url\": \"\", \"is_correct\":1}\r\n]', 0),
+(12, 1, 'single', 'Điều gì khiến Python trở thành ngôn ngữ tốt cho người mới bắt đầu?', '', '[\r\n{\"text\": \"Cú pháp đơn giản\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Hỗ trợ các tính năng nâng cao ngay từ đầu\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Dễ sử dụng trong mọi tình huống\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Có thể chạy trên mọi hệ điều hành\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(13, 1, 'single', 'Khi học lập trình, bạn cần có gì?', '', '[\r\n{\"text\": \"Kiên nhẫn và sự thử thách\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Kiến thức toán học nâng cao\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Phải hiểu hết các lý thuyết trước khi bắt tay vào thực hành\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cần phải có máy tính mạnh mẽ\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(14, 1, 'single', 'Các ngôn ngữ lập trình như C/C++ thường được dùng để làm gì?', '', '[\r\n{\"text\": \"Phát triển ứng dụng di động\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Giải các bài toán cơ bản\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Làm việc với dữ liệu web\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Tạo ứng dụng game 3D\", \"image_url\": \"\", \"is_correct\":1}\r\n]', 0),
+(15, 1, 'single', 'Pascal được gọi là gì trong các ngôn ngữ lập trình?', '', '[\r\n{\"text\": \"Ngôn ngữ khó học\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Ngôn ngữ dễ hiểu, dành cho người mới bắt đầu\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Ngôn ngữ khó tiếp cận\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Ngôn ngữ không còn phổ biến\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(16, 1, 'single', 'Java là một ngôn ngữ lập trình đa năng, nghĩa là:', '', '[\r\n{\"text\": \"Chỉ chạy trên một hệ điều hành\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Có thể chạy trên nhiều thiết bị khác nhau\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Được thiết kế cho ứng dụng web\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Không cần phải cài đặt trên máy tính\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(17, 1, 'single', 'Điều gì làm Python khác biệt với các ngôn ngữ lập trình khác?', '', '[\r\n{\"text\": \"Cần nhiều mã lệnh để thực hiện một nhiệm vụ\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cú pháp rõ ràng và dễ hiểu\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Chỉ chạy trên các máy tính có cấu hình cao\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Không hỗ trợ nhiều thư viện\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(18, 1, 'single', 'Các ngôn ngữ lập trình có thể giúp bạn tạo ra những gì?', '', '[\r\n{\"text\": \"Các ứng dụng, phần mềm, trò chơi\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Những hình ảnh đơn giản\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Chỉ phần mềm quản lý dữ liệu\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Các chương trình máy tính không cần người sử dụng\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(19, 1, 'single', 'Tại sao lập trình lại quan trọng trong thế giới công nghệ?', '', '[\r\n{\"text\": \"Giúp phát triển các ứng dụng và hệ thống\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Giúp viết bài luận cho máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Để chơi game trên máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Tạo các chương trình máy tính không cần đến internet\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(20, 1, 'single', 'Khi học lập trình, điều gì là quan trọng nhất?', '', '[\r\n{\"text\": \"Thực hành và kiên nhẫn\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Chỉ đọc lý thuyết\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Học thuộc tất cả các cú pháp\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cài đặt các phần mềm khó\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(21, 1, 'single', 'Lập trình có thể giúp gì cho bạn trong nghề nghiệp?', '', '[\r\n{\"text\": \"Tạo ra các sản phẩm phần mềm có giá trị\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Viết thư và email nhanh hơn\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Tạo ra các công cụ trực tuyến không cần lập trình\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Giải các câu hỏi học thuật\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(22, 1, 'single', 'Java được sử dụng rộng rãi để làm gì?', '', '[\r\n{\"text\": \"Viết phần mềm di động\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Xây dựng các chương trình máy tính đơn giản\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Phát triển ứng dụng web và di động\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Chỉ phát triển các hệ thống cơ sở dữ liệu\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(23, 1, 'single', 'Lập trình Python thích hợp để làm gì?', '', '[\r\n{\"text\": \"Chơi game\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Tạo ra các ứng dụng khoa học và phân tích dữ liệu\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Xây dựng phần mềm ngân hàng\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Chỉ phát triển phần mềm cho điện thoại\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(24, 1, 'single', 'Pascal có thể giúp người mới bắt đầu học gì?', '', '[\r\n{\"text\": \"Các kỹ thuật lập trình nâng cao\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Các khái niệm cơ bản về lập trình\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Phát triển ứng dụng phức tạp\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Viết phần mềm ứng dụng di động\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(25, 1, 'single', 'Python giúp bạn làm gì trong việc lập trình?', '', '[\r\n{\"text\": \"Tạo ra các chương trình dễ hiểu và dễ thực hiện\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Tạo ra phần mềm không cần bất kỳ cú pháp nào\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cung cấp rất ít thư viện hỗ trợ\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Học ngữ pháp máy tính\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(26, 1, 'single', 'Lập trình giúp bạn phát triển kỹ năng gì?', '', '[\r\n{\"text\": \"Kỹ năng giải quyết vấn đề\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Kỹ năng viết văn\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Kỹ năng nói chuyện với máy tính\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Kỹ năng thiết kế đồ họa\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(27, 1, 'single', 'Điều gì là quan trọng khi bắt đầu học lập trình?', '', '[\r\n{\"text\": \"Làm quen với cú pháp cơ bản\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Học các thuật toán phức tạp ngay từ đầu\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Tìm phần mềm phù hợp\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Quản lý dự án lập trình\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(28, 1, 'single', 'Tại sao C/C++ lại được sử dụng cho các hệ thống yêu cầu hiệu suất cao?', '', '[\r\n{\"text\": \"Dễ học và sử dụng\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cung cấp khả năng kiểm soát trực tiếp phần cứng\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Không hỗ trợ nhiều tính năng\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cần ít mã lệnh hơn các ngôn ngữ khác\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(29, 1, 'single', 'Java có thể chạy trên:', '', '[\r\n{\"text\": \"Chỉ trên máy tính cá nhân\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Nhiều thiết bị khác nhau, bao gồm điện thoại và máy tính bảng\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Chỉ trên máy tính xách tay\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Chỉ trên máy tính có phần mềm đặc biệt\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(30, 1, 'single', 'Python được gọi là ngôn ngữ lập trình gì?', '', '[\r\n{\"text\": \"Phức tạp và mạnh mẽ\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Dễ học và sử dụng\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Dành cho các chuyên gia\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Khó hiểu và khó sử dụng\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(31, 1, 'single', 'Java có đặc điểm gì nổi bật?', '', '[\r\n{\"text\": \"Chỉ chạy trên máy tính để bàn\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Tính tương thích cao, có thể chạy trên nhiều nền tảng\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Dễ học nhưng ít tính năng\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Không hỗ trợ giao diện người dùng\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(32, 2, 'single', 'Pascal được đề xuất bởi ai?', '', '[\r\n{\"text\": \"Dennis Ritchie\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Niklaus Wirth\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Alan Turing\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"John von Neumann\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(33, 2, 'single', 'Năm nào Pascal được đề xuất?', '', '[\r\n{\"text\": \"1965\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"1970\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"1980\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"1990\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(34, 2, 'single', 'Ngôn ngữ Pascal được đặt tên theo ai?', '', '[\r\n{\"text\": \"Albert Einstein\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Blaise Pascal\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Isaac Newton\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Gottfried Wilhelm Leibniz\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(35, 2, 'single', 'Pascal có đặc điểm gì?', '', '[\r\n{\"text\": \"Ngữ pháp phức tạp\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Ngữ pháp và ngữ nghĩa đơn giản\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Không có tính logic\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cấu trúc chương trình lộn xộn\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(36, 2, 'single', 'Một chương trình Pascal bắt đầu bằng từ khóa nào?', '', '[\r\n{\"text\": \"start\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"program\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"begin\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"function\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(37, 2, 'single', 'Khai báo thư viện trong Pascal sử dụng từ khóa nào?', '', '[\r\n{\"text\": \"uses\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"import\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"include\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"require\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(38, 2, 'single', 'Từ khóa nào dùng để xóa màn hình trong Pascal?', '', '[\r\n{\"text\": \"clear\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"reset\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"clrscr\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"clean\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(39, 2, 'single', 'Để in ra thông tin trên màn hình, Pascal sử dụng hàm nào?', '', '[\r\n{\"text\": \"print\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"display\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"writeln\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"echo\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(40, 2, 'single', 'Trong chương trình Pascal, phần nào là phần thân của chương trình?', '', '[\r\n{\"text\": \"Phần khai báo\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Phần thân bắt đầu bằng begin và kết thúc bằng end\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Phần xử lý\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Phần nhập xuất\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(41, 2, 'single', 'Phần khai báo biến trong Pascal sử dụng từ khóa nào?', '', '[\r\n{\"text\": \"var\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"declare\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"let\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"set\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(42, 2, 'single', 'Để kết thúc chương trình trong Pascal, từ khóa nào được sử dụng?', '', '[\r\n{\"text\": \"exit\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"end\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"finish\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"stop\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(43, 2, 'single', 'Câu lệnh readln trong Pascal dùng để làm gì?', '', '[\r\n{\"text\": \"Đọc dữ liệu từ bàn phím\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"In ra màn hình\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Đọc dữ liệu từ tệp\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Xóa màn hình\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(44, 2, 'single', 'Pascal có những trình biên dịch nào?', '', '[\r\n{\"text\": \"FreePascal\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Turbo Pascal\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Quick Pascal\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Tất cả các đáp án trên\", \"image_url\": \"\", \"is_correct\":1}\r\n]', 0),
+(45, 2, 'single', 'Tại sao Turbo Pascal không còn hỗ trợ trên Windows 7, 8, và 10?', '', '[\r\n{\"text\": \"Vì không còn bản cập nhật\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Vì không tương thích với hệ điều hành mới\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Vì phần mềm đã bị hủy bỏ\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Vì nó bị lỗi phần cứng\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(46, 2, 'single', 'FreePascal là gì?', '', '[\r\n{\"text\": \"Trình biên dịch Pascal miễn phí\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Một hệ điều hành\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Một ngôn ngữ lập trình khác\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Phần mềm hỗ trợ DOS\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(47, 2, 'single', 'Phần khai báo CONST trong Pascal dùng để làm gì?', '', '[\r\n{\"text\": \"Khai báo hằng số\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Khai báo biến\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Khai báo kiểu dữ liệu\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Khai báo chương trình con\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(48, 2, 'single', 'Pascal có thể xử lý kiểu dữ liệu nào?', '', '[\r\n{\"text\": \"Số nguyên\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Số thực\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Chuỗi ký tự\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Tất cả các đáp án trên\", \"image_url\": \"\", \"is_correct\":1}\r\n]', 0),
+(49, 2, 'single', 'Từ khóa nào dùng để khai báo kiểu dữ liệu trong Pascal?', '', '[\r\n{\"text\": \"type\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"var\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"const\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"data\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(50, 2, 'single', 'Pascal hỗ trợ loại cấu trúc dữ liệu nào?', '', '[\r\n{\"text\": \"Mảng\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Danh sách liên kết\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Đối tượng\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cả a và b\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(51, 2, 'single', 'Trong Pascal, uses crt; dùng để làm gì?', '', '[\r\n{\"text\": \"Khai báo thư viện nhập xuất\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Khai báo thư viện xử lý dữ liệu\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Khai báo thư viện giao diện\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Khai báo thư viện đồ họa\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(52, 2, 'single', 'Lệnh nào sau đây dùng để in một dòng thông báo ra màn hình?', '', '[\r\n{\"text\": \"print\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"writeln\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"display\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"output\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(53, 2, 'single', 'Câu lệnh nào dùng để nhập dữ liệu từ bàn phím vào một biến trong Pascal?', '', '[\r\n{\"text\": \"read\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"input\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"scan\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"enter\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(54, 2, 'single', 'Pascal có thể xử lý kiểu dữ liệu mảng một chiều hay hai chiều?', '', '[\r\n{\"text\": \"Một chiều\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Hai chiều\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Cả hai chiều\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Không hỗ trợ mảng\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(55, 2, 'single', 'Từ khóa nào dùng để khai báo một chương trình con trong Pascal?', '', '[\r\n{\"text\": \"function\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"procedure\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"subroutine\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"method\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(56, 2, 'single', 'Pascal có hỗ trợ đối tượng và lớp như C++ hay Java không?', '', '[\r\n{\"text\": \"Có\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Không\", \"image_url\": \"\", \"is_correct\":1}\r\n]', 0),
+(57, 2, 'single', 'Khi sử dụng Turbo Pascal, bạn có thể chạy chương trình trên hệ điều hành nào?', '', '[\r\n{\"text\": \"DOS\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Windows\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Linux\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"macOS\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(58, 2, 'single', 'Trong Pascal, khai báo kiểu dữ liệu cho một mảng sử dụng cú pháp nào?', '', '[\r\n{\"text\": \"type Array[1..10] of integer;\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"var Array of integer[1..10];\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"Array: integer[1..10];\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"const Array = [1..10] of integer;\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(59, 2, 'single', 'Trong Pascal, để khai báo một hằng số PI có giá trị 3.14, bạn viết như thế nào?', '', '[\r\n{\"text\": \"const PI = 3.14;\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"let PI = 3.14;\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"define PI 3.14;\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"var PI = 3.14;\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(60, 2, 'single', 'Lệnh nào trong Pascal sẽ không gây lỗi khi gọi?', '', '[\r\n{\"text\": \"writeln(\'Hello World\');\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"writeln(\'Hello World\')\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"begin writeln(\'Hello World\'); end;\", \"image_url\": \"\", \"is_correct\":0},\r\n{\"text\": \"begin writeln(\'Hello World\') end;\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(61, 2, 'single', 'Pascal có hỗ trợ kiểu dữ liệu con trỏ không?', '', '[\r\n{\"text\": \"Có\", \"image_url\": \"\", \"is_correct\":1},\r\n{\"text\": \"Không\", \"image_url\": \"\", \"is_correct\":0}\r\n]', 0),
+(62, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true}]', 0),
+(63, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(64, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(65, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true}]', 0),
+(66, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(67, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(68, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(69, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(70, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(71, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(72, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasdsádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(73, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(74, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(75, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(76, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(77, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(78, 4, 'single', 'ádasdasdasdasdasdasdsádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(79, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(80, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(81, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(82, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(83, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(84, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(85, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(86, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(87, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(88, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(89, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(90, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(91, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true}]', 0),
+(92, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true}]', 0),
+(93, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true}]', 0),
+(94, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(95, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(96, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true}]', 0),
+(97, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(98, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(99, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(100, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0),
+(101, 4, 'single', 'ádasdasdasdasdasdasds', '', '[{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":true},{\"text\":\"ádasdasdasdasdasdasds\",\"image_url\":null,\"is_correct\":false}]', 0);
 
 -- --------------------------------------------------------
 
@@ -2322,7 +2967,8 @@ CREATE TABLE `roles` (
 INSERT INTO `roles` (`id`, `name`) VALUES
 (1, 'Adminstrator'),
 (2, 'Người dùng'),
-(3, 'Quản trị viên bài tập hệ thống');
+(3, 'Quản trị viên bài tập hệ thống'),
+(4, 'Quản trị viên người dùng');
 
 -- --------------------------------------------------------
 
@@ -2354,7 +3000,8 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
 (1, 12),
 (3, 9),
 (3, 10),
-(3, 11);
+(3, 11),
+(4, 5);
 
 -- --------------------------------------------------------
 
@@ -2386,8 +3033,10 @@ CREATE TABLE `system_exercise_topics` (
 --
 
 INSERT INTO `system_exercise_topics` (`id`, `name`, `image_url`, `document_url`, `description`, `programming_language`, `unlock_condition_type`, `level`, `min_required_exercises`, `min_required_score`, `bonus_points`, `is_editable`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
-(18, 'Khởi đầu cùng WiseOwl', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731560762/1731560759795-lap-trinh-web-la-gi-cac-buoc-lap-trinh-web-co-ban.jpg', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731152796/1731152794709-Kh%C3%A1%C2%BB%C2%9Di%20%C3%84%C2%91%C3%A1%C2%BA%C2%A7u%20cung%20WiseOwl.pdf', 'Giới thiệu về lập trình cho người mới bắt đầu', 'Multi', 'none', 1, 1, 50, 50, 0, 1, '2024-11-09 11:46:37', 1, '2024-11-14 05:54:55'),
-(19, 'Khởi đầu lập trình với Pascal', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731559024/1731559022903-images%20%281%29.jpg', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731559026/1731559023023-AutoRecovery%20save%20of%20Document2.pdf', 'Bắt đầu với cài đặt môi trường Pascal, học các kiểu dữ liệu, cấu trúc điều kiện và vòng lặp. Tiếp theo, tìm hiểu mảng, chuỗi, và cách viết hàm, thủ tục, rồi áp dụng qua các bài tập tính toán, mảng.', 'Pascal', 'none', 1, 3, 50, 50, 1, 1, '2024-11-09 11:57:26', 1, '2024-11-14 04:40:31');
+(18, 'Khởi đầu cùng WiseOwl', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731560762/1731560759795-lap-trinh-web-la-gi-cac-buoc-lap-trinh-web-co-ban.jpg', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731152796/1731152794709-Kh%C3%A1%C2%BB%C2%9Di%20%C3%84%C2%91%C3%A1%C2%BA%C2%A7u%20cung%20WiseOwl.pdf', 'Giới thiệu về lập trình cho người mới bắt đầu', 'Multi', 'none', 1, 1, 50, 50, 1, 1, '2024-11-09 11:46:37', 1, '2024-12-18 06:39:21'),
+(19, 'Khởi đầu lập trình với Pascal', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731559024/1731559022903-images%20%281%29.jpg', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1731559026/1731559023023-AutoRecovery%20save%20of%20Document2.pdf', 'Bắt đầu với cài đặt môi trường Pascal, học các kiểu dữ liệu, cấu trúc điều kiện và vòng lặp. Tiếp theo, tìm hiểu mảng, chuỗi, và cách viết hàm, thủ tục, rồi áp dụng qua các bài tập tính toán, mảng.', 'Pascal', 'none', 1, 3, 50, 50, 0, 1, '2024-11-09 11:57:26', 1, '2024-12-18 05:23:25'),
+(21, 'qứaasfasfasfas', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1734506132/1734506128709-lap-trinh-web-la-gi-cac-buoc-lap-trinh-web-co-ban.jpg', 'https://res.cloudinary.com/dvp8nwdbt/image/upload/v1734506132/1734506128749-Graduation_Project.pdf', 'àasfasfasf', 'Multi', 'none', 1, 5, 50, 50, 1, 1, '2024-12-18 07:15:31', NULL, NULL),
+(22, 'ádasd', NULL, '', 'ádasdasdasdasdas', 'Multi', 'none', 1, 0, 50, 50, 1, 1, '2024-12-18 07:20:07', 1, '2024-12-18 07:30:59');
 
 -- --------------------------------------------------------
 
@@ -2429,8 +3078,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `provider`, `provider_id`, `fullname`, `email`, `phone_number`, `gender`, `date_of_birth`, `avatar_url`, `role_id`, `last_activity`, `created_at`, `updated_at`) VALUES
-(1, 'wiseowl@admin', 'a923a13cb68f7593c187ce8d77020fb2e04d913b28022f75e3751b1544337f79', NULL, NULL, 'Adminstrator', NULL, NULL, 'Khác', NULL, '', 1, '2024-11-14 22:01:55', '2024-10-26 09:11:00', '2024-11-14 15:01:55'),
-(2, 'Quyen1506', '6e6d16908ed1c04a52ec391771202906412326d8c2de232fae486c26c51816c6', NULL, NULL, 'Vũ Tiến Quyền', NULL, NULL, 'Nam', NULL, '', 2, '2024-11-09 10:06:00', '2024-10-26 09:11:00', '2024-11-09 03:06:00'),
+(1, 'wiseowl@admin', 'a923a13cb68f7593c187ce8d77020fb2e04d913b28022f75e3751b1544337f79', NULL, NULL, 'Adminstrator', NULL, NULL, 'Khác', NULL, '', 1, '2024-12-22 14:13:12', '2024-10-26 09:11:00', '2024-12-22 07:13:12'),
+(2, 'Quyen1506', '6e6d16908ed1c04a52ec391771202906412326d8c2de232fae486c26c51816c6', NULL, NULL, 'Vũ Tiến Quyền', NULL, NULL, 'Nam', NULL, '', 2, '2024-12-22 13:24:35', '2024-10-26 09:11:00', '2024-12-22 06:24:35'),
 (6, 'HKJared', NULL, 'github', '3a4bff9505f4b25f14a28adf2acc81c72bd77bb0d7313294a2cf0e3c997e4aa4', 'Vu Tien Quyen', NULL, NULL, 'Nam', NULL, 'https://avatars.githubusercontent.com/u/124007412?v=4', 2, '2024-11-09 12:13:22', '2024-10-29 15:08:09', '2024-11-09 05:13:22'),
 (7, 'vuq147', NULL, 'google', '20452a9b63dfb7886f35065fc1191d21afb90979b004ef40a77836c52a58bae1', 'Quyền Vũ', 'vuq147@gmail.com', NULL, 'Nam', NULL, 'https://lh3.googleusercontent.com/a/ACg8ocIooj9ouLMGdVyTPE39qLKrsghDs-0jCVeBZWPoXRfYlmSiOAUY=s96-c', 2, '2024-11-14 21:59:55', '2024-10-30 04:22:51', '2024-11-14 14:59:55');
 
@@ -2444,6 +3093,13 @@ CREATE TABLE `user_code_exercise_submissions` (
   `result_id` int(11) NOT NULL,
   `submitted_code` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `user_code_exercise_submissions`
+--
+
+INSERT INTO `user_code_exercise_submissions` (`result_id`, `submitted_code`) VALUES
+(1, '#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n\n}');
 
 -- --------------------------------------------------------
 
@@ -2489,8 +3145,17 @@ CREATE TABLE `user_exercise_results` (
   `is_completed` tinyint(1) NOT NULL DEFAULT 0,
   `started_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `completed_at` datetime DEFAULT NULL,
-  `submission_count` int(11) DEFAULT 1
+  `submission_count` int(11) DEFAULT 1,
+  `score` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `user_exercise_results`
+--
+
+INSERT INTO `user_exercise_results` (`id`, `user_id`, `exercise_id`, `is_completed`, `started_at`, `completed_at`, `submission_count`, `score`) VALUES
+(1, 2, 3, 1, '2024-12-18 05:26:52', '2024-12-18 12:31:51', 2, 100),
+(2, 2, 2, 0, '2024-12-18 05:28:24', NULL, 2, 25);
 
 -- --------------------------------------------------------
 
@@ -2500,10 +3165,37 @@ CREATE TABLE `user_exercise_results` (
 
 CREATE TABLE `user_multiple_choice_answers` (
   `id` int(11) NOT NULL,
+  `question_id` int(11) NOT NULL,
   `result_id` int(11) NOT NULL,
   `selected_options` longtext NOT NULL,
   `is_correct` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `user_multiple_choice_answers`
+--
+
+INSERT INTO `user_multiple_choice_answers` (`id`, `question_id`, `result_id`, `selected_options`, `is_correct`) VALUES
+(1, 55, 2, '[{\"text\":\"subroutine\",\"image_url\":null}]', 0),
+(2, 54, 2, '[{\"text\":\"Một chiều\",\"image_url\":null}]', 0),
+(3, 38, 2, '[{\"text\":\"clear\",\"image_url\":null}]', 0),
+(4, 32, 2, '[{\"text\":\"Dennis Ritchie\",\"image_url\":null}]', 0),
+(5, 49, 2, '[{\"text\":\"type\",\"image_url\":null}]', 1),
+(6, 48, 2, '[{\"text\":\"Tất cả các đáp án trên\",\"image_url\":null}]', 0),
+(7, 35, 2, '[{\"text\":\"Ngữ pháp và ngữ nghĩa đơn giản\",\"image_url\":null}]', 1),
+(8, 37, 2, '[{\"text\":\"uses\",\"image_url\":null}]', 1),
+(9, 44, 2, '[{\"text\":\"Tất cả các đáp án trên\",\"image_url\":null}]', 0),
+(10, 36, 2, '[{\"text\":\"begin\",\"image_url\":null}]', 0),
+(11, 42, 2, '[{\"text\":\"end\",\"image_url\":null}]', 1),
+(12, 33, 2, '[{\"text\":\"1965\",\"image_url\":null}]', 0),
+(13, 61, 2, '[{\"text\":\"Không\",\"image_url\":null}]', 0),
+(14, 51, 2, '[{\"text\":\"Khai báo thư viện giao diện\",\"image_url\":null}]', 0),
+(15, 56, 2, '[{\"text\":\"Có\",\"image_url\":null}]', 0),
+(16, 39, 2, '[{\"text\":\"echo\",\"image_url\":null}]', 0),
+(17, 34, 2, '[{\"text\":\"Blaise Pascal\",\"image_url\":null}]', 1),
+(18, 40, 2, '[{\"text\":\"Phần xử lý\",\"image_url\":null}]', 0),
+(19, 50, 2, '[{\"text\":\"Cả a và b\",\"image_url\":null}]', 0),
+(20, 43, 2, '[{\"text\":\"Xóa màn hình\",\"image_url\":null}]', 0);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -2530,6 +3222,20 @@ ALTER TABLE `exercises`
   ADD KEY `exercise_fk1` (`topic_id`),
   ADD KEY `exercise_fk2` (`created_by`),
   ADD KEY `exercise_fk3` (`updated_by`);
+
+--
+-- Chỉ mục cho bảng `instructors`
+--
+ALTER TABLE `instructors`
+  ADD PRIMARY KEY (`user_id`),
+  ADD KEY `instructor_fk2` (`approved_by`);
+
+--
+-- Chỉ mục cho bảng `instructor_identifications`
+--
+ALTER TABLE `instructor_identifications`
+  ADD PRIMARY KEY (`user_id`),
+  ADD KEY `instructor_identification_fk2` (`verified_by`);
 
 --
 -- Chỉ mục cho bảng `logs`
@@ -2634,7 +3340,8 @@ ALTER TABLE `user_exercise_results`
 --
 ALTER TABLE `user_multiple_choice_answers`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_multiple_choice_answer_fk1` (`result_id`);
+  ADD KEY `user_multiple_choice_answer_fk1` (`result_id`),
+  ADD KEY `user_multiple_choice_answer_fk2` (`question_id`);
 
 --
 -- AUTO_INCREMENT cho các bảng đã đổ
@@ -2644,19 +3351,19 @@ ALTER TABLE `user_multiple_choice_answers`
 -- AUTO_INCREMENT cho bảng `exercises`
 --
 ALTER TABLE `exercises`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `logs`
 --
 ALTER TABLE `logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2137;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2615;
 
 --
 -- AUTO_INCREMENT cho bảng `multiple_choice_exercises`
 --
 ALTER TABLE `multiple_choice_exercises`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT cho bảng `permissions`
@@ -2668,13 +3375,13 @@ ALTER TABLE `permissions`
 -- AUTO_INCREMENT cho bảng `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `system_exercise_topics`
 --
 ALTER TABLE `system_exercise_topics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -2686,13 +3393,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `user_exercise_results`
 --
 ALTER TABLE `user_exercise_results`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `user_multiple_choice_answers`
 --
 ALTER TABLE `user_multiple_choice_answers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
@@ -2717,6 +3424,20 @@ ALTER TABLE `exercises`
   ADD CONSTRAINT `exercise_fk1` FOREIGN KEY (`topic_id`) REFERENCES `system_exercise_topics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `exercise_fk2` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   ADD CONSTRAINT `exercise_fk3` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `instructors`
+--
+ALTER TABLE `instructors`
+  ADD CONSTRAINT `instructor_fk1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `instructor_fk2` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+--
+-- Các ràng buộc cho bảng `instructor_identifications`
+--
+ALTER TABLE `instructor_identifications`
+  ADD CONSTRAINT `instructor_identification_fk1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `instructor_identification_fk2` FOREIGN KEY (`verified_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 --
 -- Các ràng buộc cho bảng `logs`
@@ -2801,7 +3522,8 @@ ALTER TABLE `user_exercise_results`
 -- Các ràng buộc cho bảng `user_multiple_choice_answers`
 --
 ALTER TABLE `user_multiple_choice_answers`
-  ADD CONSTRAINT `user_multiple_choice_answer_fk1` FOREIGN KEY (`result_id`) REFERENCES `user_exercise_results` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `user_multiple_choice_answer_fk1` FOREIGN KEY (`result_id`) REFERENCES `user_exercise_results` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `user_multiple_choice_answer_fk2` FOREIGN KEY (`question_id`) REFERENCES `multiple_choice_exercises` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

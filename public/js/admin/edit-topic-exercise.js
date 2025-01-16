@@ -41,9 +41,6 @@ $(document).ready(async function() {
     // Hiển thị form thêm bài tập
     createEditForm(exercise, topic);
 
-    // createEditor('Đề bài');
-    // createCodeEditor(topic);
-
     if (topic.programming_language != 'Multi') {
         $('#language').addClass('unchangeable');
     }
@@ -145,19 +142,16 @@ $(document).ready(function() {
     });
 
     $(document).on('click.wiseowlEvent', '.add-question-btn', function () {
-        // Tìm danh sách các ID hiện tại
-        const questionIds = $('.edit-question-item')
-            .map(function () {
-                const idMatch = $(this).attr('id')?.match(/question_(\d+)/);
-                return idMatch ? parseInt(idMatch[1], 10) : null;
-            })
-            .get();
     
-        // Tìm i lớn nhất hiện tại và tăng lên 1
-        const newId = Math.max(0, ...questionIds) + 1;
-    
+        const exerciseId = $(this).attr('data-exercise-id');
+
         // Tạo component câu hỏi mới
-        const newQuestionHtml = createEditQuestionComponent({ id: newId });
+        const newQuestionHtml = createEditQuestionComponent({
+            id: -1,
+            exercise_id: exerciseId,
+            type: 'single',
+            options: [{}, {}]
+        });
     
         // Thêm câu hỏi mới vào cuối danh sách
         const newElement = $(newQuestionHtml).appendTo('.question-list');
@@ -251,8 +245,8 @@ $(document).ready(function() {
 
     $(document).on("click.wiseowlEvent", ".add-topic-exercise__container  .cancel-btn", function () {
         const topicId = $(this).attr('data-topic-id');
-
-        const topic = topics.find(t => t.id == topicId);
+        
+        const topic = topics.find(t => t.id == topicId); console.log(topics)
 
         showConfirm('Xác hậy loại bỏ nội dung đã thêm trước đó.', 'Xác nhận', function(result) {
             if (result) {
@@ -261,26 +255,206 @@ $(document).ready(function() {
         })
     });
 
+    // Xóa ảnh cũ của câu hỏi
+    $(document).on("click.wiseowlEvent", ".remove-old-image-btn", function() {
+        $(this).closest('.image-container').remove()
+    });
+
+    $(document).on("click.wiseowlEvent", ".submit-code-exercise-btn", async function () {
+        const is_valid_exercise = checkCodeExercise();
+
+        if (!is_valid_exercise) {
+            return
+        }
+
+        const exercise_id = $(this).attr("data-exercise-id");
+        let code_exercise = {
+            exercise_id: parseInt(exercise_id, 10),
+            content: '',
+            language: '',
+            starter_code: null,
+            test_cases: []
+        };
+
+        code_exercise.content = editor.getData();
+        code_exercise.language = $('#language').attr('data-val');
+
+        if ($('#has_starter_code').attr('data-val') == '1') {
+            code_exercise.starter_code = code_editor.getValue();
+        }
+
+        $('.edit-testcase-item').each(function() {
+            $item = $(this);
+
+            code_exercise.test_cases.push({
+                input: $item.find('.input').val() || '',
+                output: $item.find('.output').val()
+            })
+        });
+
+        const response = await apiWithAccessToken('/code-exercise', 'PUT', { code_exercise: code_exercise });
+
+        if (response && response.message) {
+            showNotification(response.message)
+        }
+    });
+
     // TODO: Lưu bài tập
-    $(document).on("click.wiseowlEvent", ".submit-btn", function () {
+    $(document).on("click.wiseowlEvent", ".submit-btn", async function () {
         const is_valid_exercise = checkExercise();
 
         if (!is_valid_exercise) {
             return
         }
 
-        const topicId = $(this).attr('data-topic-id');
+        const exercise_id = $(this).attr("data-exercise-id");
+        const exercise = {
+            id: parseInt(exercise_id, 10),
+            title: $('#title').val(),
+            description: $('#description').val(),
+            level: $('#level').attr('data-val'),
+            bonus_scores: parseInt($('#bonus_scores').attr('data-val'), 10)
+        }
+
+        const response = await apiWithAccessToken('/exercise', 'PUT', { exercise: exercise });
+
+        if (response && response.message) {
+            showNotification(response.message)
+        }
+    });
+
+    // TODO: Lưu câu hỏi
+    $(document).on("click.wiseowlEvent", ".submit-question-btn", async function () {
+        const is_valid_exercise = checkExercise();
+
+        if (!is_valid_exercise) {
+            return
+        }
+
+        const question_id = $(this).attr('data-question-id');
+        const exercise_id = $('.admin__container').attr('data-exercise-id')
+
+        const $question = $(this).closest('.edit-question-item');
+
+        function checkQuestionValid () {
+            let isValid = true;
+
+            const questionText = $question.find('textarea.question').val().trim();
+            const hasImage = $question.find('.preview-image').length > 0;
+
+            // Kiểm tra nội dung câu hỏi
+            if (!questionText && !hasImage) {
+                $question.find('textarea.question').addClass('danger-border');
+
+                showStackedNotification('Vui lòng nhập nội dung câu hỏi hoặc thêm thêm một hình ảnh minh họa.', 'question_err');
+                isValid = false; // Đặt cờ không hợp lệ
+                return false; // Dừng vòng lặp .each() hiện tại
+            }
+
+            // Kiểm tra đáp án
+            $question.find('.question-option').each(function () {
+                if (!isValid) return false; // Thoát vòng lặp nếu phát hiện lỗi trước đó
+
+                const $option = $(this);
+                const optionText = $option.find('textarea').val().trim();
+                const optionImage = $option.find('.preview-image').length > 0;
+
+                // Đáp án phải có nội dung hoặc hình ảnh
+                if (!optionText && !optionImage) {
+                    $option.find('textarea').addClass('danger-border');
+
+                    showStackedNotification('Đáp án không được để trống, phải nhập nội dung hoặc thêm một hình ảnh minh họa.', 'option_err');
+                    isValid = false; // Đặt cờ không hợp lệ
+                    return false; // Dừng vòng lặp .each() hiện tại
+                }
+            });
+
+            if (!isValid) return false; // Thoát vòng lặp nếu phát hiện lỗi trước đó
+
+            // Kiểm tra đáp án đúng
+            const $correctOption = $question.find('.question-option.is_correct');
+            if (!$correctOption.length) {
+
+                showStackedNotification('Câu hỏi phải có ít nhất một đáp án đúng.', 'option_correct_err');
+                isValid = false; // Đặt cờ không hợp lệ
+                return false; // Dừng vòng lặp .each() hiện tại
+            }
+
+            return isValid
+        }
+
+        if (!checkQuestionValid()) {
+            return
+        }
         
-        createExercise(topicId);
+        const question = {
+            id: question_id,
+            exercise_id: exercise_id,
+            type: $question.find('.type_col .wo-select').attr('data-val'),
+            question: $question.find('textarea.question').val() || '',
+            question_image_url: $question.find('.question_col .image-container img').attr('src') || '',
+            options: [],
+            is_required: $question.find('.is_required input[type="checkbox"]').is(':checked')
+        }
+
+        // Kiểm tra đáp án
+        $question.find('.question-option').each(async function () {
+            const $option = $(this);
+
+            const option = {
+                text: $option.find('.option__text').val(),
+                image_url: null,
+                is_correct: $option.hasClass('is_correct')
+            }
+
+            const $image = $option.find(`.content img`);
+            if($image[0]) {
+                option.image_url = $image.attr('src')
+            }
+
+            question.options.push(option)
+        });
+
+        const inputFile = $(`#question-image_${ question_id }`);
+        if(inputFile[0].files && inputFile[0].files.length > 0) {
+            let formData = new FormData();
+
+            formData.append('files', inputFile[0].files[0]);
+            formData.append('keys[]', `image_url`);
+
+            const responseUrl = await upload(formData);
+            // console.log(responseUrl)
+
+            if (!responseUrl) {
+                return
+            }
+
+            if (responseUrl.image_url) {
+                question.question_image_url = responseUrl.image_url
+            }
+        }
+
+
+        const body = {
+            question: question
+        }
+    
+        const response = await apiWithAccessToken('/mutiple-choice-exercise', 'PUT', body);
+    
+        if (response && response.message) {
+            showNotification(response.message);
+        }
     });
 });
 
 function createEditForm(exercise, topic) {
-    const $addTopicContainer = $('.admin__container');
+    const $adminContainer = $('.admin__container');
+
+    $adminContainer.attr('data-exercise-id', exercise.id)
 
     const type_options = [
-        { value: 'multiple_choice', text: 'Bài tập trắc nghiệm', is_selected: 1 },
-        { value: 'code', text: 'Bài tập lập trình', is_selected: 0 }
+        { value: 'multiple_choice', text: 'Bài tập trắc nghiệm', is_selected: exercise.type == "code" ? 0 : 1 },
+        { value: 'code', text: 'Bài tập lập trình', is_selected: exercise.type == "code" ? 1 : 0 }
     ];
 
     const level_options = [
@@ -297,8 +471,8 @@ function createEditForm(exercise, topic) {
         { value: '90', text: '90 điểm', is_selected: 0 },
         { value: '100', text: '100 điểm', is_selected: 0 }
     ];
-
-    $addTopicContainer.append(`
+    
+    $adminContainer.append(`
         <div class="row gap-24 full-width">
             <div class="add-topic-exercise__container col gap-24 flex-1">
                 <div class="full-width col panel">
@@ -344,12 +518,12 @@ function createEditForm(exercise, topic) {
                         </div>
                     </div>
                     <div class="action row gap-16 center">
-                        <button class="cancel-btn"  data-exercise-id="${ exercise.id }">Hủy</button>
-                        <button class="submit-btn" data-exercise-id="${ exercise.id }">Xác nhận</button>
+                        <button class="cancel-btn"  data-exercise-id="${ exercise.id }" data-topic-id="${ exercise.topic_id }">Hủy</button>
+                        <button class="submit-btn" data-exercise-id="${ exercise.id }"  data-topic-id="${ exercise.topic_id }">Lưu</button>
                     </div>
                 </div>
                 ${
-                    exercise.type == "code_exercide" ?
+                    exercise.type == "code" ?
                     createEditCodeExercise(exercise.code_exercise) :
                     createEditMultipleChoiceExercise(exercise.multiple_choice_exercise)
                 }
@@ -358,6 +532,12 @@ function createEditForm(exercise, topic) {
         </div>
     `);
 
+    if (exercise.type == "code") {
+        createEditor('Đề bài', exercise.code_exercise.content);
+        createCodeEditor(exercise.code_exercise);
+    }
+
+    $('#type').trigger('change')
     // ?: Những thông tin không thể thay đổi
     $('#type').addClass('unchangeable');
 }
@@ -371,7 +551,7 @@ function createEditMultipleChoiceExercise(multiple_choice_exercise) {
             <div class="panel__body col gap-24">
                 ${ createListEditQuestionComponent(multiple_choice_exercise) }
                 <div class="row flex-box item-center">
-                    <button class="add-btn action-btn add-question-btn">Thêm câu hỏi</button>
+                    <button class="add-btn action-btn add-question-btn" data-exercise-id="${ multiple_choice_exercise.exercise_id }">Thêm câu hỏi</button>
                     <div class="row gap-16">
                         <p>Số câu hỏi: <span id="total_questions">${ multiple_choice_exercise.length }</span></p>
                         <p>Số câu hỏi bắt buộc: <span id="total_required_questions">0</span></p>
@@ -391,7 +571,7 @@ function createEditCodeExercise(code_exercise) {
     ];
 
     const starter_code_options = [
-        { value: '0', text: 'Không', is_selected: code_exercise.starter_code ? 1 : 0 },
+        { value: '0', text: 'Không', is_selected: code_exercise.starter_code ? 0 : 1 },
         { value: '1', text: 'Có', is_selected: code_exercise.starter_code ? 1 : 0 },
     ];
 
@@ -417,14 +597,17 @@ function createEditCodeExercise(code_exercise) {
                             ${ createSelectComponent(starter_code_options, 'has_starter_code') }
                         </div>
                     </div>
-                    <div class="starter_code__container hide scale-up-ver-top">
+                    <div class="starter_code__container ${code_exercise.starter_code ? "" : "hide"} scale-up-ver-top">
                         <textarea id="code_editor"></textarea>
                     </div>
                     <div class="col">
                         <label>Test case</label>
-                        ${ createListNewTestcaseComponent(code_exercise.test_cases) }
+                        ${ createListEditTestcaseComponent(code_exercise.test_cases) }
                     </div>
                 </div>
+            </div>
+            <div class="action row gap-16 center">
+                <button class="submit-code-exercise-btn" data-exercise-id="${ code_exercise.exercise_id }">Lưu</button>
             </div>
         </div>
     `
@@ -510,16 +693,36 @@ function previewImage(input, target) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
+            // Tạo div bọc ảnh và nút xóa
+            const $imageContainer = $('<div>', {
+                class: 'relative image-container',
+            });
+
+            // Tạo ảnh xem trước
             const $imagePreview = $('<img>', {
                 src: e.target.result,
                 class: 'preview-image',
                 alt: 'Preview',
             });
 
-            // Xóa ảnh cũ nếu đã có
-            $(target).find('.preview-image').remove();
-            // Thêm ảnh mới
-            $(target).append($imagePreview);
+            // Tạo nút xóa ảnh
+            const $removeButton = $('<button>', {
+                class: 'absolute center remove-image-btn',
+                html: '<ion-icon name="close-outline"></ion-icon>',
+                click: function () {
+                    // Xóa div chứa ảnh và nút xóa
+                    $imageContainer.remove();
+                    // Xóa file trong input
+                    $(input).val('');
+                },
+            });
+
+            // Xóa nội dung cũ nếu có
+            $(target).find('.image-container').remove();
+
+            // Thêm ảnh và nút xóa vào div, sau đó thêm div vào target
+            $imageContainer.append($imagePreview).append($removeButton);
+            $(target).append($imageContainer);
         };
         reader.readAsDataURL(file);
     }
@@ -550,157 +753,23 @@ function checkExercise() {
         return false; // Dừng kiểm tra hoàn toàn
     }
 
-    if ($('#type').attr('data-val') == 'multiple_choice') { // Kiểm tra điều kiện bài tập trắc nghiệm
-        $('.edit-question-item').each(function () {
-            if (!isValid) return false; // Thoát vòng lặp nếu phát hiện lỗi trước đó
-
-            const $question = $(this);
-            const questionText = $question.find('textarea.question').val().trim();
-            const hasImage = $question.find('.preview-image').length > 0;
-
-            // Kiểm tra nội dung câu hỏi
-            if (!questionText && !hasImage) {
-                $question.find('textarea.question').addClass('danger-border');
-
-                // Cuộn đến câu hỏi không hợp lệ
-                $('.main-body').animate({
-                    scrollTop: $question.offset().top - 96
-                }, 500);
-
-                showStackedNotification('Vui lòng nhập nội dung câu hỏi hoặc thêm thêm một hình ảnh minh họa.', 'question_err');
-                isValid = false; // Đặt cờ không hợp lệ
-                return false; // Dừng vòng lặp .each() hiện tại
-            }
-
-            // Kiểm tra đáp án
-            $question.find('.question-option').each(function () {
-                if (!isValid) return false; // Thoát vòng lặp nếu phát hiện lỗi trước đó
-
-                const $option = $(this);
-                const optionText = $option.find('textarea').val().trim();
-                const optionImage = $option.find('.preview-image').length > 0;
-
-                // Đáp án phải có nội dung hoặc hình ảnh
-                if (!optionText && !optionImage) {
-                    $option.find('textarea').addClass('danger-border');
-
-                    // Cuộn đến câu hỏi không hợp lệ
-                    $('.main-body').animate({
-                        scrollTop: $question.offset().top - 96
-                    }, 500);
-
-                    showStackedNotification('Đáp án không được để trống, phải nhập nội dung hoặc thêm một hình ảnh minh họa.', 'option_err');
-                    isValid = false; // Đặt cờ không hợp lệ
-                    return false; // Dừng vòng lặp .each() hiện tại
-                }
-            });
-
-            if (!isValid) return false; // Thoát vòng lặp nếu phát hiện lỗi trước đó
-
-            // Kiểm tra đáp án đúng
-            const $correctOption = $question.find('.question-option.is_correct');
-            if (!$correctOption.length) {
-                // Cuộn đến câu hỏi không hợp lệ
-                $('.main-body').animate({
-                    scrollTop: $question.offset().top - 96
-                }, 500);
-
-                showStackedNotification('Câu hỏi phải có ít nhất một đáp án đúng.', 'option_correct_err');
-                isValid = false; // Đặt cờ không hợp lệ
-                return false; // Dừng vòng lặp .each() hiện tại
-            }
-        });
-
-        if (!isValid) return false; // Dừng kiểm tra hoàn toàn nếu có lỗi
-    } else { 
-        const content = editor.getData();
-        
-        if (content == '') {
-            scrollToElementInMainBody('#editor')
-            showStackedNotification('Hãy nhập đề bài cho bài tập lập trình.', 'content_err');
-            return false;
-        }
-    }
-
     return isValid; // Trả về trạng thái kiểm tra tổng quát
 }
 
-async function createExercise(topicId) {
-    const exercise = {
-        topic_id: parseInt(topicId, 10),
-        title: $('#title').val(),
-        description: $('#description').val(),
-        type: $('#type').attr('data-val'),
-        level: $('#level').attr('data-val'),
-        bonus_scores: parseInt($('#bonus_scores').attr('data-val'), 10)
+function checkCodeExercise() {
+    const content = editor.getData();
+        
+    if (content == '') {
+        scrollToElementInMainBody('#editor')
+        showStackedNotification('Hãy nhập đề bài cho bài tập lập trình.', 'content_err');
+        return false;
     }
 
-    let multiple_choice_exercises = [];
-    let code_exercise = {
-        content: '',
-        language: '',
-        starter_code: null,
-        test_cases: []
-    };
-
-    if (exercise.type == 'multiple_choice') {
-        $('.edit-question-item').each(function () {
-            const $question = $(this);
-            
-            const multiple_choice_exercise = {
-                type: $question.find('.type_col .wo-select').attr('data-val'),
-                question: $question.find('textarea.question').val() || '',
-                question_image_url: null,
-                options: [],
-                is_required: $question.find('.is_required input[type="checkbox"]').is(':checked')
-            }
-
-            // Kiểm tra đáp án
-            $question.find('.question-option').each(function () {
-                const $option = $(this);
-
-                const option = {
-                    text: $option.find('.option__text').val(),
-                    image_url: null,
-                    is_correct: $option.hasClass('is_correct')
-                }
-
-                multiple_choice_exercise.options.push(option)
-            });
-
-            multiple_choice_exercises.push(multiple_choice_exercise);
-        });
-    } else {
-        code_exercise.content = editor.getData();
-        code_exercise.language = $('#language').attr('data-val');
-
-        if ($('#has_starter_code').attr('data-val') == '1') {
-            code_exercise.starter_code = code_editor.getValue();
-        }
-
-        $('.edit-testcase-item').each(function() {
-            $item = $(this);
-
-            code_exercise.test_cases.push({
-                input: $item.find('.input').val() || '',
-                output: $item.find('.output').val()
-            })
-        });
-    }
-
-    const body = {
-        exercise, multiple_choice_exercises, code_exercise
-    }
-
-    const response = await apiWithAccessToken('/exercise', 'POST', body);
-
-    if (response && response.exercise_id) {
-        showCreatedSuccessfully(response.exercise_id);
-    }
+    return true; 
 }
 
-function createCodeEditor(topic) {
-    // Xác định mode dựa trên programming_language
+function createCodeEditor(code_exercise) {
+    // Xác định mode dựa trên language
     const languageModes = {
         Cpp: "text/x-c++src",
         Java: "text/x-java",
@@ -708,11 +777,11 @@ function createCodeEditor(topic) {
         Python: "text/x-python",
         Multi: "text/x-pascal" // Mặc định là Pascal nếu Multi
     };
-    const mode = languageModes[topic?.programming_language || 'Multi']; // Nếu không tìm thấy, mặc định là Multi
+    const mode = languageModes[code_exercise?.language || 'Multi']; // Nếu không tìm thấy, mặc định là Multi
 
     // Tạo CodeMirror
     code_editor = CodeMirror.fromTextArea(document.getElementById("code_editor"), {
-        mode: mode, // Gán mode dựa trên topic
+        mode: mode, // Gán mode dựa trên code_exercise
         theme: "default",
         tabSize: 4,
         indentWithTabs: true,
@@ -730,19 +799,9 @@ function createCodeEditor(topic) {
         }
     });
 
+    if (code_exercise.starter_code) {            
+        code_editor.setValue(code_exercise.starter_code)
+    }
+
     $('#language').trigger('change')
-}
-
-function showCreatedSuccessfully(exercise_id) {
-    const exerciseTitle = $('#title'); 
-    const $adminContainer = $('.admin__container');
-
-    // Loại bỏ tất cả các phần tử con trừ `.breadcrumb`
-    $adminContainer.children(':not(.breadcrumb)').remove();
-
-    // Thêm thông báo thành công
-    $adminContainer.append(createAlertSuccessComponent('Tạo bài tập thành công', [
-        { href: '/admin/system-exercise-management', text: 'Quay về trang chủ', is_main: 0 },
-        { href: `/admin/topic-exercise?title=${ exerciseTitle }&id=${ exercise_id }`, text: 'Xem', is_main: 1 }
-    ]))
 }

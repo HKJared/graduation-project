@@ -21,8 +21,8 @@ class LogModel {
     // Tạo một bản ghi log mới
     static async createLog(action, user_id) {
         const queryString = `
-            INSERT INTO logs (user_id, action)
-            VALUES (?, ?)
+            INSERT INTO logs (user_id, action, detail)
+            VALUES (?, ?, '')
         `;
 
         try {

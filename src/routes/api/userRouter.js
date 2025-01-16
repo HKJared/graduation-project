@@ -24,6 +24,8 @@ apiRouter.get('/topic', authenticate, TopicController.getTopicByUser);
 
 apiRouter.get('/exercise', authenticate, ExerciseController.getExerciseByUser);
 
+apiRouter.get('/exercise-result', authenticate, ExerciseController.getExerciseResultByUser);
+
 apiRouter.post('/submit-multiple-choice-exercise', authenticate, ExerciseController.submitMultipleChoiceExercise);
 apiRouter.post('/submit-code-exercise', authenticate, ExerciseController.submitCodeExercise);
 

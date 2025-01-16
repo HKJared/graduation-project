@@ -335,6 +335,22 @@
     color: var(--color-primary);
 }
 
+.edit-question-item .image-container {
+    max-height: 350px;
+    max-width: 350px;
+}
+
+.edit-question-item .image-container .remove-image-btn, .edit-question-item .remove-old-image-btn {
+    top: 4px;
+    right: 4px;
+    background-color: #fff;
+    color: var(--color-danger);
+    height: 24px;
+    width: 24px;
+    border-radius: 12px;
+    border: 1px solid #bfbfbf;
+}
+
 .edit-question-item .question__action .remove-question-btn:hover,
 .edit-question-item .question__action .submit-question-btn:hover,
 .edit-question-item .question__action .add-option-btn:hover {
@@ -521,6 +537,7 @@
     color: var(--color-white-60);
 }
 
-.question-item .question-option.is_selected .icon {
+.question-item .question-option.is_selected .icon,
+.question-item .question-option .icon.is_correct {
     color: var(--color-primary);
 }

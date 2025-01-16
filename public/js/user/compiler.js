@@ -108,7 +108,10 @@ $(document).ready(function () {
 
     // Sự kiện Stop Code
     $('.stop-code-btn').on('click.woEvent', function () {
-        
+        isRunning = false
+        const runBtn = $('.run-code-btn');
+        runBtn.removeClass('not-allowed');
+        runBtn.html('<ion-icon name="play"></ion-icon>');
     });
 
     // Sự kiện khi checkbox "Tự động căn lề" thay đổi
@@ -162,6 +165,7 @@ async function runCode() {
     const currentOutput = outputEditor.getValue();
 
     // Thêm lớp CSS cho nút khi đang chạy
+    isRunning = true
     const runBtn = $('.run-code-btn');
     runBtn.addClass('not-allowed');
     runBtn.html('<ion-icon class="running-icon" name="color-filter-outline"></ion-icon>');
@@ -176,7 +180,22 @@ async function runCode() {
         });
 
         const data = await response.json(); console.log(data);
+
+        if (!isRunning) {
+            runBtn.removeClass('not-allowed');
+            runBtn.html('<ion-icon name="play"></ion-icon>');
+
+            return
+        }
+
         outputEditor.setValue(currentOutput + (currentOutput == '' ? '' : '\n') + data.output);
+
+        if (data.executionTime) {
+            $('.execution-time-result').empty().append(`<div class="row gap-8 success item-center"><ion-icon name="stopwatch-outline"></ion-icon> ${data.executionTime}ms</div>`);
+        } else {
+            $('.execution-time-result').empty().append(`<div class="row gap-8 danger item-center"><ion-icon name="alert-circle-outline"></ion-icon> Error</div>`);
+        }
+        
     } catch (error) {
         outputEditor.setValue(currentOutput + (currentOutput == '' ? '' : '\n') + "Lỗi kết nối tới server.");
     } finally {

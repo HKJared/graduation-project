@@ -80,6 +80,7 @@
     color: var(--color-white-100);
 }
 
+.add-topic-exercise__container .panel > .action .submit-code-exercise-btn,
 .add-topic-exercise__container .panel > .action .submit-btn {
     background-color: var(--color-success);
     color: var(--color-white-100);

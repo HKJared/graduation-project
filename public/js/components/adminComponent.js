@@ -105,15 +105,19 @@ function createEditQuestionComponent(question) {
                     </button>
                     <div class="content col">
                         <div class="wo-textarea">
-                            <textarea name="" class="option__text" placeholder="Đáp án">${option.text}</textarea>
+                            <textarea name="" class="option__text" placeholder="Đáp án">${option.text || ''}</textarea>
                         </div>
-                        ${option.image_url ? `<img src="${option.image_url}" alt="Option Image" class="option-image">` : ''}
+                        ${
+                            option.image_url ?
+                            `<div class="relative image-container"><img src="${option.image_url}" class="preview-image" alt="Preview"><button class="absolute center remove-old-image-btn"><ion-icon name="close-outline" role="img" class="md hydrated" aria-label="close outline"></ion-icon></button></div>` 
+                            : ''
+                        }
                     </div>
                     <div class="image center">
                         <label for="question_${question.id}_option_${index}" class="change-question-image center">
                             <ion-icon name="image-outline"></ion-icon>
                         </label>
-                        <input type="file" id="question_${question.id}_option_${index}" ${option.image_url ? `data-image-url="${option.image_url}"` : ''}>
+                        <input type="file"  accept="image/*" id="question_${question.id}_option_${index}" ${option.image_url ? `data-image-url="${option.image_url}"` : ''}>
                     </div>
                     <div class="option-action">
                         <button class="remove-option-btn center"  title="Loại bỏ đáp án này">
@@ -130,14 +134,19 @@ function createEditQuestionComponent(question) {
                     <div class="col question_col">
                         <label for="">Nội dung câu hỏi <span>*</span></label>
                         <div class="wo-textarea">
-                            <textarea name="" class="question">${question.question}</textarea>
+                            <textarea name="" class="question">${question.question || ''}</textarea>
                         </div>
+                        ${
+                            question.question_image_url ?
+                            `<div class="relative image-container"><img src="${question.question_image_url}" class="preview-image" alt="Preview"><button class="absolute center remove-old-image-btn"><ion-icon name="close-outline" role="img" class="md hydrated" aria-label="close outline"></ion-icon></button></div>` 
+                            : ''
+                        }
                     </div>
                     <div class="col center image_col">
                         <label for="question-image_${question.id}" class="change-question-image">
                             <ion-icon name="image-outline"></ion-icon>
                         </label>
-                        <input type="file" accept="" class="question_image_url" id="question-image_${question.id}" ${question.question_image_url ? `data-image-url="${question.question_image_url}"` : ''}>
+                        <input type="file" accept="image/*" class="question_image_url" id="question-image_${question.id}" ${question.question_image_url ? `data-image-url="${question.question_image_url}"` : ''}>
                     </div>
                     <div class="col type_col">
                         <label for="">Loại câu hỏi</label>
@@ -181,7 +190,7 @@ function createEditQuestionComponent(question) {
                     <label for="question-image_${question.id}" class="change-question-image" title="Thêm hình ảnh minh họa">
                         <ion-icon name="image-outline"></ion-icon>
                     </label>
-                    <input type="file" accept="" class="question_image_url" id="question-image_${question.id}">
+                    <input type="file" accept="image/*" class="question_image_url" id="question-image_${question.id}">
                 </div>
                 <div class="col type_col">
                     <label for="">Loại câu hỏi</label>
@@ -202,7 +211,7 @@ function createEditQuestionComponent(question) {
                         <label for="question_${question.id}_option_1" class="change-question-image center" title>
                             <ion-icon name="image-outline"></ion-icon>
                         </label>
-                        <input type="file" id="question_${question.id}_option_1">
+                        <input type="file" accept="image/*" id="question_${question.id}_option_1">
                     </div>
                     <div class="option-action">
                         <button class="remove-option-btn center" title="Loại bỏ đáp án này">
@@ -223,7 +232,7 @@ function createEditQuestionComponent(question) {
                         <label for="question_${question.id}_option_2" class="change-question-image center" title>
                             <ion-icon name="image-outline"></ion-icon>
                         </label>
-                        <input type="file" id="question_${question.id}_option_2">
+                        <input type="file" accept="image/*" id="question_${question.id}_option_2">
                     </div>
                     <div class="option-action">
                         <button class="remove-option-btn center" title="Loại bỏ đáp án này">
@@ -286,7 +295,7 @@ function createExerciseQuestionComponent(question, order) {
     const optionsHTML = question.options.map((option, index) => {
         return `
             <div class="question-option row full-width item-center gap-16 ">
-                <button class="icon" title="Đánh dấu là đáp án đúng">
+                <button class="icon ${ option.is_correct ? "is_correct" : "" }" title="Đánh dấu là đáp án đúng">
                     <ion-icon name="${ question.type == 'multi' ? 'square' : 'ellipse' }"></ion-icon>
                 </button>
                 <div class="content col">
@@ -332,7 +341,7 @@ function createListExerciseQuestionComponent(excercises) {
 
 // TODO: Component testcase
 function createEditTestcaseComponent(testcase) {
-    if (testcase) {
+    if (testcase ) {
         return `
             <div class="edit-testcase-item row gap-16 item-center">
                 <div class="wo-textarea">
@@ -361,6 +370,19 @@ function createListNewTestcaseComponent(quantity = 10) {
     let listNewQuestionComponent = '';
     for (let i = 1; i <= quantity; i++) {
         listNewQuestionComponent += createEditTestcaseComponent();
+    }
+
+    return `
+        <div class="testcase-list col gap-8">
+            ${ listNewQuestionComponent }
+        </div>
+    `
+}
+
+function createListEditTestcaseComponent(list) {
+    let listNewQuestionComponent = '';
+    for (let i = 1; i < list.length; i++) {
+        listNewQuestionComponent += createEditTestcaseComponent(list[i]);
     }
 
     return `

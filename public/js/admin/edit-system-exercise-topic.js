@@ -23,7 +23,9 @@ $(document).ready(async function() {
     const response = await apiWithAccessToken(`/topic?id=${ topicId }&data_to_edit=1`);
 
     if (response && response.topic) {
-        showTopic(response.topic)
+        showTopic(response.topic);
+
+        $('#programming_language').addClass('unchangeable')
     } else {
         showTopic();
     }
@@ -367,7 +369,7 @@ async function updateTopic(topicId) {
         const formData = createFormData();
 
         const responseUrl = await upload(formData);
-        console.log(responseUrl)
+        // console.log(responseUrl)
 
         if (!responseUrl) {
             return

@@ -75,11 +75,26 @@ apiRouter.delete('/topic', (req, res, next) => {
 apiRouter.post('/exercise', (req, res, next) => {
     authorize(req, res, 'exercise-creation', next);
 }, ExerciseController.createExercise);
+apiRouter.put('/exercise', (req, res, next) => {
+    authorize(req, res, 'exercise-edit', next);
+}, ExerciseController.updateExercise);
+apiRouter.delete('/exercise', (req, res, next) => {
+    authorize(req, res, 'exercise-delete', next);
+}, ExerciseController.deleteExercise);
 apiRouter.get('/topic-exercises', (req, res, next) => {
     authorize(req, res, 'admin', next);
 }, ExerciseController.getTopicExercisesByAdmin);
 apiRouter.get('/exercise', (req, res, next) => {
     authorize(req, res, 'admin', next);
 }, ExerciseController.getExercise);
+
+
+apiRouter.put('/mutiple-choice-exercise', (req, res, next) => {
+    authorize(req, res, 'exercise-edit', next);
+}, ExerciseController.createOrUpdateMultipleChoiceExercise);
+
+apiRouter.put('/code-exercise', (req, res, next) => {
+    authorize(req, res, 'exercise-edit', next);
+}, ExerciseController.updateCodeExercise);
 
 module.exports = apiRouter;

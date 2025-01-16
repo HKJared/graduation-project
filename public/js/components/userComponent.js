@@ -39,7 +39,7 @@ function createTopicComponent(topic) {
 }
 
 function createListTopicComponent(topics) {
-    console.log(topics)
+    // console.log(topics)
     // Nhóm các topics theo level
     const groupedByLevel = topics.reduce((acc, topic) => {
         // Nếu chưa có nhóm cho level này thì tạo một nhóm mới
@@ -223,6 +223,29 @@ function createListPreviewQuestionComponent(numberQuestions) {
     `
 }
 
+function createListPreviewQuestionResultComponent(results) {
+    let questionsHTML = '';
+
+    results.map((result, index) => {
+        questionsHTML += `
+            <button id="preview_question_${ index + 1 }" class="preview-question-item 
+            ${
+                result.is_correct ? 
+                "success-bg" : 
+                "danger-bg"
+            } col center">
+                <span>${index + 1}</span>
+            </button>
+        `
+    })
+
+    return `
+        <div class="list-preview-question">
+            ${ questionsHTML }
+        </div>
+    `
+}
+
 function createExerciseQuestionComponent(question, order) {
     if (!question || !question.id) {
         return ``;
@@ -263,6 +286,63 @@ function createListExerciseQuestionComponent(excercises) {
 
     for (let i = 0; i < excercises.length; i++) {
         listExerciseHTML += createExerciseQuestionComponent(excercises[i], i+1)
+    }
+
+    return `
+        <div class="list-exercise-question col gap-24 scale-up-ver-top">
+            ${ listExerciseHTML }
+        </div>
+    `
+}
+
+function createExerciseQuestionResultComponent(question, order) {
+    if (!question || !question.id) {
+        return ``;
+    }
+
+    const selectedTexts = new Set(question.selected_options.map(option => option.text));
+
+    // Gộp selected_options vào options
+    question.options = question.options.map(option => ({
+        ...option,
+        is_selected: selectedTexts.has(option.text)
+    }));
+
+    // Tạo HTML cho các lựa chọn câu trả lời (options)
+    const optionsHTML = question.options.map((option, index) => {
+        return `
+            <div class="question-option ${ option.is_selected ? "is_selected" : "" } row full-width item-center gap-16 ">
+                <button class="icon" title="Đánh dấu là đáp án đúng">
+                    <ion-icon name="${ question.type == 'multi' ? 'square' : 'ellipse' }"></ion-icon>
+                </button>
+                <div class="content col">
+                    <span>${option.text}</span>
+                    ${option.image_url ? `<img src="${option.image_url}" alt="Option Image" class="option-image">` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="question-item col gap-8 scale-up-ver-top" id="question_${order}" data-question-id="${ question.id }" data-question-type="${ question.type }">
+            <div class="edit-row col gap-8">
+                <div class="col question_col">
+                    <span class="question ${question.is_correct ? "success" : "danger"}">Câu hỏi ${ order }: ${question.question} (${ question.type == 'single' ? 'Chọn một đáp án' : 'Chọn nhiều đáp án' })</span>
+                </div>
+                ${ question.question_image_url ? '<div><img src="' + question.question_image_url + '"></img></div>' : '' }
+            </div>
+            <div class="question-options col gap-8 full-width">
+                ${optionsHTML}
+            </div>
+        </div>
+    `;
+}
+
+function createListExerciseQuestionResultComponent(result) {
+    let listExerciseHTML = ''
+
+    for (let i = 0; i < result.length; i++) {
+        listExerciseHTML += createExerciseQuestionResultComponent(result[i], i+1)
     }
 
     return `

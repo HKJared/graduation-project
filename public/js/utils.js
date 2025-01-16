@@ -84,7 +84,7 @@ function renderLoading() {}
 
 function removeLoading() {}
 
-function createEditor(placeholder = '') {
+function createEditor(placeholder = '', content) {
     CKEDITOR.ClassicEditor
         .create(document.getElementById("editor"), {
             toolbar: {
@@ -172,6 +172,9 @@ function createEditor(placeholder = '') {
         .then(newEditor => {
             removeLoading();
             editor = newEditor;
+            if (content) {
+                editor.setData(content)
+            }
         })
         .catch(error => {
             removeLoading();
@@ -416,6 +419,31 @@ function hasAnyPermission(permissions, requiredPermissions) {
     );
 }
 
+function convertImageFileToBase64URL(file) {
+    return new Promise((resolve, reject) => {
+        // Kiểm tra nếu không phải file hoặc không phải file ảnh
+        if (!file || !file.type.startsWith('image/')) {
+            reject(new Error('The provided file is not an image.'));
+            return;
+        }
+
+        const reader = new FileReader();
+
+        // Thành công, trả về Base64 URL
+        reader.onload = function (event) {
+            resolve(event.target.result); // Base64 URL
+        };
+
+        // Xử lý lỗi
+        reader.onerror = function (error) {
+            reject(new Error('Error reading the file: ' + error.message));
+        };
+
+        // Đọc file dưới dạng Data URL (Base64 URL)
+        reader.readAsDataURL(file);
+    });
+}
+
 // Hàm tạo mảng các tháng gần nhất
 function getLastSixMonths() {
     const months = [];
@@ -451,4 +479,23 @@ async function upload(formData) {
         console.error('There was a problem with the fetch operation:', error);
         return null; // Trả về null nếu có lỗi
     }
+}
+
+function formatDatetime(isoDatetime) {
+    // Chuyển chuỗi ISO thành đối tượng Date
+    const date = new Date(isoDatetime);
+
+    // Chuyển đổi sang giờ Việt Nam (GMT+7)
+    const vietnamTime = new Date(date.getTime());
+
+    // Lấy các thành phần ngày, tháng, năm, giờ, phút, giây
+    const day = String(vietnamTime.getDate()).padStart(2, '0');
+    const month = String(vietnamTime.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const year = vietnamTime.getFullYear();
+    const hours = String(vietnamTime.getHours()).padStart(2, '0');
+    const minutes = String(vietnamTime.getMinutes()).padStart(2, '0');
+    const seconds = String(vietnamTime.getSeconds()).padStart(2, '0');
+
+    // Trả về chuỗi định dạng "dd/mm/yyyy hh:mm:ss"
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }

@@ -126,10 +126,10 @@ function showExercise(exercise) {
                         </div>
                     </div>
                     <div class="metadata row gap-16">
-                        <p>Tạo bởi <strong>${ exercise.created_by_username }</strong> vào lúc <strong>${ exercise.created_at }</strong></p>
+                        <p>Tạo bởi <strong>${ exercise.created_by_username }</strong> vào lúc <strong>${ formatDatetime(exercise.created_at) }</strong></p>
                         ${
                             exercise.updated_by ? 
-                            '<p>Cập nhật bởi <strong>' + exercise.updated_by_username  + '</strong> vào lúc <strong>' + exercise.updated_at + '</strong></p>'
+                            '<p>Cập nhật bởi <strong>' + exercise.updated_by_username  + '</strong> vào lúc <strong>' + formatDatetime(exercise.updated_at) + '</strong></p>'
                             :
                             '' 
                         }

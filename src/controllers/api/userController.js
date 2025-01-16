@@ -122,7 +122,7 @@ class UserController {
     
             // Tạo người dùng mới trong cơ sở dữ liệu
             const newUserId = await UserModel.createUser(newUser);
-            log_id = LogModel.createLog(`Đăng ký tài khoản qua tài khoản ${ provider }`, newUserId);
+            log_id = await LogModel.createLog(`Đăng ký tài khoản qua tài khoản ${ provider }`, newUserId);
             await LogModel.updateStatusLog(log_id);
     
             // Trả về userId cho route
@@ -361,6 +361,17 @@ class UserController {
             const log_id = await LogModel.createLog(`info-update`, user_id);
 
             const info = req.body.info;
+
+            if (info.date_of_birth) {
+                // Chuyển đổi giá trị ngày sinh thành đối tượng Date
+                const dateOfBirth = new Date(info.date_of_birth);
+                
+                // Tăng thêm một ngày
+                dateOfBirth.setDate(dateOfBirth.getDate() + 1);
+            
+                // Cập nhật lại giá trị date_of_birth
+                info.date_of_birth = dateOfBirth.toISOString().slice(0, 10); // Định dạng lại thành 'YYYY-MM-DD'
+            }
 
             if (!info) {
                 await LogModel.updateDetailLog('Không có dữ liệu.', log_id);

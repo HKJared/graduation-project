@@ -73,7 +73,7 @@ class ExerciseModel {
         // Tạo chuỗi truy vấn SQL
         const queryString = `
             UPDATE exercises
-            SET ${keys.map(key => `${key} = ?`).join(', ')}
+            SET ${keys.map(key => `${key} = ?`).join(', ')}, updated_at = now()
             WHERE id = ?
         `;
 
@@ -184,6 +184,59 @@ class ExerciseModel {
         }
     }
 
+    // Lấy câu hỏi trắc nghiệm bằng id
+    static async getMultipleChoiceExercisesById(questionId) {
+        const queryString = `
+            SELECT
+                *
+            FROM
+                multiple_choice_exercises
+            WHERE
+                id = ?
+        `;
+    
+        try {
+            const [rows] = await pool.execute(queryString, [questionId]);
+    
+            // Chuyển đổi 'options' từ chuỗi JSON sang mảng
+            const processedRows = rows.map(row => {
+                return {
+                    ...row,
+                    options: row.options ? JSON.parse(row.options) : [], // Chuyển đổi hoặc trả về mảng rỗng nếu null
+                };
+            });
+    
+            return processedRows[0]; // Trả về dữ liệu đã được xử lý
+        } catch (error) {
+            console.error('Error executing getMultipleChoiceExercisesById() query:', error);
+            throw error;
+        }
+    }
+
+    // Cập nhật câu hỏi trác nghiệm
+    static async updateMultipleChoiceExercises(updateQuestion) {
+        const { id, type, question, question_image_url, options, is_required } = updateQuestion
+        const queryString = `
+            UPDATE
+                multiple_choice_exercises
+            SET
+                type = ?, question = ?, question_image_url = ?, options = ?, is_required = ?
+            WHERE
+                id = ?
+        `;
+    
+        try {
+            const [result] = await pool.execute(queryString, [
+                type, question, question_image_url, JSON.stringify(options), is_required, id
+            ]);
+    
+            return result.affectedRows > 0;
+        } catch (error) {
+            console.error('Error executing updateMultipleChoiceExercises() query:', error);
+            throw error;
+        }
+    }
+
     // Tạo thông tin bài tập code
     static async createCodeExercise(exerciseId, codeExercise) {
         const {
@@ -226,6 +279,28 @@ class ExerciseModel {
             return rows[0]; // Trả về ID của bài tập code vừa được tạo
         } catch (error) {
             console.error('Error executing getCodeExercise() query:', error);
+            throw error;
+        }
+    }
+
+    // Cập nhật thông tin bài tập code
+    static async updateCodeExercise(exerciseId, updatedData) {
+        const keys = Object.keys(updatedData);
+        const values = Object.values(updatedData);
+
+        // Tạo chuỗi truy vấn SQL
+        const queryString = `
+            UPDATE code_exercises
+            SET ${keys.map(key => `${key} = ?`).join(', ')}
+            WHERE exercise_id = ?
+        `;
+
+        try {
+            values.push(exerciseId); // Thêm ID của bài tập vào cuối mảng values
+            const [result] = await pool.execute(queryString, values);
+            return result.affectedRows > 0; // Trả về true nếu có bản ghi nào được cập nhật
+        } catch (error) {
+            console.error('Error executing updateExercise() query:', error);
             throw error;
         }
     }
@@ -323,6 +398,26 @@ class ExerciseModel {
         }
     }
 
+    // Lấy thông tin bài làm của người dùng
+    static async getUserExerciseResultByExerciseIdAndUserId(result_id, user_id) {
+        const queryString = `
+            SELECT
+                *
+            FROM
+                user_exercise_results
+            WHERE
+                exercise_id = ?
+                AND user_id = ?
+        `;
+        try {
+            const [row] = await pool.execute(queryString, [result_id, user_id]);
+            return row[0]; // Trả về ID của bài tập vừa được tạo
+        } catch (error) {
+            console.error('Error executing getUserExerciseResult() query:', error);
+            throw error;
+        }
+    }
+
     // Cập nhật thông tin bài làm của người dùng
     static async updateUserExerciseResult(id, score, is_completed) {
         try {
@@ -375,6 +470,36 @@ class ExerciseModel {
         }
     }
 
+    // Lấy thông tin bài làm trắc nghiệm của người dùng
+    static async getMultipleChoiceExerciseAnswerByResultId(result_id) {
+        const queryString = `
+            SELECT 
+                umca.*,
+                mce.*
+            FROM
+                user_multiple_choice_answers umca
+            JOIN
+                multiple_choice_exercises mce ON mce.id = umca.question_id
+            WHERE
+                umca.result_id = ?
+        `;
+
+        try {
+            const [rows] = await pool.execute(queryString, [result_id]);
+            const processedRows = rows.map(row => {
+                return {
+                    ...row,
+                    options: row.options ? JSON.parse(row.options) : [], // Chuyển đổi hoặc trả về mảng rỗng nếu null
+                    selected_options: row.selected_options ? JSON.parse(row.selected_options) : [],
+                };
+            });
+            return processedRows; // Trả về số lượng câu trả lời đã được tạo
+        } catch (error) {
+            console.error('Error executing getMultipleChoiceExerciseAnswerByResultId() query:', error);
+            throw error;
+        }
+    }
+
     // Tạo thông tin bài làm lập trình của người dùng
     static async createCodeExerciseSubmission(result_id, submittedCode) {
         // Tạo chuỗi truy vấn SQL và mảng giá trị cho nhiều câu trả lời
@@ -387,6 +512,26 @@ class ExerciseModel {
             return result.affectedRows;
         } catch (error) {
             console.error('Error executing createCodeExerciseSubmission() query:', error);
+            throw error;
+        }
+    }
+
+    // Tạo thông tin bài làm lập trình của người dùng
+    static async getCodeExerciseSubmissionByResultId(result_id) {
+        const queryString = `
+            SELECT 
+                *
+            FROM
+                user_code_exercise_submissions
+            WHERE
+                result_id = ?
+        `;
+
+        try {
+            const [row] = await pool.execute(queryString, [result_id,]); 
+            return row[0];
+        } catch (error) {
+            console.error('Error executing getCodeExerciseSubmissionByResultId() query:', error);
             throw error;
         }
     }

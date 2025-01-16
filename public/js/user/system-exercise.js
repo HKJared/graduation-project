@@ -130,21 +130,39 @@ function showExercise(exercise) {
 
 function createDisplayMultipleChoiceExercise(exercise) {
     return `
-        <div class="row gap-24 full-width">
-            <div class="overview__container col">
-                <div class="preview-questions_container col gap-8 panel full-width sticky-top">
-                    ${ createListPreviewQuestionComponent(20) }
+        <div class="col gap-24 full-width">
+            <div class="questions_container col panel">
+                <div class="panel_header row item-center gap-8">
+                    <span class="center" style="padding-right: 8px; border-right: 1px solid var(--color-white-60);"><ion-icon name="clipboard-outline"></ion-icon></span>
+                    <span>${ exercise.title }</span>
+                </div>
+                <div class="panel_body col flex-1 gap-16">
+                    <div class="info-overview row gap-16">
+                        <span class="${ exercise.level }">${ exercise.level }</span>
+                        <span class="row gap-4 item-center warning"><ion-icon name="medal-outline"></ion-icon> ${ exercise.bonus_scores }</span>
+                    </div>
+                    <div class="col gap-8">
+                        <h3>Mô tả</h3>
+                        <span>${ exercise.description }</span>
+                    </div>
                 </div>
             </div>
-            <div class="questions_container flex-1 col panel">
-                ${ createListExerciseQuestionComponent(exercise.questions) }
-                <div class="suggest_container col gap-4">
-                    <p>Bạn cần hoàn thành tất cả câu hỏi để có thể tiến hành chấm điểm.</p>
-                    <p>Hãy kiểm tra kỹ bài làm của bạn trước khi thực hiện chấm điểm.</p>
-                    <p>Nếu bạn đã làm bài tập này trước đó, khi chấm điểm lần này nếu thấp hơn lần trước thì bài làm sẽ không được lưu.<p>
+            <div class="row gap-24 full-width">
+                <div class="overview__container col">
+                    <div class="preview-questions_container col gap-8 panel full-width sticky-top">
+                        ${ createListPreviewQuestionComponent(exercise.questions.length) }
+                    </div>
                 </div>
-                <div class="action_container center">
-                    <button class="submit-btn success-bg not-allowed">Chấm điểm</button>
+                <div class="questions_container flex-1 col panel">
+                    ${ createListExerciseQuestionComponent(exercise.questions) }
+                    <div class="suggest_container col gap-4">
+                        <p>Bạn cần hoàn thành tất cả câu hỏi để có thể tiến hành chấm điểm.</p>
+                        <p>Hãy kiểm tra kỹ bài làm của bạn trước khi thực hiện chấm điểm.</p>
+                        <p>Nếu bạn đã làm bài tập này trước đó, khi chấm điểm lần này nếu thấp hơn lần trước thì bài làm sẽ không được lưu.<p>
+                    </div>
+                    <div class="action_container center">
+                        <button class="submit-btn success-bg not-allowed">Chấm điểm</button>
+                    </div>
                 </div>
             </div>
         </div>

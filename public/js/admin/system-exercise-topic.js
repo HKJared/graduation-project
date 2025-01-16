@@ -34,7 +34,22 @@ $(document).ready(async function() {
         showDetailTopic();
     }
 
-    
+    $(document).on('click.wiseowlEvent', '.delete-exercise-btn', async function() {
+        const exercise_id = $(this).attr('data-exercise-id');
+        const $component = $(this).closest('.topic-exercise-item')
+
+        showConfirm('Xác nhận xóa bài tập.', 'Xác nhận', async function(result) {
+            if (!result) return
+
+            const response = await apiWithAccessToken('/exercise', 'DELETE', {exercise_id: exercise_id})
+
+            if (response && response.message) {
+                showNotification(response.message);
+
+                $component.remove();
+            }
+        })
+    })
 });
 
 function showDetailTopic(topic) {

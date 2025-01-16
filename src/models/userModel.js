@@ -15,8 +15,8 @@ class UserModel {
     
         // Tạo chuỗi truy vấn SQL với các khóa tương ứng
         const queryString = `
-            INSERT INTO users (${keys.join(', ')}, fullname)
-            VALUES (${keys.map(() => '?').join(', ')}, ?)
+            INSERT INTO users (${keys.join(', ')}, fullname, last_activity)
+            VALUES (${keys.map(() => '?').join(', ')}, ?, NOW())
         `;
     
         try {
@@ -292,14 +292,23 @@ class UserModel {
         // Xây dựng câu lệnh SQL
         let setClause = [];
         let values = [];
-        
+    
         // Duyệt qua các key của account để xây dựng câu lệnh SQL
         for (const [key, value] of Object.entries(account)) {
             if (key === 'id') continue; // Bỏ qua trường id ở đây
+    
+            // Kiểm tra nếu là trường 'last_activity' và chuyển đổi giá trị ngày giờ
+            if (key === 'last_activity' && value) {
+                const date = new Date(value);
+                // Đảm bảo giá trị 'last_activity' có định dạng hợp lệ cho MySQL
+                values.push(date.toISOString().slice(0, 19).replace('T', ' '));
+            } else {
+                values.push(value);
+            }
+    
             setClause.push(`${key} = ?`);
-            values.push(value);
         }
-
+    
         // Thêm ID của người dùng vào cuối cùng
         setClause = setClause.join(', ');
         const queryString = `
@@ -307,9 +316,9 @@ class UserModel {
             SET ${setClause}
             WHERE id = ?
         `;
-
+    
         values.push(account.id); // Thêm user_id vào cuối mảng values
-
+    
         try {
             const [result] = await pool.execute(queryString, values);
             return result.affectedRows > 0;
@@ -318,7 +327,7 @@ class UserModel {
             throw error;
         }
     }
-
+    
     static async deleteUser(user_id) {
         const queryString = `
         DELETE FROM users
