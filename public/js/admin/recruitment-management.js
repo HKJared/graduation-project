@@ -56,7 +56,7 @@ $(document).ready(function() {
             return; // Ngăn không cho form submit nếu có lỗi
         }
 
-        showConfirm('Xác nhận lưu', function(result) {
+        showConfirm('Xác nhận lưu', 'Xác nhận', function(result) {
             if (result) {
                 editRecruitment(recruitment);
             }

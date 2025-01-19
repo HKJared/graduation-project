@@ -102,8 +102,8 @@ $(document).ready(function () {
         let allFilled = true;
     
         // Kiểm tra tất cả các input trong .main
-        $('.main input').each(function() {
-            if ($(this).val() === '') {
+        $('.main input').each(function() { 
+            if ($(this).val() == '') {
                 allFilled = false;
                 return false; // Thoát vòng lặp sớm nếu tìm thấy input rỗng
             }
@@ -111,19 +111,33 @@ $(document).ready(function () {
     
         // Thay đổi trạng thái của nút submit-btn
         if (allFilled) {
-            $('.submit-btn').css({
+            $('.submit-container .submit-btn').css({
                 'opacity': '1',
                 'cursor': 'pointer'
-            }).attr('title', '');
+            }).attr('title', '').removeClass('not-allowed');
         } else {
-            $('.submit-btn').css({
+            $('.submit-container .submit-btn').css({
                 'opacity': '0.7',
                 'cursor': 'not-allowed'
-            }).attr('title', 'Hãy điền đầy đủ thông tin để có thể đăng ký');
+            }).attr('title', 'Hãy điền đầy đủ thông tin để có thể đăng ký').addClass('not-allowed');
         }
     });
 
-    $(document).on('click.woEvent', '.cancel-btn', function(event) {
+    // xóa ảnh trong input và ảnh hiển thị mẫu
+    $(document).on('click.woEvent', '.remove-img', function() {
+        const previewContainer = $(this).parent('.preview-image');
+        const btn = previewContainer.siblings('.upload-btn');
+        const input = previewContainer.siblings('input[type="file"]');
+    
+        // Clear the preview and show the upload button again
+        previewContainer.empty();
+        previewContainer.css('display', 'none');
+        input.val('');
+        input.trigger('change');
+        btn.show();
+    });
+
+    $(document).on('click.woEvent', '.submit-container .cancel-btn', function(event) {
         event.stopPropagation();
 
         showConfirm('Xác nhận hủy bỏ các thông tin đã điền', 'Xác nhận', function(result) {
@@ -133,7 +147,7 @@ $(document).ready(function () {
         })
     });
 
-    $(document).on('click.woEvent', '.submit-btn', async function(event) {
+    $(document).on('click.woEvent', '.submit-container .submit-btn', async function(event) {
         event.stopPropagation();
         
         // Kiểm tra nếu cursor của nút submit là not-allowed
@@ -170,8 +184,8 @@ $(document).ready(function () {
             id_type: $('input[name="id_type"]:checked').val(),
             id_value: idValue,
             fullname: $('#fullname').val(),
-            id_image_url: response.id_image || '', 
-            id_image_with_person_url: response.id_image_with_person || ''
+            id_image_url: response.id_image, 
+            id_image_with_person_url: response.id_image_with_person
         };
 
         const body = {
@@ -181,7 +195,8 @@ $(document).ready(function () {
         const { code, instructor_registor } = await userApi('instructor-register', 'POST', body);
 
         if (code && instructor_registor) {
-            user_info.instructor = instructor_registor;
+            user_info.instructor = instructor_registor.instructorData;
+            user_info.identification = instructor_registor.identificationData;
             const $container = $('.user__container');
 
             const message = 'Đăng ký thành công. Chúng tôi sẽ kiểm duyệt thông tin bạn cung cấp và gửi thông báo phản hồi đến bạn một cách sớm nhất';
@@ -192,7 +207,7 @@ $(document).ready(function () {
                     is_main: 0
                 },
                 {
-                    href: '/instructor-registor-info',
+                    href: '/info#instructor',
                     text: 'Xem thông tin đăng ký',
                     is_main: 1
                 }

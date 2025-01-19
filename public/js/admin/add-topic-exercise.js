@@ -244,7 +244,7 @@ $(document).ready(function() {
 
         const topic = topics.find(t => t.id == topicId);
 
-        showConfirm('Xác hậy loại bỏ nội dung đã thêm trước đó.', 'Xác nhận', function(result) {
+        showConfirm('Xác nhận loại bỏ nội dung đã thêm trước đó.', 'Xác nhận', function(result) {
             if (result) {
                 updateViewBasedOnPath(`/admin/system-exercise-topic?name=${ topic.name }&id=${topic.id}`)
             }

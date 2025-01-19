@@ -11,6 +11,7 @@ const RecruitmentController = require('../../controllers/api/recruitmentControll
 
 const apiRouter = express.Router();
 
+apiRouter.post('/', UserController.createUser)
 apiRouter.post('/login', UserController.login);
 apiRouter.get('/refresh-token', authenticate, UserController.refreshToken);
 apiRouter.get('/info', authenticate, UserController.getUserInfo);

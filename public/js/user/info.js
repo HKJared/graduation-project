@@ -2,6 +2,7 @@ $(document).ready(function() {
     // Thêm lớp active vào nav-item tương ứng
     $('.nav-item').removeClass('active');
     updateUnderline();
+    
     setView();
 
     updateUserNav();

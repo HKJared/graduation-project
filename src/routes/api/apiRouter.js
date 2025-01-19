@@ -14,6 +14,8 @@ const RoleController = require('../../controllers/api/roleController');
 
 const LogController = require('../../controllers/api/logController');
 const RequestController = require('../../controllers/api/requestController');
+const UserController = require('../../controllers/api/userController');
+const VerificationController = require('../../controllers/api/verificationController');
 
 const apiRouter = express.Router();
 
@@ -50,7 +52,11 @@ apiRouter.post("/compile", (req, res) => {
 });
 
 // sent request
-apiRouter.post('/request', RequestController.creatRequest)
+apiRouter.post('/request', RequestController.creatRequest);
+
+// phone verified
+apiRouter.post('/phone-verification', VerificationController.createPhoneVerification);
+apiRouter.put('/phone-verification', VerificationController.phoneVerification);
 
 
 module.exports = apiRouter;

@@ -77,10 +77,13 @@ class UserController {
 
             account.phone_number = phone_verification.phone_number;
 
-            const new_user_id = await UserModel.createUser(account);
-            if (!req.log_id) {
-                await CartModel.createCart(new_user_id);
-            }
+            const {
+                username, password, role_id, phone_number
+            } = account
+
+            const new_user_id = await UserModel.createUser({
+                username, password, role_id, phone_number
+            });
 
             await LogModel.updateStatusLog(log_id);
             await LogModel.updateDetailLog(`Tạo tài khoản thành công.`, log_id);
@@ -254,14 +257,21 @@ class UserController {
                 return res.status(400).json({ message: 'Vui lòng nhập đầy đủ thông tin', code: 0 })
             }
 
+            if (!instructor.teaching_certificate_url || !instructor_identification.id_image_url || !instructor_identification.id_image_with_person_url) {
+                await LogModel.updateDetailLog('Lỗi trong quá trình tải file', log_id);
+
+                return res.status(400).json({ message: 'Đã có lỗi trong quá trình tải file (Có thể có kích thước file quá lớn)', code: 0 })
+            }
+
             await UserModel.createInstructor(user_id, instructor);
             await UserModel.createInstructorIdentification(user_id, instructor_identification);
 
             await LogModel.updateStatusLog(log_id);
 
-            const instructor_registor = await UserModel.getInstructorByUserId(user_id);
+            const instructorData = await UserModel.getInstructorByUserId(user_id);
+            const identificationData = await UserModel.getInstructorIdentificationByUserId(user_id);
 
-            return res.status(200).json({ message: "Đăng ký thành công.", code: 1, instructor_registor: instructor_registor });
+            return res.status(200).json({ message: "Đăng ký thành công.", code: 1, instructor_registor: { instructorData, identificationData } });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });

@@ -56,7 +56,7 @@ $(document).ready(function () {
             return;
         }
 
-        showConfirm(`Chúng tôi sẽ gửi mã xác nhận đến số điện thoại ${phone_number}`, 'Gửi mã xác nhận', '', function (result) {
+        showConfirm(`Chúng tôi sẽ gửi mã xác nhận đến số điện thoại ${phone_number}`, 'Gửi mã xác nhận', function (result) {
             if (result) {
                 sentOTPtoPhoneNumber(phone_number);
             }
@@ -525,7 +525,7 @@ function showCompeleteContainer() {
 
 
 // các hàm gọi api
-function sentOTPtoPhoneNumber(phone_number) {
+function sentOTPtoPhoneNumber(phone_number) { console.log(1)
     const access_token = localStorage.getItem('wiseowlUserAccessToken');
     renderLoading();
     fetch('/api/phone-verification', {
