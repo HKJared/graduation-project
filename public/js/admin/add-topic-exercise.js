@@ -531,9 +531,14 @@ function checkExercise() {
                 $question.find('textarea.question').addClass('danger-border');
 
                 // Cuộn đến câu hỏi không hợp lệ
+                // $('.main-body').animate({
+                //     scrollTop: $question.offset().top - 96
+                // }, 500);
+                let scrollPosition = $question.position().top + $('.main-body').scrollTop();
                 $('.main-body').animate({
-                    scrollTop: $question.offset().top - 96
+                    scrollTop: scrollPosition - 96
                 }, 500);
+
 
                 showStackedNotification('Vui lòng nhập nội dung câu hỏi hoặc thêm thêm một hình ảnh minh họa.', 'question_err');
                 isValid = false; // Đặt cờ không hợp lệ

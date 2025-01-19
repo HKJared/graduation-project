@@ -20,6 +20,17 @@ $(document).ready(async function() {
             setAdminInfo(admin_info);
         }
     }
+
+    
+
+    $(document).on('click', '.logout-btn', function() {
+        localStorage.removeItem('wiseowlAdminRefreshToken');
+        localStorage.removeItem('wiseowlAdminAccessToken');
+ 
+        clearDataAdmin();
+ 
+        window.location.href = '/admin/login'
+     });
 });
 
 // Hàm xử lí giao diện
@@ -41,6 +52,16 @@ function displayNavByPermissions(permissions) {
             icon: "fa-gears",
             permissions: [6, 7, 8, 9, 10, 11],
             partial: "system-exercise-management"
+        },
+        "Quản Lý Yêu Cầu Liên Hệ": {
+            icon: "fa-clipboard-question",
+            permissions: [13, 14],
+            partial: "request-management"
+        },
+        "Quản Lý Tuyển Dụng": {
+            icon: "fa-users-viewfinder",
+            permissions: [15, 16, 17],
+            partial: "recruitment-management"
         }
     };
 
@@ -105,6 +126,16 @@ function setAdminInfo(admin_info) {
         <a href="/admin/profile" class="full-height full-width center spa-action" style="background-color: var(--color-black-100)">            
             <img src="${ admin_info.avatar_url }" alt="" srcset="${ admin_info.avatar_url }, ${ admin_info.avatar_url }" 
                  onerror="this.onerror=null; this.src='/images/logo-oval.png';">
+        </a>
+        <div class="tooltip__container">
+                <div class="tooltip__box">
+                    <div class="tooltip__triangle"></div>
+                    <div class="tooltip__content col">
+                        <a href="/admin/profile" class="tooltip-item spa-action center">Tài Khoản Của Tôi</a>
+                        <button class="tooltip-item logout-btn">Đăng Xuất</button>
+                    </div>
+                </div>
+            </div>
         </a>
     `);
 

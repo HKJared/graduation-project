@@ -1,0 +1,43 @@
+<link rel="stylesheet" href="/css/admin/request-management.css" />
+<div class="admin__container col gap-24 full-width">
+  <div aria-label="breadcrumb">
+    <ul class="breadcrumb row">
+      <li class="breadcrumb-item">
+        <a href="/admin" class="spa-action">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        Quản lý Yêu Cầu Liên Hệ
+      </li>
+    </ul>
+  </div>
+  <div class="request__container panel col full-width">
+    <div class="panel__header row flex-box">
+      <span>Danh sách yêu cầu liên hệ</span>
+      <div>
+      </div>
+    </div>
+    <div class="panel__body exercise__container">
+      <div class="header-container">
+        <div class="request row">
+          <div class="id center">
+            <span>ID</span>
+          </div>
+          <div class="fullname center">
+            <span>Người gửi</span>
+          </div>
+          <div class="message center">
+            <span>Nội dung</span>
+          </div>
+          <div class="status center">
+            <span>Trạng thái</span>
+          </div>
+        </div>
+      </div>
+      <ul class="request-items col"></ul>
+      <div class="see-more-container full-width">
+        <button type="button">Xem thêm</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/admin/request-management.js"></script>

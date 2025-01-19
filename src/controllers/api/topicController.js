@@ -96,8 +96,8 @@ function getTopicAccessCountsByMonthData(user_exercise_results = []) {
     }
 
     return {
-        // topicAccessCountsByMonthData: months,  // Số lượng chủ đề đã được truy cập cộng dồn theo từng tháng
-        topicAccessCountsByMonthData: [142, 156, 157, 167, 179, 182, 189],
+        topicAccessCountsByMonthData: months,  // Số lượng chủ đề đã được truy cập cộng dồn theo từng tháng
+        // topicAccessCountsByMonthData: [142, 156, 157, 167, 179, 182, 189],
         totalTopicAccess: totalTopicAccess,  // Tổng số lượt truy cập chủ đề
         activeUserCount: activeUserCount  // Tổng số tài khoản đang hoạt động trong 5 phút gần đây
     };
@@ -327,15 +327,15 @@ class TopicController {
                 const statistics = {
                     topicAccessCountsByMonthData: topicAccessCountsByMonthData,
                     topicCompletionCountsByMonthData: topicCompletionCountsByMonthData,
-                    totalTopicAccess: totalTopicAccess || 120,
-                    totalTopicCompleted: totalTopicCompleted || 100,
+                    totalTopicAccess: totalTopicAccess || 0,
+                    totalTopicCompleted: totalTopicCompleted || 0,
 
                     total_exercises: total_exercises,
-                    totalExerciseResults: user_exercise_results.length || 475,
-                    averageExerciseSubmissions: averageExerciseSubmissions || 3,
+                    totalExerciseResults: user_exercise_results.length || 0,
+                    averageExerciseSubmissions: averageExerciseSubmissions || 0,
 
-                    totalUserAccess: totalUserAccess || 25,
-                    activeUserCount: activeUserCount || 4
+                    totalUserAccess: totalUserAccess || 0,
+                    activeUserCount: activeUserCount || 0
                 }
 
                 topic.statistics = statistics
@@ -409,14 +409,14 @@ class TopicController {
             await LogModel.updateDetailLog('Xem số liệu thống kê bài tập hệ thống.', log_id);
 
             const topics = await TopicModel.getTopics();
-            // const total_topics = countTopicsByLanguageAndEditability(topics);
-            const total_topics = [
-                { lang: 'Cpp', editable: 6, nonEditable: 16 },
-                { lang: 'Java', editable: 6, nonEditable: 12 },
-                { lang: 'Pascal', editable: 1, nonEditable: 4 },
-                { lang: 'Python', editable: 5, nonEditable: 20 },
-                { lang: 'Multi', editable: 3, nonEditable: 24 }
-            ]
+            const total_topics = countTopicsByLanguageAndEditability(topics);
+            // const total_topics = [
+            //     { lang: 'Cpp', editable: 6, nonEditable: 16 },
+            //     { lang: 'Java', editable: 6, nonEditable: 12 },
+            //     { lang: 'Pascal', editable: 1, nonEditable: 4 },
+            //     { lang: 'Python', editable: 5, nonEditable: 20 },
+            //     { lang: 'Multi', editable: 3, nonEditable: 24 }
+            // ]
 
             const user_exercise_results = await ExerciseModel.getUserExerciseResultsByStarted();           
             const { topicAccessCountsByMonthData, totalTopicAccess, activeUserCount } = getTopicAccessCountsByMonthData(user_exercise_results);
@@ -424,30 +424,30 @@ class TopicController {
 
             const user_completed_topics = await TopicModel.getUserCompletedTopics();
             const totalTopicCompleted = user_completed_topics.length;
-            // const topicCompletionCountsByMonthData = getTopicCompletionCountsByMonthData(user_completed_topics);
-            const topicCompletionCountsByMonthData = [15, 16, 19, 26, 34, 42, 46];
+            const topicCompletionCountsByMonthData = getTopicCompletionCountsByMonthData(user_completed_topics);
+            // const topicCompletionCountsByMonthData = [15, 16, 19, 26, 34, 42, 46];
 
             const exercises = await ExerciseModel.getExercises();
-            // const total_exercises = countExercisesByLevelAndType(exercises);
-            const total_exercises = [
-                { level: 'easy', multiple_choice: 35, code: 20 },
-                { level: 'medium', multiple_choice: 30, code: 10 },
-                { level: 'hard', multiple_choice: 10, code: 16 }
-            ]
+            const total_exercises = countExercisesByLevelAndType(exercises);
+            // const total_exercises = [
+            //     { level: 'easy', multiple_choice: 35, code: 20 },
+            //     { level: 'medium', multiple_choice: 30, code: 10 },
+            //     { level: 'hard', multiple_choice: 10, code: 16 }
+            // ]
 
             const statistics = {
                 total_topics: total_topics,
                 topicAccessCountsByMonthData: topicAccessCountsByMonthData,
                 topicCompletionCountsByMonthData: topicCompletionCountsByMonthData,
-                totalTopicAccess: totalTopicAccess || 120,
-                totalTopicCompleted: totalTopicCompleted || 100,
+                totalTopicAccess: totalTopicAccess || 0,
+                totalTopicCompleted: totalTopicCompleted || 0,
 
                 total_exercises: total_exercises,
-                totalExerciseResults: user_exercise_results.length || 475,
-                averageExerciseSubmissions: averageExerciseSubmissions || 3,
+                totalExerciseResults: user_exercise_results.length || 0,
+                averageExerciseSubmissions: averageExerciseSubmissions || 0,
 
-                totalUserAccess: totalUserAccess || 25,
-                activeUserCount: activeUserCount || 4
+                totalUserAccess: totalUserAccess || 0,
+                activeUserCount: activeUserCount || 0
             }
             
 

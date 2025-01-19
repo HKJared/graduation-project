@@ -1,0 +1,59 @@
+<link rel="stylesheet" href="/css/admin/add-recruitment.css">
+
+<div class="admin__container col gap-24 full-width item-center">
+    <div aria-label="breadcrumb" class="full-width">
+        <ul class="breadcrumb row">
+            <li class="breadcrumb-item"><a href="/admin" class="spa-action">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/admin/recruitment-management" class="spa-action">Quản Lý Tuyển Dụng</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Thêm bài tuyển dụng</li>
+        </ul>
+    </div> 
+    <div class="panel col">
+        <div class="panel__header">
+            <span>Tạo bài tuyển dụng</span>
+        </div>
+        <div class="panel__body">
+            <form class="create-recruitment col">
+                <label for="position">Vị trí tuyển dụng<span>*</span></label>
+                <input type="text" id="position">
+                <div class="row gap-16">
+                    <div class="left-row col flex-1">
+                        <label for="department">Phòng ban</label>
+                        <input type="text" id="department">
+                    </div>
+                    <div class="right-row col flex-1">
+                        <label for="location">Địa điểm làm việc<span>*</span></label>
+                        <input type="text" id="location">
+                    </div>
+                </div>
+                <div class="row gap-16">
+                    <div class="left-row col flex-1">
+                        <label for="quantity">Số lượng tuyển<span>*</span></label>
+                        <input type="number" id="quantity" min="1" max="">
+                    </div>
+                    <div class="right-row col flex-1">
+                        <label for="salary_range">Khoảng lương<span>*</span></label>
+                        <input type="text" name="" id="salary_range" placeholder="xx - xx triệu">
+                    </div>
+                </div>
+                <div class="row gap-16">
+                    <div class="left-row col flex-1">
+                        <label for="experience_required">Yêu cầu kinh nghiệm (năm)<span>*</span></label>
+                        <input type="number" id="experience_required" min="0">
+                    </div>
+                    <div class="right-row col flex-1">
+                        <label for="application_deadline">Hạn nộp hồ sơ<span>*</span></label>
+                        <input type="date" name="" id="application_deadline">
+                    </div>
+                </div>
+                <label for="detail">Chi tiết</label>
+                <div class="editor-container">
+                    <textarea name="" id="editor"></textarea>
+                </div>
+                <button type="submit" class="submit-recruitment">Lưu bài tuyển dụng</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/js/admin/add-recruitment.js"></script>

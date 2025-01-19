@@ -1,0 +1,257 @@
+.delete-btn:hover {
+    opacity: 1;
+}
+
+.add-recruitment-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 80px);
+    z-index: 9990;
+}
+
+.edit-recruitment, .add-recruitment {
+    padding: 15px;
+    background-color: #fff;
+    border: var(--border);
+    width: 700px;
+    z-index: 999;
+    position: relative;
+    border-radius: 5px;
+    box-shadow: 0 0 3px #b6b6b6;
+}
+
+.edit-recruitment .x-btn, .add-recruitment .x-btn {
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    top: 6px;
+    right: 6px;
+}
+
+.edit-recruitment input, .add-recruitment input, .edit-recruitment textarea, .add-recruitment textarea, .edit-recruitment select, .add-recruitment select {
+    border: var(--border);
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 3px 10px;
+    resize: vertical;
+}
+
+.edit-recruitment input:focus, .add-recruitment input:focus, .edit-recruitment textarea:focus, .add-recruitment textarea:focus, .edit-recruitment select:focus, .add-recruitment select:focus {
+    outline: 1px solid #F7F7F7;
+}
+
+.edit-recruitment label, .add-recruitment label {
+    padding: 16px 0 8px 5px;
+}
+
+.edit-recruitment .cancel, .edit-recruitment .submit-recruitment, .add-recruitment .submit-recruitment {
+    font-size: 16px;
+    padding: 5px;
+    margin-top: 20px;
+    background-color: #bada55;
+    border-radius: 5px;
+    color: var(--Text);
+}
+
+.edit-recruitment .cancel {
+    background-color: transparent;
+}
+
+.edit-recruitment .submit-recruitment:hover, .add-recruitment .submit-recruitment:hover {
+    background-color: #c1df5f;
+}
+
+.edit-recruitment .cancel:hover {
+    background-color: #f8f8f8;
+}
+
+
+.recruitments-container h2 {
+    color: #3364EB;
+    width: 1000px;
+    padding: 10px 0;
+}
+
+.recruitments-container .add-recruitment {
+    width: 30px;
+    height: 30px;
+    background-color: #bada55;
+    border-radius: 3px;
+}
+
+.recruitment-items {
+    margin-top: 36px;
+    width: 100%;
+    background-color: #fff;
+    min-height: 480px;
+}
+
+.recruitment-items > li {
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;    
+    border-radius: 5px;
+    height: 100px;
+    padding: 16px;
+    background-color: #fff;
+    border-bottom: var(--border);
+}
+
+.recruitment-item .action > * {
+    color: #fff;
+    display: flex;
+    gap: 4px;
+
+    font-size: .875rem;
+    font-weight: 400;
+    padding: 4px 12px;
+    border-radius: 4px;
+}
+
+.position {
+    width: 800px;
+    color: var(--Text);
+}
+
+.department, .application-deadline {
+    font-size: 12px;
+    color: var(--extraText);
+}
+
+.block1 .show-more {
+    display: flex;
+    justify-content: end;
+}
+
+.block1 .show-more button {
+    position: relative;
+    border: 0;
+    height: 30px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.block1 .show-more button .background {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 30px;
+    width: 200%;
+    background: linear-gradient(to right, var(--mainColor) 50%, #1a95e7 50%);
+    transition: transform 0.5s ease;
+}
+
+.block1 .show-more a {
+    position: relative;
+    color: #fff;
+    padding: 0 20px;
+    font-size: 14px;
+    z-index: 1;
+}
+
+.block1 .show-more button:hover .background {
+    transform: translateX(50%);
+}
+
+:root {
+    --border: 1px solid #bebebe;
+}
+
+.edit-recruitment input, .edit-recruitment textarea, .edit-recruitment select {
+    border: var(--border);
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 5px 10px;
+}
+
+.edit-recruitment textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.edit-recruitment input:focus, .edit-recruitment textarea:focus, .edit-recruitment select:focus {
+    outline: 1px solid #F7F7F7;
+}
+
+.edit-recruitment input::placeholder {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.edit-recruitment label {
+    margin: 15px 0 5px 0;
+}
+
+.edit-recruitment-container .row {
+    justify-content: space-between
+}
+
+.edit-recruitment-container .row > * {
+    flex: 0 0 47%;
+}
+
+.edit-recruitment-container {
+    justify-content: center;
+    align-items: center;
+    background-color: #F7F7F7;
+    padding: 15px 0 25px 0;
+    position: relative;
+}
+
+.edit-recruitment-container h2 {
+    color: #3364EB;
+    width: 1000px;
+    padding: 10px 0;
+}
+
+.edit-recruitment {
+    width: 1000px;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 10px 10px 20px 10px;
+}
+
+.edit-recruitment label span {
+    color: #ff0000;
+}
+
+.submit-recruitment {
+    display: block;
+    width: auto;
+    background-color: #3364EB;
+    color: #fff;
+    border: 0;
+    margin-top: 40px;
+    padding: 10px 15px;
+    font-style: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-recruitment:hover {
+    background-color: #507aee;
+}
+
+.editor-container {
+    border: 1px solid #bebebe !important;
+    border-radius: 5px !important;
+    overflow: hidden;
+}
+
+#detail {
+    display: none;
+}
+
+.extra-info {
+    margin-top: 20px;
+}
+
+.extra-info span {
+    margin-left: 20px;
+    font-size: 12px;
+    color: var(--extraText);
+}

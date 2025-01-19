@@ -1,0 +1,27 @@
+<link rel="stylesheet" href="/css/admin/recruitment-management.css" />
+<div class="admin__container col gap-24 full-width">
+  <div aria-label="breadcrumb">
+    <ul class="breadcrumb row">
+      <li class="breadcrumb-item">
+        <a href="/admin" class="spa-action">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        Quản lý Tuyển dụng
+      </li>
+    </ul>
+  </div>
+  <div class="recruitments-container panel col full-width">
+    <div class="panel__header row flex-box">
+      <span>Danh sách bài tuyển dụng</span>
+      <div>
+        <a href="/admin/add-recruitment" class="spa-action action-btn add-btn"
+          >Thêm bài tuyển dụng</a
+        >
+      </div>
+    </div>
+    <div class="panel__body exercise__container">
+      <ul class="recruitment-items col"></ul>
+    </div>
+  </div>
+</div>
+<script src="/js/admin/recruitment-management.js"></script>

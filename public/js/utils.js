@@ -499,3 +499,24 @@ function formatDatetime(isoDatetime) {
     // Trả về chuỗi định dạng "dd/mm/yyyy hh:mm:ss"
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
+
+function formatDate(datetimeString) {
+    // Tạo đối tượng Date từ chuỗi thời gian
+    const date = new Date(datetimeString);
+
+    // Chuyển đổi sang giờ Việt Nam bằng cách bù múi giờ (UTC+7)
+    const vietnamTimeOffset = 7 * 60 * 60 * 1000; // 7 giờ tính bằng mili giây
+    const vietnamDate = new Date(date.getTime() + vietnamTimeOffset);
+
+    // Lấy ngày, tháng, năm theo giờ Việt Nam
+    const day = vietnamDate.getDate(); // Ngày (1-31)
+    const month = vietnamDate.getMonth() + 1; // Tháng (0-indexed, +1 để thành 1-12)
+    const year = vietnamDate.getFullYear(); // Năm (4 chữ số)
+
+    // Thêm số 0 trước ngày và tháng nếu cần
+    const formattedDay = day < 10 ? `0${day}` : day;
+    const formattedMonth = month < 10 ? `0${month}` : month;
+
+    // Trả về chuỗi ngày theo định dạng DD/MM/YYYY
+    return `${formattedDay}/${formattedMonth}/${year}`;
+}

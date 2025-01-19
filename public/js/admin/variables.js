@@ -11,5 +11,6 @@ var page;
 var itemsPerPage;
 var keyword;
 var items;
+var loading;
 
 var roles;

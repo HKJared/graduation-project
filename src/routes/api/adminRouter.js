@@ -9,6 +9,8 @@ const LogController = require('../../controllers/api/logController');
 const UserController = require('../../controllers/api/userController');
 const TopicController = require('../../controllers/api/topicController');
 const ExerciseController = require('../../controllers/api/exerciseController');
+const RequestController = require('../../controllers/api/requestController');
+const RecruitmentController = require('../../controllers/api/recruitmentController');
 
 const   apiRouter = express.Router();
 
@@ -96,5 +98,30 @@ apiRouter.put('/mutiple-choice-exercise', (req, res, next) => {
 apiRouter.put('/code-exercise', (req, res, next) => {
     authorize(req, res, 'exercise-edit', next);
 }, ExerciseController.updateCodeExercise);
+
+
+apiRouter.get('/requests', (req, res, next) => {
+    authorize(req, res, 'admin', next);
+}, RequestController.getRequests);
+apiRouter.put('/request', (req, res, next) => {
+    authorize(req, res, 'request-edit', next);
+}, RequestController.updateRequest);
+
+
+apiRouter.get('/recruitments', (req, res, next) => {
+    authorize(req, res, 'admin', next);
+}, RecruitmentController.getRecruitments);
+apiRouter.get('/recruitment', (req, res, next) => {
+    authorize(req, res, 'admin', next);
+}, RecruitmentController.getRecruitment);
+apiRouter.post('/recruitment', (req, res, next) => {
+    authorize(req, res, 'recruitment-creation', next);
+}, RecruitmentController.createRecruitment);
+apiRouter.put('/recruitment', (req, res, next) => {
+    authorize(req, res, 'recruitment-edit', next);
+}, RecruitmentController.updateRecruitment);
+apiRouter.delete('/recruitment', (req, res, next) => {
+    authorize(req, res, 'recruitment-delete', next);
+}, RecruitmentController.deleteRecruitment);
 
 module.exports = apiRouter;

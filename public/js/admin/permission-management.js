@@ -82,6 +82,23 @@ function setView() {
             permissions: [
                 { id: 5, name: "user-disable", label: "Vô hiệu hóa người dùng" }
             ]
+        },
+        {
+            name: "request",
+            label: "Nhóm quyền yêu cầu liên hệ",
+            permissions: [
+                { id: 13, name: "request-edit", label: "Cập nhật trạng thái yêu cầu liên hệ" },
+                { id: 14, name: "request-delete", label: "Xóa yêu cầu liên hệ" }
+            ]
+        },
+        {
+            name: "recruitment",
+            label: "Nhóm quyền tuyển dụng",
+            permissions: [
+                { id: 15, name: "recruitment-creation", label: "Tạo bài tuyển dụng" },
+                { id: 16, name: "recruitment-creation", label: "Sửa bài tuyển dụng" },
+                { id: 17, name: "recruitment-creation", label: "Xóa bài tuyển dụng" },
+            ]
         }
     ];
     

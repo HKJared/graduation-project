@@ -12,13 +12,11 @@ $(document).ready(async function() {
         return
     }
 
-    if (!topics.length) {
-        const response = await userApi('topics');
+    const response = await userApi("topics");
 
-        if (response && response.topics) {
-            topics = response.topics
-        }
-    }    
+    if (response && response.topics) {
+      topics = response.topics;
+    }  
 
     showTopics(topics)
 });

@@ -92,6 +92,7 @@ function getElementByHref(href) {
     })
     .then(html => {
         $(document).off('.wiseowlEvent');
+        $(document).off('.woEvent');
         $('.main-body').html(html);
     })
     .catch(error => {
@@ -287,4 +288,10 @@ async function apiWithRefreshToken(url, method, body) {
     } finally {
         removeProgressBar();
     }
+}
+
+function clearDataAdmin() {
+    admin_info = {}
+
+    topics = []
 }

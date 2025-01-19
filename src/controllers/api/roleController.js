@@ -50,8 +50,10 @@ class RoleController {
                 return res.status(400).json({ message: 'Tạo mới không thành công, vui lòng thử lại hoặc tải lại trang.' });
             }
 
+            await RoleModel.addPermissionsToRole(new_role_id, [1]);
+
             const new_role = await RoleModel.getRoleById(new_role_id);
-            new_role.permissions = [];
+            new_role.permissions = await RoleModel.getPermissionsByRoleId(new_role_id);
 
             await LogModel.updateStatusLog(log_id);
 

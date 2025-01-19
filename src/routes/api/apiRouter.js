@@ -13,6 +13,7 @@ const ElementController = require('../../controllers/api/elementController');
 const RoleController = require('../../controllers/api/roleController');
 
 const LogController = require('../../controllers/api/logController');
+const RequestController = require('../../controllers/api/requestController');
 
 const apiRouter = express.Router();
 
@@ -47,6 +48,9 @@ apiRouter.post("/compile", (req, res) => {
         return res.status(500).json({ output: "Có lỗi từ phía server." });
     }
 });
+
+// sent request
+apiRouter.post('/request', RequestController.creatRequest)
 
 
 module.exports = apiRouter;

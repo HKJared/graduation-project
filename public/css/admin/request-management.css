@@ -1,0 +1,109 @@
+.request__container .header-container {
+    background-color: #8ca9f8;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.request__container  ul.request-items {
+    background-color: #fff;
+}
+
+.request__container  ul.request-items > li {
+    padding: 10px 0;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.id, .fullname, .message, .status {
+    padding: 12px 0;
+}
+
+.id {
+    width: 80px;
+}
+
+.fullname {
+    width: 400px;
+}
+
+.message {
+    width: 580px;
+}
+
+.status {
+    width: 100px;    
+}
+
+ul .message {
+    color: var(--extraText);
+}
+
+.header-table {
+    padding: 12px 0;
+    background-color: #8ca9f8;
+    color: #fff;
+}
+
+.row-table .message span {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+ul .status span {
+    padding: 6px 12px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.sub-request {
+    display: none;
+    width: 940px;
+    background-color: #fefefe;
+    padding: 15px;
+}
+
+.sub-request li {
+    max-width: 1000px;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+.row-table .request {
+    position: relative;
+    cursor: pointer;
+}
+
+.row-table .request i {
+    position: absolute;
+    left: 10px;
+    top: 15px;    
+    transition: transform 0.5s;
+}
+
+.rotate-180 {
+    transform: rotate(-180deg);
+}
+
+.change-status {
+    display: flex;
+    justify-content: center;
+}
+
+.change-status button {
+    border: 0;
+    padding: 7px 10px;
+    border-radius: 10px;
+    margin: 0 5px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.change-status .complete {
+    background-color: #108023;
+}
+
+.change-status .complete:hover {
+    background-color: #1f9733;
+}

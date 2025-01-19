@@ -67,12 +67,12 @@
 }
 
 .admin-table table tr > *:nth-child(3) {
-    width: 250px;
+    width: 200px;
     text-align: left;
 }
 
 .admin-table table tr > *:nth-child(4) {
-    width: 100px;
+    width: 350px;
     text-align: left;
 }
 
@@ -82,7 +82,7 @@
 }
 
 .admin-table table tr > *:nth-child(6) {
-    width: 100px;
+    width: 150px;
     text-align: left;
 }
 

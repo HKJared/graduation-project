@@ -10,13 +10,11 @@ $(document).ready(async function() {
         displayChart(response.statistics);
     }
 
-    if (!topics.length) {
-        const response = await apiWithAccessToken('topics', 'GET')
-        if (response && response.topics) {
-            topics = response.topics;
-            // Phát ra sự kiện tùy chỉnh 'topicsUpdated' sau khi topics đã được cập nhật
-            $(document).trigger('topicsUpdated', [topics]);
-        }
+    const responseTopic = await apiWithAccessToken('topics', 'GET')
+    if (responseTopic && responseTopic.topics) {
+        topics = responseTopic.topics;
+        // Phát ra sự kiện tùy chỉnh 'topicsUpdated' sau khi topics đã được cập nhật
+        $(document).trigger('topicsUpdated', [topics]);
     }
             
     showTopics(topics);
@@ -665,4 +663,6 @@ function addTopicToArr(topic) {
     } else {
         topics.splice(index, 0, topic); // Chèn vào vị trí index
     }
+
+    console.log(topics)
 }

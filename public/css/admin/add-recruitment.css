@@ -1,0 +1,115 @@
+:root {
+    --border: 1px solid #bebebe;
+}
+
+.create-recruitment input, .create-recruitment textarea, .create-recruitment select {
+    border: var(--border);
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 5px 10px;
+}
+
+.create-recruitment textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.create-recruitment input:focus, .create-recruitment textarea:focus, .create-recruitment select:focus {
+    outline: 1px solid #F7F7F7;
+}
+
+.create-recruitment input::placeholder {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.create-recruitment label {
+    margin: 15px 0 5px 0;
+}
+
+.create-recruitment-container .row {
+    justify-content: space-between
+}
+
+.create-recruitment-container .row > * {
+    flex: 0 0 47%;
+}
+
+.create-recruitment-container {
+    justify-content: center;
+    align-items: center;
+    background-color: #F7F7F7;
+    padding: 15px 0 25px 0;
+    position: relative;
+}
+
+.back {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    font-size: 18px;
+    background-color: transparent;
+    color: #979797;
+    border: 0;
+    cursor: pointer;
+}
+
+.panel {
+    width: fit-content;
+}
+
+.create-recruitment {
+    width: 1000px;
+}
+
+.create-recruitment label span {
+    color: #ff0000;
+}
+
+.submit-recruitment {
+    display: block;
+    width: auto;
+    background-color: #3364EB;
+    color: #fff;
+    border: 0;
+    margin-top: 40px;
+    padding: 10px 15px;
+    font-style: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-recruitment:hover {
+    background-color: #507aee;
+}
+
+.editor-container {
+    border: 1px solid #bebebe !important;
+    border-radius: 5px !important;
+    overflow: hidden;
+}
+
+.ck-sticky-panel__content {
+    border-top: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+}
+
+.ck-content {
+    border-bottom: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+}
+
+.ck-editor__editable[role="textbox"] {
+    min-height: 200px;
+}
+
+.ck-content .image {
+    max-width: 80%;
+    margin: 20px auto;
+}
+
+#detail {
+    display: none;
+}

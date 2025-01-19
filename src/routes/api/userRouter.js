@@ -7,6 +7,7 @@ const TopicController = require('../../controllers/api/topicController');
 const authenticate = require('../../middlewares/authentication');
 const authorize = require('../../middlewares/authorization');
 const ExerciseController = require('../../controllers/api/exerciseController');
+const RecruitmentController = require('../../controllers/api/recruitmentController');
 
 const apiRouter = express.Router();
 
@@ -30,6 +31,8 @@ apiRouter.post('/submit-multiple-choice-exercise', authenticate, ExerciseControl
 apiRouter.post('/submit-code-exercise', authenticate, ExerciseController.submitCodeExercise);
 
 apiRouter.post('/instructor-register', authenticate, UserController.instructorRegister) // đăng ký làm người giảng dạy
+
+apiRouter.get('/recruitments', RecruitmentController.getRecruitments);
 
 // api lấy element ejs
 apiRouter.get('/element/:partial', ElementController.getUserElement);

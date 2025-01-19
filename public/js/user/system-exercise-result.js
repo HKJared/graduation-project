@@ -62,7 +62,7 @@ function showResult(result) {
     );
   } else {
     $container.attr("data-type", "code");
-    $container.append(createDisplayCodeExercise(result.exercise_data));
+    $container.append(createDisplayCodeExercise(result, result.exercise_data));
 
     setupCompiler(result);
   }
@@ -149,7 +149,31 @@ function createDisplayMultipleChoiceExercise(result, exercise) {
     `;
 }
 
-function createDisplayCodeExercise(exercise) {
+function createDisplayCodeExercise(result, exercise) {
+  function createSubmissionCountTag() {
+    return `
+            <span class="row gap-4 item-center ${
+              result.submission_count <= 3 ? "success" : ""
+            }">${result.submission_count} lần nộp</span>
+        `;
+  }
+
+  function createCompletedTag() {
+    return result.is_completed
+      ? `<span class="row gap-4 item-center success" title="Đã hoàn thành vào ngày ${formatDatetime(
+          result.completed_at
+        )}">Đã hoàn thành</span>`
+      : `<span class="row gap-4 item-center warning">Chưa hoàn thành</span>`;
+  }
+
+  function createScoreTag() {
+    return `<span class="row gap-4 item-center ${
+      result.score >= 80 ? "success" : "warning"
+    }" title="Điểm của bài làm"><ion-icon name="ribbon-outline"></ion-icon> ${
+      result.score
+    }</span>`;
+  }
+
   code_exercise = exercise.code_exercise;
   return `
        <div class="row gap-16 w-full-screen container">
@@ -176,6 +200,17 @@ function createDisplayCodeExercise(exercise) {
                         <h3>Đề bài</h3>
                         <div>${exercise.code_exercise.content}</div>
                     </div>
+                    <div class="col gap-8">
+                        <h3>Thông tin bài làm</h3>
+                        <span>Nộp lần đầu: ${formatDatetime(
+                          result.started_at
+                        )}</span>
+                        <div class="info-overview row gap-16">
+                            ${createSubmissionCountTag()}
+                            ${createCompletedTag()}
+                            ${createScoreTag()}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="compiler__container flex-1 col gap-16">
@@ -183,11 +218,12 @@ function createDisplayCodeExercise(exercise) {
                     <div class="panel_header col gap-8">
                         <div class="row item-center flex-box">
                             <span class="success row item-center gap-4"><ion-icon name="code-slash-outline"></ion-icon> Compiler</span>
-                            <div class="row gap-8">
-                                <button class="reset-btn center" data-starter-code="${
-                                  exercise.code_exercise.starter_code || ""
-                                }" title="Làm mới"><ion-icon name="reload-outline"></ion-icon></button>
-                                <button class="submit-btn success-bg">Chấm điểm</button>
+                            <div class="row action_container gap-8">
+                              <a href="/system-exercise?title=${exercise.title}&id=${
+                                exercise.id
+                              }" class="${
+                                result.is_completed ? "success-bg" : "warning-bg"
+                              } spa-action center" title="Làm lại">Làm lại</a>
                             </div>
                         </div>
                         <div class="editor__header-main row">
@@ -205,7 +241,7 @@ function createDisplayCodeExercise(exercise) {
     `;
 }
 
-function setupCompiler() {
+function setupCompiler(result) {
   // Khởi tạo CodeMirror cho phần editor
   exerciseEditor = CodeMirror.fromTextArea(document.getElementById("editor"), {
     mode: "text/x-c++src",
@@ -215,6 +251,7 @@ function setupCompiler() {
     lineWrapping: true,
     indentUnit: 4,
     autoCloseBrackets: true,
+    readOnly: true, 
     extraKeys: {
       Enter: function (cm) {
         // Lấy số lượng khoảng trắng cần thêm
@@ -225,6 +262,8 @@ function setupCompiler() {
       },
     },
   });
+
+  exerciseEditor.setValue(result.code_data.submitted_code)
 
   exerciseEditor.getWrapperElement().style.fontSize = ".875rem";
 

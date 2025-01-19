@@ -6,13 +6,11 @@ $(document).ready(async function() {
 
     setTitle('Chủ đề luyện tập')
 
-    if (!topics.length) {
-        const response = await userApi('topics');
+    const response = await userApi('topics');
 
-        if (response && response.topics) {
-            topics = response.topics
-        }
-    }   
+    if (response && response.topics) {
+        topics = response.topics
+    }  
 
     const url = window.location.href;
     const urlParams = new URLSearchParams(new URL(url).search);
@@ -25,7 +23,7 @@ $(document).ready(async function() {
     showTopic(topic);
 });
 
-function showTopic(topic) { console.log(topic)
+function showTopic(topic) {
     const $container = $('.system_exercise_topic__container');
 
     if (!topic) {

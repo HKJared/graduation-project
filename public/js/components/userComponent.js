@@ -6,7 +6,7 @@ function createTopicComponent(topic) {
     let actionText = 'Bắt đầu';
     let progressBar = '';
 
-    if (topic.is_completed) {
+    if (topic.is_completed || topic.completed_exercises_percentage == 100) {
         actionText = 'Xem lại';
         progressBar = '<div class="progress-bar"><div class="progress-bar__fill" style="width: 100%;"></div></div>';
     } else if (topic.completed_exercises_percentage) {
