@@ -325,11 +325,11 @@ $(document).ready(function() {
 
     // TODO: Lưu câu hỏi
     $(document).on("click.wiseowlEvent", ".submit-question-btn", async function () {
-        const is_valid_exercise = checkExercise();
+        // const is_valid_exercise = checkExercise();
 
-        if (!is_valid_exercise) {
-            return
-        }
+        // if (!is_valid_exercise) {
+        //     return
+        // }
 
         const question_id = $(this).attr('data-question-id');
         const exercise_id = $('.admin__container').attr('data-exercise-id')

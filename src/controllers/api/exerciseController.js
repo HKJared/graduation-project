@@ -47,11 +47,9 @@ class ExerciseController {
 
         await LogModel.updateDetailLog("Chủ đề đã khóa chỉnh sửa.", log_id);
 
-        return res
-          .status(400)
-          .json({
-            message: "Chủ đề hiện không thể chỉnh sửa và tạo bài tập mới.",
-          });
+        return res.status(400).json({
+          message: "Chủ đề hiện không thể chỉnh sửa và tạo bài tập mới.",
+        });
       }
 
       const exercise_id = await ExerciseModel.createExercise({
@@ -72,12 +70,10 @@ class ExerciseController {
           log_id
         );
 
-        return res
-          .status(400)
-          .json({
-            message:
-              "Thêm bài tập mới không thành công, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(400).json({
+          message:
+            "Thêm bài tập mới không thành công, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       if (exercise.type == "multiple_choice") {
@@ -145,12 +141,10 @@ class ExerciseController {
           "Không có ID của bài tập được cung cấp.",
           log_id
         );
-        return res
-          .status(404)
-          .json({
-            message:
-              "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message:
+            "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       await LogModel.updateDetailLog(
@@ -165,24 +159,20 @@ class ExerciseController {
           "Không tìm thấy bài tập trong DB.",
           log_id
         );
-        return res
-          .status(404)
-          .json({
-            message:
-              "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message:
+            "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       if (exercise.is_editable) {
         await LogModel.updateDetailLog(
           "Chủ đề của bài tập này đang trong giai đoạn chỉnh sửa."
         );
-        return res
-          .status(404)
-          .json({
-            message:
-              "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message:
+            "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       if (exercise.type == "multiple_choice") {
@@ -193,8 +183,8 @@ class ExerciseController {
 
         function getRandomQuestions(questions) {
           // Lọc các phần tử is_required và not_required
-          const isRequired = questions.filter((q) => q.is_required === true);
-          const notRequired = questions.filter((q) => q.is_required !== true);
+          const isRequired = questions.filter((q) => q.is_required === 1);
+          const notRequired = questions.filter((q) => q.is_required !== 1);
 
           // Số lượng câu hỏi cần lấy thêm
           const remainingCount = 20 - isRequired.length;
@@ -206,7 +196,19 @@ class ExerciseController {
           );
 
           // Kết hợp và trả về
-          return [...isRequired, ...additionalQuestions];
+          //   return [...isRequired, ...additionalQuestions];
+          const combinedQuestions = [...isRequired, ...additionalQuestions];
+
+          // Trộn ngẫu nhiên mảng combinedQuestions
+          for (let i = combinedQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [combinedQuestions[i], combinedQuestions[j]] = [
+              combinedQuestions[j],
+              combinedQuestions[i],
+            ]; // Hoán đổi
+          }
+
+          return combinedQuestions;
         }
 
         // Hàm lấy n phần tử ngẫu nhiên từ một mảng
@@ -405,11 +407,9 @@ class ExerciseController {
           log_id
         );
 
-        return res
-          .status(404)
-          .json({
-            message: "Lỗi đường truyền, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message: "Lỗi đường truyền, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       const exercise = await ExerciseModel.getExerciseById(exercise_id);
@@ -419,24 +419,20 @@ class ExerciseController {
           "Không tìm thấy bài tập trong DB.",
           log_id
         );
-        return res
-          .status(404)
-          .json({
-            message:
-              "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message:
+            "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       if (exercise.is_editable) {
         await LogModel.updateDetailLog(
           "Chủ đề của bài tập này đang trong giai đoạn chỉnh sửa."
         );
-        return res
-          .status(404)
-          .json({
-            message:
-              "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message:
+            "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       const questions =
@@ -566,15 +562,13 @@ class ExerciseController {
 
       await LogModel.updateStatusLog(log_id);
 
-      return res
-        .status(200)
-        .json({
-          message: "Chấm điểm thành công",
-          score: score,
-          last_score: last_score,
-          result_id: result_id,
-          completed_topic_id: completed_topic_id,
-        });
+      return res.status(200).json({
+        message: "Chấm điểm thành công",
+        score: score,
+        last_score: last_score,
+        result_id: result_id,
+        completed_topic_id: completed_topic_id,
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Lỗi từ phía server." });
@@ -595,11 +589,9 @@ class ExerciseController {
           log_id
         );
 
-        return res
-          .status(404)
-          .json({
-            message: "Lỗi đường truyền, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message: "Lỗi đường truyền, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       const exercise = await ExerciseModel.getExerciseById(exercise_id);
@@ -609,24 +601,20 @@ class ExerciseController {
           "Không tìm thấy bài tập trong DB.",
           log_id
         );
-        return res
-          .status(404)
-          .json({
-            message:
-              "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message:
+            "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       if (exercise.is_editable) {
         await LogModel.updateDetailLog(
           "Chủ đề của bài tập này đang trong giai đoạn chỉnh sửa."
         );
-        return res
-          .status(404)
-          .json({
-            message:
-              "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
-          });
+        return res.status(404).json({
+          message:
+            "Không tìm thấy bài tập, vui lòng thử lại hoặc tải lại trang.",
+        });
       }
 
       const code_exercise = await ExerciseModel.getCodeExercise(exercise_id);
@@ -647,8 +635,8 @@ class ExerciseController {
                 .trim()
                 .replace(/\s+/g, " "); // Làm tương tự với output kỳ vọng
 
-            //   console.log("result: ", result.output.trim());
-            //   console.log("case: ", test_cases[i].output.trim());
+              //   console.log("result: ", result.output.trim());
+              //   console.log("case: ", test_cases[i].output.trim());
               if (
                 result.output.trim() == test_cases[i].output.trim() ||
                 test_cases[i].output == ""
@@ -744,15 +732,13 @@ class ExerciseController {
 
       await LogModel.updateStatusLog(log_id);
 
-      return res
-        .status(200)
-        .json({
-          message: "Chấm điểm thành công",
-          score: score,
-          last_score: last_score,
-          result_id: result_id,
-          completed_topic_id: completed_topic_id,
-        });
+      return res.status(200).json({
+        message: "Chấm điểm thành công",
+        score: score,
+        last_score: last_score,
+        result_id: result_id,
+        completed_topic_id: completed_topic_id,
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Lỗi từ phía server." });

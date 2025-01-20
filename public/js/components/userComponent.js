@@ -260,7 +260,7 @@ function createExerciseQuestionComponent(question, order) {
                 </button>
                 <div class="content col">
                     <span>${option.text}</span>
-                    ${option.image_url ? `<img src="${option.image_url}" alt="Option Image" class="option-image">` : ''}
+                    ${option.image_url ? `<div style="max-width: 420px;"><img src="${option.image_url}" alt="Option Image" class="option-image"></div>` : ''}
                 </div>
             </div>
         `;
@@ -270,9 +270,9 @@ function createExerciseQuestionComponent(question, order) {
         <div class="question-item col gap-8 scale-up-ver-top" id="question_${order}" data-question-id="${ question.id }" data-question-type="${ question.type }">
             <div class="edit-row col gap-8">
                 <div class="col question_col">
-                    <span class="question">Câu hỏi ${ order }: ${question.question} (${ question.type == 'single' ? 'Chọn một đáp án' : 'Chọn nhiều đáp án' })</span>
+                    <span class="question"><strong>Câu hỏi ${ order }:</strong> ${question.question} (${ question.type == 'single' ? 'Chọn một đáp án' : 'Chọn nhiều đáp án' })</span>
                 </div>
-                ${ question.question_image_url ? '<div><img src="' + question.question_image_url + '"></img></div>' : '' }
+                ${ question.question_image_url ? '<div style="max-width: 420px;"><img src="' + question.question_image_url + '"></img></div>' : '' }
             </div>
             <div class="question-options col gap-8 full-width">
                 ${optionsHTML}
@@ -317,7 +317,7 @@ function createExerciseQuestionResultComponent(question, order) {
                 </button>
                 <div class="content col">
                     <span>${option.text}</span>
-                    ${option.image_url ? `<img src="${option.image_url}" alt="Option Image" class="option-image">` : ''}
+                    ${option.image_url ? '<div style="max-width: 420px;"><img src="${option.image_url}" alt="Option Image" class="option-image"></div>' : ''}
                 </div>
             </div>
         `;
@@ -327,9 +327,9 @@ function createExerciseQuestionResultComponent(question, order) {
         <div class="question-item col gap-8 scale-up-ver-top" id="question_${order}" data-question-id="${ question.id }" data-question-type="${ question.type }">
             <div class="edit-row col gap-8">
                 <div class="col question_col">
-                    <span class="question ${question.is_correct ? "success" : "danger"}">Câu hỏi ${ order }: ${question.question} (${ question.type == 'single' ? 'Chọn một đáp án' : 'Chọn nhiều đáp án' })</span>
+                    <span class="question ${question.is_correct ? "success" : "danger"}"><strong>Câu hỏi ${ order }:</strong> ${question.question} (${ question.type == 'single' ? 'Chọn một đáp án' : 'Chọn nhiều đáp án' })</span>
                 </div>
-                ${ question.question_image_url ? '<div><img src="' + question.question_image_url + '"></img></div>' : '' }
+                ${ question.question_image_url ? '<div style="max-width: 420px;"><img src="' + question.question_image_url + '"></img></div>' : '' }
             </div>
             <div class="question-options col gap-8 full-width">
                 ${optionsHTML}
