@@ -1,0 +1,609 @@
+BASE_URL = http://localhost:port/api
+
+-------------------AUTHENTICATION-------------------
+
+1. Register
+Path: /register
+Method: POST
+Headers: 
+    {
+        Content-Type: "application/json"
+    }
+Body: 
+    JSON.stringify({
+        account: {
+            username:   string  (required),
+            password:   string  (required)
+        }
+    })
+Response:
+    {
+        message:"User registered successfully"
+    }    
+
+2. Login
+Path: /login
+Method: POST
+Headers: 
+    {
+        Content-Type: "application/json"
+    }
+Body: 
+    JSON.stringify({
+        account: {
+            username:   string  (required),
+            password:   string  (required)
+        }
+    })
+Response:
+    {
+        message: "Đăng nhập thành công",
+        jwt: string 
+    }
+
+-------------------USER-------------------
+
+1. Uploads
+Path: /user/upload
+Method: POST
+Headers: 
+    {
+        authentication: jwt
+    }
+Body:
+    formData:
+    // description (
+        Type: multipart/form-data,
+        FormData Fields:
+            files[]: Danh sách các tệp
+            keys[]: Danh sách khóa đại diện cho từng tệp
+    )
+Response:
+    {
+        key: file_url
+    }
+
+2. Info
+Path: /user/info
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json"
+        authentication: jwt
+    }
+Response:
+    {
+        id: int,
+        username: string,
+        fullname: string,
+        email: string (NULL),
+        phone_int: string (NULL),
+        last_activity: datetime,
+        gender: string,
+        date_of_birth: date,
+        avatar_url: string,
+        role_id: int, 
+        role_name: string,
+        created_at: datetime, 
+        updated_at: datetime (NULL)
+    }
+
+3. Change password
+Path: /user/change-password
+Method: PUT
+Headers: 
+    {
+        Content-Type: "application/json"
+        authentication: jwt
+    }
+Body:
+    JSON.stringify({
+        old_password: string  (required),
+        new_password: string  (required)
+    })
+Response:
+    {
+        message: 'Đổi mật khẩu thành công.'
+    }
+
+4. Change avatar
+Path: /user/change-avatar
+Method: PUT
+Headers:
+    {
+        Content-Type: "application/json"
+        authentication: jwt
+    }
+Body:
+    JSON.stringify({
+        avatar_url: string  (required)
+    })
+Response:
+    {
+        message: 'Đổi ảnh đại diện thành công.'
+    }
+
+5. Update info
+Path: /user/update-info
+Method: PUT
+Headers:
+    {
+        Content-Type: "application/json"
+        authentication: jwt
+    }
+Body:
+    JSON.stringify({
+        fullname: string  (required),
+        gender: enum ('Nam', 'Nữ', 'Khác')  (required),
+        date_of_birth: date  (required)
+    })
+Response:
+    {
+        message: 'Cập nhật thông tin thành công.'
+    }
+
+
+-------------------USER-------------------
+I. MarketPlace Category
+1. GetData
+Path: /marketplace-categories
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json"
+    }
+Response:
+    {
+        categories: [
+            {
+                id: int,
+                name: string,
+                image_url: string
+            }
+        ]
+    }
+
+II. MarketPlace Item    
+1. GetData
+Path: /marketplace-items
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json"
+    }
+Response:
+    {
+        items: [
+            {
+                id: int,
+                category_id: int,
+                name: string,
+                image_url: string (NULL),
+                list_units: array
+            }
+        ]
+    }
+
+III. Recipe Category    
+1. GetData
+Path: /user/recipe-categories
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Response:
+    {
+        items: [
+            {
+                id: int,
+                name: string,
+                image_url: string
+            }
+        ]
+    }
+
+IV. Recipe   
+1. Search
+Path: /recipes?keyword&page&itemsPerPage(&category_id NULL)
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json"
+    }
+Response:
+    {
+        recipes: [
+            {
+                id: int,
+                category_id: int,
+                name: string,
+                image_url: string,
+                time: int,
+                serving: int,
+                total_views: int,
+                total_saves: int,
+                created_by: int,
+                category_name: string,
+                user_fullname: string
+            }
+        ],
+        totalCount: int
+    }
+
+2. GET Detail Recipe
+Path: /user/recipe?recipe_id
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Response:
+    {
+        recipe: {
+            id: int,
+            name: string,
+            category_id: int,
+            image_url: string,
+            description: string,
+            time: int,
+            serving: int,
+            cost_estimate: int,
+            kcal: int,
+            ingredients: array [{marketplace_item_id, name, quantity}],
+            instructions: array [{ step, name, detail }],
+            total_views: int,
+            total_saves: int,
+            created_by: int,
+            category_name: string,
+            user_fullname: string
+        }
+    }
+
+3. Upload recipe
+PATH: /user/recipe
+Method: POST
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        recipe: {
+            category_id: int  (required),
+            name: string  (required),
+            image_url: string (required),
+            description: string (required),
+            time: int (required),
+            serving: int  (required),
+            cost_estimate: int  (required, > 10000),
+            kcal: int  (required),
+            ingredients: array [{marketplace_item_id, name, quantity}] (required),
+            instructions: array [{ step, name, detail }]  (required)
+        }
+    }
+Response:
+    {
+        message: "Đăng tải công thức nấu ăn thành công, chúng tôi sẽ thông báo cho bạn khi công thức nấu ăn được phê duyệt.",
+        new_recipe: {
+            id: int,
+            name: string,
+            category_id: int,
+            image_url: string,
+            description: string,
+            time: int,
+            serving: int,
+            cost_estimate: int,
+            kcal: int,
+            ingredients: array [{marketplace_item_id, name, quantity}],
+            instructions: array [{ step, name, detail }],
+            total_views: int,
+            total_saves: int,
+            created_by: int,
+            category_name: string,
+            user_fullname: string
+        }
+    }
+
+4. Update recipe
+PATH: /user/recipe
+Method: PUT
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        recipe_id: int  (required),
+        newData: {
+            category_id: int  (required),
+            name: string  (required),
+            image_url: string (NULL),
+            description: string (required),
+            time: int (required),
+            serving: int  (required),
+            cost_estimate: int  (required, > 10000),
+            kcal: int  (required),
+            ingredients: array [{marketplace_item_id, name, quantity}] (required),
+            instructions: array [{ step, name, detail }]  (required)
+        }
+    }
+Response:
+    {
+        message: "Cập nhật công thức nấu ăn thành công, chúng tôi sẽ thông báo cho bạn khi công thức nấu ăn được phê duyệt.",
+        recipe: {
+            id: int,
+            name: string,
+            category_id: int,
+            image_url: string,
+            description: string,
+            time: int,
+            serving: int,
+            cost_estimate: int,
+            kcal: int,
+            ingredients: array [{marketplace_item_id, name, quantity}],
+            instructions: array [{ step, name, detail }],
+            total_views: int,
+            total_saves: int,
+            created_by: int,
+            category_name: string,
+            user_fullname: string
+        }
+    }
+
+5. Delete recipe
+PATH: /user/recipe
+Method: DELETE
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        recipe_id: int  (required)
+    }
+Response:
+    {
+        message: "Xóa công thức nấu ăn thành công."
+    }
+
+
+V. Uploads
+PATH: /user/upload
+Method: POST
+Headers: 
+    {
+        authentication: jwt
+    }
+Body:
+    {
+        formData  (required)
+    }
+Response:
+    {
+        message: "Xóa công thức nấu ăn thành công."
+    }
+p/s: formData chứa 2 mảng files (chứa các file) và keys (chứa các key tương ứng)
+
+PATH: /user/recipe
+Method: DELETE
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        recipe_id: int  (required)
+    }
+Response:
+    {
+        message: "Xóa công thức nấu ăn thành công."
+    }
+
+VI. Family group
+1. Create Family group
+PATH: /user/family-group
+Method: POST
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        name: string  (required),
+        member_ids: int[] (required)
+    }
+Response:
+    {
+        message: "Tạo nhóm gia đình thành công.",
+        new_family: object
+    }
+
+2. Get Family groups
+PATH: /user/family-groups
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Response:
+    {
+        familiesAsLeader, familiesAsMember
+    }
+
+3. Get Family group
+PATH: /user/family-group?id=
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Response:
+    {
+        family_group: object
+    }
+
+4. Add family members
+PATH: /user/family-members
+Method: POST
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        family_group_id: int  (required),
+        member_ids: int[] (required)
+    }
+Response:
+    {
+        message: "Thêm thành công."
+    }
+
+5. Update family group
+PATH: /user/family-group
+Method: PUT
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        family_group_id: int (required),
+        newData: {
+            name: string (required)
+        }
+    }
+Response:
+    {
+        message: "Cập nhật thông tin gia đình thành công."
+    }
+
+6. Delete family member
+PATH: /user/family-member
+Method: DELETE
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        family_group_id: int (required),
+        member_id: int (required),
+    }
+Response:
+    {
+        message: "Xóa thành công."
+    }
+
+7. Delete Family group
+PATH: /user/family-group
+Method: DELETE
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Body:
+    {
+        family_group_id: int (required),
+    }
+Response:
+    {
+        message: "Xóa thành công."
+    }
+
+VII. User
+1. Get User by username or phone_number
+PATH: /user/user-username-or-phone-number?keyword=
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: jwt
+    }
+Response:
+    {
+        user: {
+            id: int,
+            v.v...
+        }
+    }
+
+
+-------------------ADMIN-------------------
+I. Authentication, Authorization
+adminstrator account: {
+    username:   "dichotienloi@admin",
+    password:   "dichotienloi@admin004370"
+}
+
+1. Login
+Path: /admin/login
+Method: POST
+Headers: 
+    {
+        Content-Type: "application/json"
+    }
+Body: 
+    JSON.stringify({
+        account: {
+            username:   string  (required),
+            password:   string  (required)
+        }
+    })
+Response:
+    {
+        message: "Đăng nhập thành công",
+        refresh_token: string,
+        access_token: string 
+    }
+
+2. Refresh
+Path: /admin/refresh-token
+Method: GET
+Headers: 
+    {
+        Content-Type: "application/json",
+        authentication: refresh_token
+    }
+Response:
+    {
+        access_token: string 
+    }
+
+II. MarketPlace Category
+1. Create 
+Path: /admin/marketplace-category
+Method: POST
+Headers:
+    {
+        Content-Type: "application/json"
+        authorization: access_token
+    }
+Body: 
+    {
+        new_category: {
+            name: string,
+            image_url: string
+        }
+    }
+Response:
+    {
+        message: "Tạo danh mục thành công.",
+        new_category
+    }
+
+2.
