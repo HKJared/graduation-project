@@ -307,22 +307,22 @@ class TopicController {
 
             if (!topic.is_editable && !data_to_edit) {
                 // Tính toán thông số
-                const user_exercise_results = await ExerciseModel.getUserExerciseResultsByStarted();
+                const user_exercise_results = await ExerciseModel.getUserExerciseResultsByTopicIdAndStarted(topic_id);
 
                 const { topicAccessCountsByMonthData, totalTopicAccess, activeUserCount } = getTopicAccessCountsByMonthData(user_exercise_results);
                 const { averageExerciseSubmissions, totalUserAccess } = calculateAverageSubmissions(user_exercise_results);
 
-                const user_completed_topics = await TopicModel.getUserCompletedTopics();
+                const user_completed_topics = await TopicModel.getUserCompletedTopicsByTopicId(topic_id);
                 const totalTopicCompleted = user_completed_topics.length;
-                // const topicCompletionCountsByMonthData = getTopicCompletionCountsByMonthData(user_completed_topics);
-                const topicCompletionCountsByMonthData = [15, 16, 19, 26, 34, 42, 46];
+                const topicCompletionCountsByMonthData = getTopicCompletionCountsByMonthData(user_completed_topics);
+                // const topicCompletionCountsByMonthData = [15, 16, 19, 26, 34, 42, 46];
                 
-                // const total_exercises = countExercisesByLevelAndType(exercises);
-                const total_exercises = [
-                    { level: 'easy', multiple_choice: 1, code: 0 },
-                    { level: 'medium', multiple_choice: 1, code: 0 },
-                    { level: 'hard', multiple_choice: 0, code: 0 }
-                ]
+                const total_exercises = countExercisesByLevelAndType(exercises);
+                // const total_exercises = [
+                //     { level: 'easy', multiple_choice: 1, code: 0 },
+                //     { level: 'medium', multiple_choice: 1, code: 0 },
+                //     { level: 'hard', multiple_choice: 0, code: 0 }
+                // ]
 
                 const statistics = {
                     topicAccessCountsByMonthData: topicAccessCountsByMonthData,

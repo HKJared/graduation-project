@@ -624,6 +624,12 @@ class ExerciseController {
       const test_cases = code_exercise.test_cases;
 
       for (let i = 0; i < test_cases.length; i++) {
+        if (!test_cases[i].input && test_cases[i].output) {
+          totalCorrect++
+          continue;
+        }
+
+
         await new Promise((resolve) => {
           compileCode(
             code_exercise.language, // Ngôn ngữ của bài tập

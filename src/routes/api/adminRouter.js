@@ -26,6 +26,18 @@ apiRouter.get('/info', (req, res, next) => {
 apiRouter.get('/admins', (req, res, next) => {
     authorize(req, res, 'admin', next);
 }, UserController.getAdmins);
+apiRouter.get('/admin', (req, res, next) => {
+    authorize(req, res, 'admin', next);
+}, UserController.getAdminById);
+apiRouter.post('/admin', (req, res, next) => {
+    authorize(req, res, 'admin-creation', next);
+}, UserController.createUser);
+apiRouter.put('/admin', (req, res, next) => {
+    authorize(req, res, 'admin-authorization', next);
+}, UserController.updateAdmin);
+apiRouter.delete('/admin', (req, res, next) => {
+    authorize(req, res, 'admin-authorization', next);
+}, UserController.deleteAdmin);
 
 //  TODO: Role
 apiRouter.post('/role', (req, res, next) => {

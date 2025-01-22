@@ -337,6 +337,40 @@ class ExerciseModel {
         }
     }
 
+        // Lấy thông tin luyện tập của người dùng theo 1 chủ đề
+        static async getUserExerciseResultsByTopicIdAndStarted(topicId, started_at = null) {
+            // Câu truy vấn cơ bản
+            let queryString = `
+                SELECT
+                    er.*, 
+                    e.topic_id,
+                    e.level as exercise_level,
+                    u.username,
+                    u.last_activity as user_last_activity
+                FROM
+                    user_exercise_results er
+                JOIN
+                    exercises e ON er.exercise_id = e.id
+                JOIN
+                    users u ON er.user_id = u.id
+                WHERE
+                    e.topic_id = ?
+            `;
+            
+            // Nếu có giá trị started_at, thêm điều kiện vào câu truy vấn
+            if (started_at) {
+                queryString += ` AND er.started_at = ?`;  // Điều kiện so sánh với started_at
+            }
+        
+            try {
+                const [rows] = await pool.execute(queryString, started_at ? [topicId, started_at] : [topicId]);
+                return rows; // Trả về danh sách bài tập
+            } catch (error) {
+                console.error('Error executing getUserExerciseResultsByStarted() query:', error);
+                throw error;
+            }
+        }
+
     // Lấy thông tin luyện tập của người dùng theo topic
     static async getUserExerciseResultsByTopicId(topicId) {
         // Câu truy vấn cơ bản

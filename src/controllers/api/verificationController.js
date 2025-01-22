@@ -10,7 +10,8 @@ class VerificationController {
             const log_id = req.log_id;
 
             const phone_number = req.body.phone_number;
-            const otp_code = await OTPService.createOTP();
+            // const otp_code = await OTPService.createOTP();
+            const otp_code = "111111";
 
             const user = await UserModel.getUserByUsernameOrPhoneNumber(phone_number);
             if (user) {

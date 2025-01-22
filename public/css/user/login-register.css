@@ -371,6 +371,16 @@ body {
     text-align: center;
 }
 
+.otp-input:focus {
+    border: 1px solid rgba(0, 0, 0, 0.62);
+}
+
+input[type=number].otp-input::-webkit-inner-spin-button,
+input[type=number].otp-input::-webkit-outer-spin-button {
+	margin: 0;
+	-webkit-appearance: none;
+}
+
 .action-btn button {
     background-color: var(--color-primary);
     height: 2.5rem;

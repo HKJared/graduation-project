@@ -103,6 +103,10 @@ main .main-body {
     height: max-content;
 }
 
+.blur__container label > span {
+    color: var(--color-danger);
+}
+
 .panel {
     background-color: var(--color-white-100);
     border-radius: 6px;

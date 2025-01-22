@@ -241,6 +241,33 @@ class TopicModel {
         }
     }
 
+        // Lấy thông tin chủ đề được hoàn thành bởi người dùng
+        static async getUserCompletedTopicsByTopicId(topic_id) {
+            const queryString = `
+                SELECT
+                    ct.*,
+                    u.username,
+                    t.name as topic_name
+                FROM
+                    user_completed_topics ct
+                JOIN
+                    users u ON ct.user_id = u.id
+                JOIN
+                    system_exercise_topics t ON ct.topic_id = t.id
+                WHERE
+                    t.id = ?
+            `;
+        
+            try {
+                const [rows] = await pool.execute(queryString, [topic_id]);
+                // Chuyển đổi unlock_conditions thành mảng cho mỗi topic
+                return rows
+            } catch (error) {
+                console.error('Error executing getTopics() query:', error);
+                throw error;
+            }
+        }
+
     // Lấy thông tin chủ đề được hoàn thành cuar 1 người dùng theo ID nguời dùng
     static async getUserCompletedTopicsByUserId(user_id) {
         const queryString = `

@@ -47,15 +47,15 @@ class UserController {
     // hàm tạo tài khoản
     static async createUser(req, res) {
         try {
+            const account = req.body.account; 
+
             const user_id = req.user_id || null;
             let log_id;
             if (req.log_id) {
                 log_id = req.log_id;
             } else {
                 log_id = await LogModel.createLog('Đăng ký tài khoản', 2);
-            }
-            
-            const account = req.body.account;
+            }            
 
             const user = await UserModel.getUserByUsernameOrPhoneNumber(account.username);
             if (user) {
@@ -64,26 +64,30 @@ class UserController {
             }
 
             let phone_verification;
-            if (!user_id) {
+            if (!user_id && account.role_id === 2) {
                 phone_verification = await VerificationModel.getPhoneVerificationById(account.phone_verification_id);
 
                 if (!phone_verification.is_verified) {
                     await LogModel.updateDetailLog(`Chưa xác thực số điện thoại.`, log_id);
                     return res.status(400).json({ message: "Số điện thoại của bạn chưa được xác thực, vui lòng quay lại trang đăng ký." })
                 }
+
+                account.phone_number = phone_verification.phone_number;
+
+                delete account.phone_verification_id;
             }
             
             account.password = hashPassword(account.password);
 
-            account.phone_number = phone_verification.phone_number;
+            // const {
+            //     username, password, role_id, email, phone_number, created_by
+            // } = account
 
-            const {
-                username, password, role_id, phone_number
-            } = account
+            // const new_user_id = await UserModel.createUser({
+            //     username, password, role_id, email: email || "", phone_number, created_by
+            // });
 
-            const new_user_id = await UserModel.createUser({
-                username, password, role_id, phone_number
-            });
+            const new_user_id = await UserModel.createUser(account);
 
             await LogModel.updateStatusLog(log_id);
             await LogModel.updateDetailLog(`Tạo tài khoản thành công.`, log_id);
@@ -167,6 +171,93 @@ class UserController {
             const { users, totalPages } = await UserModel.getAdmins(keyword || '', page || 1, itemsPerPage || 15);
 
             return res.status(200).json({ admins: users, totalPages: totalPages });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });
+        }
+    }
+
+    static async getAdminById(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = req.log_id;
+
+            const { id } = req.query;
+
+            await LogModel.updateDetailLog('Lấy thông tin chi tiết tài khoản quản trị viên.', log_id);
+
+            const admin = await UserModel.getUserById(id);
+
+            return res.status(200).json({ admin: admin });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });
+        }
+    }
+
+    static async updateAdmin(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = req.log_id;
+
+            
+            const account = req.body.account;
+
+            const admin = await UserModel.getUserById(account.  id);
+
+            if (!admin || admin.role_id == 2) {
+                await LogModel.updateDetailLog("Không tìm thấy tài khoản quản trị viên cần cập nhật.", log_id);
+                return res.status(404).json({ message: "Không tìm thấy tài khoản quản trị viên cần cập nhật, vui lòng thử lại hoặc tải lại trang." });
+            }
+
+            if (account.avatar_url === null){
+                account.avatar_url = admin.avatar_url
+            }
+
+            const is_update = await UserModel.updateUser(account);
+
+            if (!is_update) {
+                await LogModel.updateDetailLog("Cập nhật thông tin tài khoản quản trị viên không thành công.", log_id);
+                return res.status(404).json({ message: "Cập nhật thông tin tài khoản quản trị viên không thành công." });
+            }
+
+            if (account.avatar_url !== admin.avatar_url) {
+                deleteFileFromCloudinary(admin.avatar_url)
+            }
+
+            await LogModel.updateStatusLog(log_id)
+
+            return res.status(200).json({ message: "Cập nhật thông tin tài khoản quản trị viên thành công." });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });
+        }
+    }
+
+    static async deleteAdmin(req, res) {
+        try {
+            const user_id = req.user_id;
+            const log_id = req.log_id;
+
+            const id = req.body.id;
+
+            const admin = await UserModel.getUserById(id);
+
+            if (!admin || admin.role_id == 2) {
+                await LogModel.updateDetailLog("Không tìm thấy tài khoản quản trị viên cần xóa.", log_id);
+                return res.status(404).json({ message: "Không tìm thấy tài khoản quản trị viên cần xóa, vui lòng thử lại hoặc tải lại trang." });
+            }
+
+            const is_deleted = await UserModel.deleteUser(id);
+
+            if (!is_deleted) {
+                await LogModel.updateDetailLog("Xóa tài khoản quản trị viên không thành công.", log_id);
+                return res.status(404).json({ message: "Xóa tài khoản quản trị viên không thành công, vui lòng thử lại hoặc tải lại trang." });
+            }
+
+            await LogModel.updateStatusLog(log_id)
+
+            return res.status(200).json({ message: "Xóa tài khoản quản trị viên thành công." });
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Lỗi từ phía server.', code: 0 });

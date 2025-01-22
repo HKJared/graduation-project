@@ -95,7 +95,7 @@ $(document).ready(function () {
     });
 
     // Xử lí các sự kiện của form xác minh số điện thoại
-    $(document).on('input', '.otp-input', function () {
+    $(document).on('input, change', '.otp-input', function () {
         var otpInputs = $('.otp-input');
         var index = otpInputs.index(this);
     
@@ -113,6 +113,8 @@ $(document).ready(function () {
         e.preventDefault();
         var otpInputs = $('.otp-input');
         var index = otpInputs.index(this);
+    
+        checkOtpInputs();
     
         // Nếu nhấn phím Backspace
         if (e.key === "Backspace") {
@@ -146,6 +148,8 @@ $(document).ready(function () {
     $(document).on('focus', '.otp-input', function () {
         var otpInputs = $('.otp-input');
         var index = otpInputs.index(this);
+    
+        checkOtpInputs();
     
         // Đảm bảo chỉ chuyển focus khi ô hiện tại rỗng
         if ($(this).val() === '') {
@@ -185,8 +189,12 @@ $(document).ready(function () {
         checkPasswordCondition($(this).val());
     });
 
-    $(document).on('submit', '#registerForm',function (event) {
+    $(document).on('submit', '#registerForm',function (event) {console.log($('.condition-container span').not('.valid'));
         event.preventDefault();
+
+        const hasInvalid = $('.condition-container span').not('.valid').length > 0;
+
+        if (hasInvalid) return
 
         const account = {
             username: $('#username_register').val(),
@@ -279,14 +287,14 @@ function checkPassword(password) {
 function checkOtpInputs() {
     var otpInputs = $('.otp-input');
     var allFilled = true;
-    var continueBtn = $('.submit-step1-btn');
+    var continueBtn = $('.submit-step1-btn'); 
 
     otpInputs.each(function () {
-        if ($(this).val().length !== 1) {
+        if ($(this).val() === "") {       
             allFilled = false;
             return false; // Thoát khỏi vòng lặp each
         }
-    });    
+    });
 
     // Nếu tất cả các ô đã được nhập đầy đủ thì bật nút "Tiếp theo"
     if (allFilled) {
@@ -394,12 +402,12 @@ function showOtpVerificationContainer(phone_number, phone_verification_id, count
             </div>
             <form class="col" data-phone-verification-id="${phone_verification_id}" data-phone-number="${phone_number}" id="otp-verification-form">
                 <div class="otp-input-container full-width row">
-                    <input type="number" maxlength="1" class="otp-input center" />
-                    <input type="number" maxlength="1" class="otp-input center" />
-                    <input type="number" maxlength="1" class="otp-input center" />
-                    <input type="number" maxlength="1" class="otp-input center" />
-                    <input type="number" maxlength="1" class="otp-input center" />
-                    <input type="number" maxlength="1" class="otp-input center" />
+                    <input type="number" maxlength="1" class="otp-input center" style="-webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0;"/>
+                    <input type="number" maxlength="1" class="otp-input center" style="-webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0;"/>
+                    <input type="number" maxlength="1" class="otp-input center" style="-webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0;"/>
+                    <input type="number" maxlength="1" class="otp-input center" style="-webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0;"/>
+                    <input type="number" maxlength="1" class="otp-input center" style="-webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0;"/>
+                    <input type="number" maxlength="1" class="otp-input center" style="-webkit-appearance: none; -moz-appearance: textfield; appearance: none; margin: 0;"/>
                 </div>
                 <div class="countdown-container row gap-4 center">
                     <div>Vui lòng chờ <span class="countdown-val">${countdown_time}</span> giây để gửi lại.</div>
@@ -525,7 +533,7 @@ function showCompeleteContainer() {
 
 
 // các hàm gọi api
-function sentOTPtoPhoneNumber(phone_number) { console.log(1)
+function sentOTPtoPhoneNumber(phone_number) {
     const access_token = localStorage.getItem('wiseowlUserAccessToken');
     renderLoading();
     fetch('/api/phone-verification', {

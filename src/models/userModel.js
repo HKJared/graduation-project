@@ -11,7 +11,7 @@ class UserModel {
         // Lấy các khóa từ đối tượng account và loại bỏ fullname
         const { fullname: _, ...accountWithoutFullname } = account; // Sử dụng destructuring để loại bỏ fullname
         const keys = Object.keys(accountWithoutFullname);
-        const values = Object.values(accountWithoutFullname);
+        const values = Object.values(accountWithoutFullname); console.log(values)
     
         // Tạo chuỗi truy vấn SQL với các khóa tương ứng
         const queryString = `
@@ -208,7 +208,8 @@ class UserModel {
                 u.avatar_url, r.name AS role_name, u.created_at, u.updated_at
             FROM users u
             JOIN roles r ON r.id = u.role_id
-            WHERE ${conditions.join(' AND ')}
+            WHERE ${conditions.join(' AND ')} AND u.id != 1
+            ORDER BY u.id DESC
             LIMIT ${usersPerPage}
             OFFSET ${offset}
         `;
